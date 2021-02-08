@@ -1,0 +1,22 @@
+{
+    "build_ID": "",
+    "game_coordinator": "",
+    "valve_webapi": "",
+    "sessionsLogon": "",
+    "online_player_count": "",
+    "server_timestamp": "",
+    "scheduler": "",
+    "online_server_count": "",
+    "active_player_count": "",
+    "search_seconds_avg": "",
+    "searching_players": "",
+    "dev_player_count": "",
+    "dev_all_time_peak": 5,
+    "peak_24_hours": "",
+    "peak_all_time": 1308963,
+    "unique_monthly": "",
+    "client_version": "",
+    "server_version": "",
+    "patch_version": "",
+    "version_timestamp": ""
+}
