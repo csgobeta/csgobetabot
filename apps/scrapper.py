@@ -52,10 +52,14 @@ class CSGOGameCoordinator:
             f.write(data)
             f.close()
             
-            f = open(config.SS_CACHE_FILE_PATH,"r")  
+            fin = open(config.SS_CACHE_FILE_PATH,"r")  
             parsed = json.load(fin)
-            f.close()
-
+            fin.close()
+            line = json.dumps(parsed, indent=4)
+            fout = open(config.SS_CACHE_FILE_PATH,"w")
+            fout.write(line)
+            fout.close()
+            
             items = file_manager.readJson(config.SS_CACHE_FILE_PATH)
             delta = items['services'][4]
             gc_status = delta[2]
@@ -63,7 +67,7 @@ class CSGOGameCoordinator:
             return gc_status
         except:
             gc_status = 'N/A'
-            return gc_status
+            return gc_statuss
 
 class GameVersion:
     def get_gameVer(self):
