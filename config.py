@@ -25,3 +25,7 @@ CACHE_FILE_PATH = 'data/cache.json'
 SS_CACHE_FILE_PATH = 'data/ss_cache.json'
 GV_CACHE_FILE_PATH = 'data/gv_cache.json'
 GUNS_CACHE_FILE_PATH = 'data/guns_db.json'
+
+GRAPH_CACHE_FILE_PATH = ''
+GRAPH_IMG_FILE_PATH = ''
+GRAPH_URL_PATH = ''
