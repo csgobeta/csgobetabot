@@ -277,11 +277,11 @@ def get_server_status():
     p24Cache, paCache, uqCache = cacheFile['peak_24_hours'], cacheFile['peak_all_time'], cacheFile['unique_monthly']
     if gcCache == 'Normal':
         if slCache == 'normal':
-            status_text_en = strings.statusNormal_en.format(slCache, scCache, pcCache)
-            status_text_ru = strings.statusNormal_ru.format(scCache, pcCache)
+            status_text_en = strings.statusNormal_en.format(config.GRAPH_URL_PATH, slCache, scCache, pcCache)
+            status_text_ru = strings.statusNormal_ru.format(config.GRAPH_URL_PATH, scCache, pcCache)
         elif not slCache == 'normal':
-            status_text_en = strings.statusNormal_en.format(slCache, scCache, pcCache)
-            status_text_ru = strings.statusNormalSL_ru.format(scCache, pcCache)
+            status_text_en = strings.statusNormal_en.format(config.GRAPH_URL_PATH, slCache, scCache, pcCache)
+            status_text_ru = strings.statusNormalSL_ru.format(config.GRAPH_URL_PATH, scCache, pcCache)
     else:
         status_text_en = strings.statusWrong_en
         status_text_ru = strings.statusWrong_ru
