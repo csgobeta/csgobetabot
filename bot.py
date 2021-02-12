@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
 import logging
-import time
 import json
 
-from datetime import date, datetime 
+import time
+from datetime import date, datetime, timedelta
 import pytz
 from babel.dates import format_datetime
 
@@ -22,6 +22,7 @@ bot = telebot.TeleBot(config.BOT_TOKEN)
 telebot.logger.setLevel(logging.DEBUG)
 
 tz = pytz.timezone('UTC')
+tz_valve = pytz.timezone('America/Los_Angeles')
 api_dc = ValveServersDataCentersAPI()
 timer_drop = Reset()
 
@@ -271,17 +272,18 @@ def get_server_status():
     '''Get the status of CS:GO servers'''
     tsCache, tsRCache = time_converter()[0], time_converter()[1]
     cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
+    urlCache = cacheFile['graph_url']
     gcCache, slCache, sCache = cacheFile['game_coordinator'], cacheFile['sessionsLogon'], cacheFile['scheduler']
     pcCache, scCache = cacheFile['online_player_count'], cacheFile['online_server_count']
     apCache, ssCache, spCache = cacheFile['active_player_count'], cacheFile['search_seconds_avg'], cacheFile['searching_players']
     p24Cache, paCache, uqCache = cacheFile['peak_24_hours'], cacheFile['peak_all_time'], cacheFile['unique_monthly']
     if gcCache == 'Normal':
         if slCache == 'normal':
-            status_text_en = strings.statusNormal_en.format(config.GRAPH_URL_PATH, slCache, scCache, pcCache)
-            status_text_ru = strings.statusNormal_ru.format(config.GRAPH_URL_PATH, scCache, pcCache)
+            status_text_en = strings.statusNormal_en.format(urlCache, slCache, scCache, pcCache)
+            status_text_ru = strings.statusNormal_ru.format(urlCache, scCache, pcCache)
         elif not slCache == 'normal':
-            status_text_en = strings.statusNormal_en.format(config.GRAPH_URL_PATH, slCache, scCache, pcCache)
-            status_text_ru = strings.statusNormalSL_ru.format(config.GRAPH_URL_PATH, scCache, pcCache)
+            status_text_en = strings.statusNormal_en.format(urlCache, slCache, scCache, pcCache)
+            status_text_ru = strings.statusNormalSL_ru.format(urlCache, scCache, pcCache)
     else:
         status_text_en = strings.statusWrong_en
         status_text_ru = strings.statusWrong_ru
@@ -301,9 +303,10 @@ def get_devcount():
     '''Get the count of online devs'''
     tsCache, tsRCache, tsVCache = time_converter()[0], time_converter()[1], time_converter()[4]
     cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
+    url = cacheFile['graph_url2']
     dcCache, dpCache = cacheFile['dev_player_count'], cacheFile['dev_all_time_peak']
-    devcount_text_en = strings.devCount_en.format(dcCache, dpCache, tsCache, tsVCache)
-    devcount_text_ru = strings.devCount_ru.format(dcCache, dpCache, tsRCache, tsVCache)
+    devcount_text_en = strings.devCount_en.format(url, dcCache, dpCache, tsCache, tsVCache)
+    devcount_text_ru = strings.devCount_ru.format(url, dcCache, dpCache, tsRCache, tsVCache)
     return devcount_text_en, devcount_text_ru
 
 def get_timer():
@@ -469,16 +472,17 @@ def send_about_problem_bot(message):
 def time_converter():
     cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
     time_server = cacheFile['server_timestamp']
-    tsCache = datetime.fromtimestamp(time_server, tz).strftime('%a, %d %B %Y, %H:%M:%S')
+    tsCache = datetime.fromtimestamp(time_server, tz=tz).strftime('%a, %d %B %Y, %H:%M:%S')
     tsRCache = str(format_datetime(datetime.strptime(tsCache, '%a, %d %B %Y, %H:%M:%S'), 'EEE, dd MMMM yyyy, HH:mm:ss', locale='ru')).title()
 
     version_date = cacheFile['version_timestamp']
-    vdCache = datetime.fromtimestamp(version_date, tz).strftime('%a, %d %B %Y, %H:%M:%S')
-    vdRCache = str(format_datetime(datetime.strptime(tsCache, '%a, %d %B %Y, %H:%M:%S'), 'EEE, dd MMMM yyyy, HH:mm:ss', locale='ru')).title()
+    vdCache = (datetime.fromtimestamp(version_date, tz=tz) + timedelta(hours=8)).strftime('%a, %d %B %Y, %H:%M:%S') 
+    vdRCache = str(format_datetime(datetime.strptime(vdCache, '%a, %d %B %Y, %H:%M:%S'), 'EEE, dd MMMM yyyy, HH:mm:ss', locale='ru')).title()
 
-    tsVCache = datetime.now(tz = pytz.timezone('America/Los_Angeles')).strftime('%H:%M:%S, %d/%m/%y %Z')
+    tsVCache = datetime.now(tz = tz_valve).strftime('%H:%M:%S, %d/%m/%y %Z')
 
     return tsCache, tsRCache, vdCache, vdRCache, tsVCache
+
 
 ### Guns archive ###
 
@@ -1109,8 +1113,8 @@ def default_inline(inline_query):
                     description_dev = 'Show the count of in-game developers'
                     description_timer = 'Time left until experience and drop cap reset'
                     description_gv = 'Check the latest game version'
-                r = types.InlineQueryResultArticle('1', title_status, input_message_content = types.InputTextMessageContent(status_r), thumb_url='https://telegra.ph/file/57ba2b279c53d69d72481.jpg', description=description_status)
-                r2 = types.InlineQueryResultArticle('2', title_dev, input_message_content = types.InputTextMessageContent(dev_r), thumb_url='https://telegra.ph/file/24b05cea99de936fd12bf.jpg', description=description_dev)
+                r = types.InlineQueryResultArticle('1', title_status, input_message_content = types.InputTextMessageContent(status_r, parse_mode="html"), thumb_url='https://telegra.ph/file/57ba2b279c53d69d72481.jpg', description=description_status)
+                r2 = types.InlineQueryResultArticle('2', title_dev, input_message_content = types.InputTextMessageContent(dev_r, parse_mode="html"), thumb_url='https://telegra.ph/file/24b05cea99de936fd12bf.jpg', description=description_dev)
                 r3 = types.InlineQueryResultArticle('3', title_timer, input_message_content = types.InputTextMessageContent(timer_r), thumb_url='https://telegra.ph/file/6948255408689d2f6a472.jpg', description=description_timer)
                 r4 = types.InlineQueryResultArticle('4', title_gv, input_message_content = types.InputTextMessageContent(gv_r, parse_mode="html"), thumb_url='https://telegra.ph/file/82d8df1e9f5140da70232.jpg', description=description_gv)
                 bot.answer_inline_query(inline_query.id, [r, r2, r3, r4], cache_time=5)
