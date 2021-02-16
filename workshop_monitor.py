@@ -50,7 +50,7 @@ def workshop_monitor():
                         chatID = config.CSGOBETACHAT
                     else:
                         chatID = config.OWNER
-                    text = strings.notiNewMap_ru.format('ы', names, workshopUrl)
+                    text = strings.notiNewMaps_ru.format('ы', names, workshopUrl)
                     bot.send_message(chatID, text, parse_mode='Markdown')
             currentTags = newTags
             time.sleep(60)
