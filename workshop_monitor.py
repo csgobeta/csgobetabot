@@ -26,29 +26,32 @@ def workshop_monitor():
             newTags = []
             for tag in soup.find_all(class_="ugc"):
                 newTags.append(tag.get('data-publishedfileid'))
-
-            urlList, nameList = [], []
-            if currentTags != newTags:
-                [i for i in currentTags if not i in newTags or newTags.remove(i)]
-                workshop = soup.find("div", {"class": "workshopBrowseItems"})
-                for tag in newTags:
-                    urlPath = workshop.find_all("a", attrs={"class": 'ugc', 'data-publishedfileid': tag})
-                    for i in urlPath:
-                        newUrl = i["href"]
-                        urlList.append(newUrl)
-                        newName = i.find_parent('div').find('div', attrs={'class': 'workshopItemTitle'}).string.split()[0]
-                        nameList.append(newName)
-                data = list(zip(urlList, nameList))
-                if len(data) < 2:
-                    for x, y in data:
-                        text = strings.notiNewMap_ru.format(y, x)
-                    send_alert(text)
-                else:
-                    names = " и ".join([", ".join(nameList[:-1]),nameList[-1]] if len(nameList) > 2 else nameList)
-                    text = strings.notiNewMaps_ru.format(names)
-                    send_alert(text)
-            currentTags = newTags
-            time.sleep(60)
+            if len(newTags) == 0:
+                time.sleep(60)
+                continue
+            else:
+                urlList, nameList = [], []
+                if currentTags != newTags:
+                    [i for i in currentTags if not i in newTags or newTags.remove(i)]
+                    workshop = soup.find("div", {"class": "workshopBrowseItems"})
+                    for tag in newTags:
+                        urlPath = workshop.find_all("a", attrs={"class": 'ugc', 'data-publishedfileid': tag})
+                        for i in urlPath:
+                            newUrl = i["href"]
+                            urlList.append(newUrl)
+                            newName = i.find_parent('div').find('div', attrs={'class': 'workshopItemTitle'}).string.split()[0]
+                            nameList.append(newName)
+                    data = list(zip(urlList, nameList))
+                    if len(data) < 2:
+                        for x, y in data:
+                            text = strings.notiNewMap_ru.format(y, x)
+                        send_alert(text)
+                    else:
+                        names = " и ".join([", ".join(nameList[:-1]),nameList[-1]] if len(nameList) > 2 else nameList)
+                        text = strings.notiNewMaps_ru.format(names)
+                        send_alert(text)
+                currentTags = newTags
+                time.sleep(60)
 
         except AttributeError:
             error_message = traceback.format_exc()

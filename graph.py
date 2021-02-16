@@ -39,7 +39,7 @@ def graph_maker():
             sns.set_style('whitegrid')
 
             fig, ax = plt.subplots(figsize=(10, 2.5))
-            ax.plot('DateTime', 'Players', data=data, color = 'red', linewidth = .7, marker='D', markevery=[-1])
+            ax.plot('DateTime', 'Players', data=data, color = 'red', linewidth = .7, marker='o', markevery=[-1])
             ax.fill_between(data['DateTime'], data['Players'], 0, facecolor = 'red', color = 'red', alpha = .4)
 
             ax.margins(x=0)
@@ -76,7 +76,7 @@ def graph_maker():
 
             
             fig2, ax = plt.subplots(figsize=(10, 2.5))
-            ax.plot('DateTime', 'Devs', data=data, color = 'red', linewidth = .7, marker='D', markevery=[-1])
+            ax.plot('DateTime', 'Devs', data=data, color = 'red', linewidth = .7, marker='o', markevery=[-1])
             ax.fill_between(data['DateTime'], data['Devs'], 0, facecolor = 'red', color = 'red', alpha = .4)
 
             ax.margins(x=0)
