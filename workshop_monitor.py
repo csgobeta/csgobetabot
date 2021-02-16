@@ -38,19 +38,15 @@ def workshop_monitor():
                         urlList.append(newUrl)
                         newName = i.find_parent('div').find('div', attrs={'class': 'workshopItemTitle'}).string.split()[0]
                         nameList.append(newName)
-                data = zip(urlList, nameList)
-                if len(list(data)) < 2:
-                    data = zip(urlList, nameList)
-                    send_alert(data)
+                data = list(zip(urlList, nameList))
+                if len(data) < 2:
+                    for x, y in data:
+                        text = strings.notiNewMap_ru.format(y, x)
+                    send_alert(text)
                 else:
                     names = " и ".join([", ".join(nameList[:-1]),nameList[-1]] if len(nameList) > 2 else nameList)
-                    bot = telebot.TeleBot(config.BOT_TOKEN)
-                    if not config.TEST_MODE:
-                        chatID = config.CSGOBETACHAT
-                    else:
-                        chatID = config.OWNER
                     text = strings.notiNewMaps_ru.format(names)
-                    bot.send_message(chatID, text, parse_mode='Markdown')
+                    send_alert(text)
             currentTags = newTags
             time.sleep(60)
 
@@ -61,15 +57,13 @@ def workshop_monitor():
             time.sleep(60)
             workshop_monitor()
 
-def send_alert(data):
+def send_alert(text):
     bot = telebot.TeleBot(config.BOT_TOKEN)
     if not config.TEST_MODE:
         chatID = config.CSGOBETACHAT
     else:
         chatID = config.OWNER
-    for x, y in data:
-        text = strings.notiNewMap_ru.format(y, x)
-        bot.send_message(chatID, text, parse_mode='Markdown')
+    bot.send_message(chatID, text, parse_mode='Markdown')
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG, format='%(process)d %(message)s')
