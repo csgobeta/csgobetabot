@@ -44,13 +44,12 @@ def workshop_monitor():
                     send_alert(data)
                 else:
                     names = " и ".join([", ".join(nameList[:-1]),nameList[-1]] if len(nameList) > 2 else nameList)
-                    workshopUrl = 'https://steamcommunity.com/profiles/76561198082857351/myworkshopfiles/'
                     bot = telebot.TeleBot(config.BOT_TOKEN)
                     if not config.TEST_MODE:
                         chatID = config.CSGOBETACHAT
                     else:
                         chatID = config.OWNER
-                    text = strings.notiNewMaps_ru.format(names, workshopUrl)
+                    text = strings.notiNewMaps_ru.format(names)
                     bot.send_message(chatID, text, parse_mode='Markdown')
             currentTags = newTags
             time.sleep(60)
