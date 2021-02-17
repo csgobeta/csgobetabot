@@ -2,7 +2,7 @@
 # English
 cmdStart_en = '👋🏼 Hey, {}!\nThis bot is designed to check the number of online players and the availability of CS:GO servers.\n\nFor more information type /help.'
 cmdHelp_en = 'ℹ️ This bot is designed by @csgobeta. Source code on <a href="https://github.com/csgobeta/csgobetabot">GitHub</a>.\n\n<b>Here are the available commands:</b>\n/status – сheck the status of the servers\n/devcount - show the amount of devs in beta\n/timer - show the time left until cap reset\n/dc – see the status of a specific data center\n/feedback – leave feedback about the bot\n/help – get this message\n\nNote that this bot also works automatically, no need to add it anywhere. Simply open any of your chats and type ‘<code>@csgobetabot </code>‘ in the message field. Then tap on a result to send.'
-cmdFeedback_en = '💬 Please, tell us about your <b>suggestions</b> or <b>problems</b> that you have encountered using our bot.\n\nUse /cancel to cancel this command.'
+cmdFeedback_en = "💬 Please, tell us about your <b>suggestions</b> or <b>problems</b> that you have encountered using our bot.\n\nUse /cancel to cancel this command."
 # Russian
 cmdStart_ru = '👋🏼 Привет, {}!\nЭтот бот предназначен для проверки количества онлайн игроков и доступности CS:GO серверов.\n\nДля большей информации воспользуйтесь /help.'
 cmdHelp_ru = 'ℹ️ Этот бот разработан каналом @csgobeta. Исходный код на <a href="https://github.com/csgobeta/csgobetabot">GitHub</a>.\n\n<b>Доступные команды:</b>\n/status – проверить доступность серверов\n/devcount - показать количество разработчиков в бета-версии\n/timer - показать время до сброса ограничений\n/dc – посмотреть состояние определённого дата-центра (на английском языке)\n/feedback – оставить фидбэк про бота\n/help – получить это сообщение\n\nОбратите внимание, что этот бот также работает автоматически, нет необходимости добавлять его куда-либо. Просто откройте любой из Ваших чатов и введите ‘<code>@csgobetabot </code>ʼ в поле сообщения. Затем нажмите на результат для отправки.'
@@ -66,7 +66,7 @@ wrongAPI_ru = '💀 Проблемы с API Valve, пожалуйста, поп�
 
 '''Text for Maintenance'''
 # English
-maintenance_en = '🛠️ Valve servers are down for the weekly maintenance, please try again later.'
+maintenance_en = "🛠️ Valve servers are down for the weekly maintenance, please try again later."
 # Russian
 maintenance_ru = '🛠️ Сервера Valve отключены для еженедельного тех. обслуживания, пожалуйста, попробуйте позже.'
 
@@ -95,6 +95,9 @@ notiNewPlayerPeak_ru = '🤩 Зарегистрирован новый реко�
 #Russian
 notiNewDevPeak_ru = '😲 Зарегистрирован новый рекордный пик онлайн разработчиков в бета-версии Counter-Strike: Global Offensive. \n\nКоличество разработчиков: {}'
 
+'''Text for new Tweet'''
+#Russian
+notiNewTweet_ru = '💬 Официальный аккаунт CS:GO в Twitter:\n\n«{}».\n\n🔗 twitter.com/csgo/status/{}'
 
 '''Text for DC'''
 # English
@@ -187,7 +190,7 @@ singaporean_tags = ['singapore',
                     'сингапур',
                     '/singapore']
 
-'''Text for Archive data'''
+"""Text for Archive data"""
 #Russian
 gun_data_ru = '🗂 Детальная информация про {}:\n\n• Происхождение: {}\n• Стоимость: {}$\n• Обойма: {}/{}\n• Скорострельность: {} в/м.\n• Награда за убийство: {}$\n• Мобильность: {} ед.\n\n• Бронепробиваемость: {}%\n• Дальность поражения (стоя / сидя): {} / {} м.\n\n• Время, за которое достаётся оружие: {} с.\n• Перезарядка: {} / {} с.\n(готовность обоймы / готовность к стрельбе)\n\n💢 Информация об уроне:\n(противник в броне / без брони)\n\n• Голова: {} / {}\n• Грудь и руки: {} / {}\n• Живот: {} / {}\n• Ноги: {} / {}'
 origin_list_ru = ['Германия', 'Австрия', 'Италия', 'Швейцария', 'Чехия', 'Бельгия', 'Швеция', 'Израль',
