@@ -402,7 +402,7 @@ def send_gameversion(message):
         else:
                 text = gameversion_text_en
                 markup = markup_en
-        bot.send_message(message.chat.id, text, reply_markup=markup, parse_mode="html") 
+        bot.send_message(message.chat.id, text, reply_markup=markup, parse_mode='html') 
     except Exception as e:
         bot.send_message(config.LOGCHANNEL, f'❗️{e}')
         send_about_problem_bot(message)
@@ -502,7 +502,7 @@ def translate(data):
 def get_gun_info(gun_id): 
     '''Get archived data about guns'''
     cacheFile = file_manager.readJson(config.GUNS_CACHE_FILE_PATH)
-    raw_data = list(filter(lambda x:x["id"] == gun_id, cacheFile['data']))
+    raw_data = list(filter(lambda x:x['id'] == gun_id, cacheFile['data']))
     data = raw_data[0]
     key_list = []
     value_list = []
@@ -540,7 +540,7 @@ def send_gun_info(message, gun_id):
         else:
                 text = gun_data_text_en
                 markup = markup_guns
-        bot.send_message(message.chat.id, text, reply_markup=markup, parse_mode="html") 
+        bot.send_message(message.chat.id, text, reply_markup=markup, parse_mode='html') 
     except Exception as e:
         bot.send_message(config.LOGCHANNEL, f'❗️{e}')
         send_about_problem_bot(message)
@@ -1125,10 +1125,10 @@ def default_inline(inline_query):
                     description_dev = 'Show the count of in-game developers'
                     description_timer = 'Time left until experience and drop cap reset'
                     description_gv = 'Check the latest game version'
-                r = types.InlineQueryResultArticle('1', title_status, input_message_content = types.InputTextMessageContent(status_r, parse_mode="html"), thumb_url='https://telegra.ph/file/57ba2b279c53d69d72481.jpg', description=description_status)
-                r2 = types.InlineQueryResultArticle('2', title_dev, input_message_content = types.InputTextMessageContent(dev_r, parse_mode="html"), thumb_url='https://telegra.ph/file/24b05cea99de936fd12bf.jpg', description=description_dev)
+                r = types.InlineQueryResultArticle('1', title_status, input_message_content = types.InputTextMessageContent(status_r, parse_mode='html'), thumb_url='https://telegra.ph/file/57ba2b279c53d69d72481.jpg', description=description_status)
+                r2 = types.InlineQueryResultArticle('2', title_dev, input_message_content = types.InputTextMessageContent(dev_r, parse_mode='html'), thumb_url='https://telegra.ph/file/24b05cea99de936fd12bf.jpg', description=description_dev)
                 r3 = types.InlineQueryResultArticle('3', title_timer, input_message_content = types.InputTextMessageContent(timer_r), thumb_url='https://telegra.ph/file/6948255408689d2f6a472.jpg', description=description_timer)
-                r4 = types.InlineQueryResultArticle('4', title_gv, input_message_content = types.InputTextMessageContent(gv_r, parse_mode="html"), thumb_url='https://telegra.ph/file/82d8df1e9f5140da70232.jpg', description=description_gv)
+                r4 = types.InlineQueryResultArticle('4', title_gv, input_message_content = types.InputTextMessageContent(gv_r, parse_mode='html'), thumb_url='https://telegra.ph/file/82d8df1e9f5140da70232.jpg', description=description_gv)
                 bot.answer_inline_query(inline_query.id, [r, r2, r3, r4], cache_time=5)
                 log_inline(inline_query)
             except Exception as e:
@@ -1176,7 +1176,7 @@ def default_inline(inline_query):
                     description_gv = 'Check the latest game version'
                 r = types.InlineQueryResultArticle('1', title_un, input_message_content = types.InputTextMessageContent(wrong_r), thumb_url='https://telegra.ph/file/b9d408e334795b014ee5c.jpg', description=description_un)
                 r2 = types.InlineQueryResultArticle('2', title_timer, input_message_content = types.InputTextMessageContent(timer_r), thumb_url='https://telegra.ph/file/6948255408689d2f6a472.jpg', description=description_timer)
-                r3 = types.InlineQueryResultArticle('3', title_gv, input_message_content = types.InputTextMessageContent(gv_r, parse_mode="html"), thumb_url='https://telegra.ph/file/82d8df1e9f5140da70232.jpg', description=description_gv)
+                r3 = types.InlineQueryResultArticle('3', title_gv, input_message_content = types.InputTextMessageContent(gv_r, parse_mode='html'), thumb_url='https://telegra.ph/file/82d8df1e9f5140da70232.jpg', description=description_gv)
                 bot.answer_inline_query(inline_query.id, [r, r2, r3], cache_time=5)
                 log_inline(inline_query)
             except Exception as e:
