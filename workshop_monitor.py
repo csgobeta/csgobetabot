@@ -32,7 +32,8 @@ def workshop_monitor():
             else:
                 urlList, nameList = [], []
                 if currentTags != newTags:
-                    modifiedTags = [i for i in newTags if not i in currentTags or currentTags.remove(i)]
+                    tempTags = currentTags[:]
+                    modifiedTags = [i for i in newTags if not i in tempTags or tempTags.remove(i)]
                     workshop = soup.find("div", {"class": "workshopBrowseItems"})
                     for tag in modifiedTags:
                         urlPath = workshop.find_all("a", attrs={"class": 'ugc', 'data-publishedfileid': tag})
