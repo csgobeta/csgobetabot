@@ -73,7 +73,7 @@ class ValveServersAPI:
             response = requests.get(API_server_status)
             if response.status_code == 200:
                 webapi_status = 'normal'
-            elif response.status_code != 200 and datetime.datetime.today().weekday() == 1:
+            elif response.status_code != 200 and datetime.today().weekday() == 1:
                 webapi_status = 'maintenance'
             else:
                 webapi_status = 'N/A'
