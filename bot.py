@@ -499,7 +499,7 @@ def translate(data):
 ### Guns archive ###
 
 
-def get_gun_info(gun_id):r  
+def get_gun_info(gun_id): 
     '''Get archived data about guns'''
     cacheFile = file_manager.readJson(config.GUNS_CACHE_FILE_PATH)
     raw_data = list(filter(lambda x:x["id"] == gun_id, cacheFile['data']))
