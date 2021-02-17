@@ -32,9 +32,9 @@ def workshop_monitor():
             else:
                 urlList, nameList = [], []
                 if currentTags != newTags:
-                    [i for i in currentTags if not i in newTags or newTags.remove(i)]
+                    modifiedTags = [i for i in currentTags if not i in newTags or newTags.remove(i)]
                     workshop = soup.find("div", {"class": "workshopBrowseItems"})
-                    for tag in newTags:
+                    for tag in modifiedTags:
                         urlPath = workshop.find_all("a", attrs={"class": 'ugc', 'data-publishedfileid': tag})
                         for i in urlPath:
                             newUrl = i["href"]
