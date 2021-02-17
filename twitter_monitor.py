@@ -37,4 +37,4 @@ class CSGOTwitterListener(StreamListener):
 if __name__ == '__main__':
     listener = CSGOTwitterListener()
     twitterStream = Stream(auth, listener)
-    twitterStream.filter(follow=['353780675'])
+    twitterStream.filter(follow=[config.CSGOTWITTERID])
