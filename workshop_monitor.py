@@ -18,13 +18,13 @@ headers = {'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:80.0) Gecko
 def workshop_monitor():
     soup = BeautifulSoup(requests.get(url, headers=headers).content, 'html.parser')
     currentTags = []
-    for tag in soup.find_all(class_="ugc"):
+    for tag in soup.find_all(class_='ugc'):
         currentTags.append(tag.get('data-publishedfileid'))
     while True:
         try:
             soup = BeautifulSoup(requests.get(url, headers=headers).content, 'html.parser')
             newTags = []
-            for tag in soup.find_all(class_="ugc"):
+            for tag in soup.find_all(class_='ugc'):
                 newTags.append(tag.get('data-publishedfileid'))
             if len(newTags) == 0:
                 time.sleep(60)
@@ -34,11 +34,11 @@ def workshop_monitor():
                 if currentTags != newTags:
                     tempTags = currentTags[:]
                     modifiedTags = [i for i in newTags if not i in tempTags or tempTags.remove(i)]
-                    workshop = soup.find("div", {"class": "workshopBrowseItems"})
+                    workshop = soup.find('div', {'class': 'workshopBrowseItems'})
                     for tag in modifiedTags:
-                        urlPath = workshop.find_all("a", attrs={"class": 'ugc', 'data-publishedfileid': tag})
+                        urlPath = workshop.find_all('a', attrs={'class': 'ugc', 'data-publishedfileid': tag})
                         for i in urlPath:
-                            newUrl = i["href"]
+                            newUrl = i['href']
                             urlList.append(newUrl)
                             newName = i.find_parent('div').find('div', attrs={'class': 'workshopItemTitle'}).string.split()[0]
                             nameList.append(newName)
@@ -48,7 +48,7 @@ def workshop_monitor():
                             text = strings.notiNewMap_ru.format(y, x)
                         send_alert(text)
                     else:
-                        names = " и ".join([", ".join(nameList[:-1]),nameList[-1]] if len(nameList) > 2 else nameList)
+                        names = ' и '.join([', '.join(nameList[:-1]),nameList[-1]] if len(nameList) > 2 else nameList)
                         text = strings.notiNewMaps_ru.format(names)
                         send_alert(text)
                 currentTags = newTags
