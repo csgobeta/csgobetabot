@@ -489,8 +489,8 @@ def time_converter():
 
 def translate(data):
     cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
-    en_list = ['normal', 'surge', 'delayed', 'N/A']
-    ru_list = ['в норме', 'помехи', 'задержка', 'N/A']
+    en_list = ['normal', 'surge', 'delayed', 'idle', 'offline', 'N/A']
+    ru_list = ['в норме', 'помехи', 'задержка', 'бездействие', 'офлайн', 'N/A']
     for en, ru in zip(en_list, ru_list):
         if data in en:
             data_ru = ru
