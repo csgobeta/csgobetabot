@@ -489,8 +489,8 @@ def time_converter():
 
 def translate(data):
     cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
-    en_list = ['normal', 'surge', 'delayed', 'medium', 'high', 'full']
-    ru_list = ['в норме', 'помехи', 'задержка', 'средняя', 'высокая', 'полная']
+    en_list = ['normal', 'surge', 'delayed', 'N/A']
+    ru_list = ['в норме', 'помехи', 'задержка', 'N/A']
     for en, ru in zip(en_list, ru_list):
         if data in en:
             data_ru = ru
@@ -499,7 +499,7 @@ def translate(data):
 ### Guns archive ###
 
 
-def get_gun_info(gun_id):
+def get_gun_info(gun_id):r  
     '''Get archived data about guns'''
     cacheFile = file_manager.readJson(config.GUNS_CACHE_FILE_PATH)
     raw_data = list(filter(lambda x:x["id"] == gun_id, cacheFile['data']))
