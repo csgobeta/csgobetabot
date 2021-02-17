@@ -39,7 +39,7 @@ def graph_maker():
             sns.set_style('whitegrid')
 
             fig, ax = plt.subplots(figsize=(10, 2.5))
-            ax.plot('DateTime', 'Players', data=data, color = 'red', linewidth = .7, marker='o', markevery=[-1])
+            ax.plot('DateTime', 'Players', data=data, color = 'red', linewidth = .7, marker='D', markevery=[-1])
             ax.fill_between(data['DateTime'], data['Players'], 0, facecolor = 'red', color = 'red', alpha = .4)
 
             ax.margins(x=0)
@@ -72,11 +72,11 @@ def graph_maker():
 
             cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
             if cacheFile['graph_url'] != url:
-                file_manager.updateJson(config.CACHE_FILE_PATH, url, cache_key_list[20])
+                file_manager.updateJson(config.CACHE_FILE_PATH, url, cache_key_list[21])
 
             
             fig2, ax = plt.subplots(figsize=(10, 2.5))
-            ax.plot('DateTime', 'Devs', data=data, color = 'red', linewidth = .7, marker='o', markevery=[-1])
+            ax.plot('DateTime', 'Devs', data=data, color = 'red', linewidth = .7, marker='D', markevery=[-1])
             ax.fill_between(data['DateTime'], data['Devs'], 0, facecolor = 'red', color = 'red', alpha = .4)
 
             ax.margins(x=0)
@@ -109,7 +109,7 @@ def graph_maker():
 
             cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
             if cacheFile['graph_url2'] != url2:
-                file_manager.updateJson(config.CACHE_FILE_PATH, url2, cache_key_list[21])
+                file_manager.updateJson(config.CACHE_FILE_PATH, url2, cache_key_list[22])
 
         except AttributeError:
             error_message = traceback.format_exc()

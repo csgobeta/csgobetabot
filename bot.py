@@ -272,31 +272,35 @@ def get_server_status():
     '''Get the status of CS:GO servers'''
     tsCache, tsRCache = time_converter()[0], time_converter()[1]
     cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
-    urlCache = cacheFile['graph_url']
-    gcCache, slCache, sCache = cacheFile['game_coordinator'], cacheFile['sessionsLogon'], cacheFile['scheduler']
+    url = cacheFile['graph_url']
+    gcCache, slCache, sCache, piCache = cacheFile['game_coordinator'], cacheFile['sessionsLogon'], cacheFile['scheduler'], cacheFile['steam_community']
     pcCache, scCache = cacheFile['online_player_count'], cacheFile['online_server_count']
     apCache, ssCache, spCache = cacheFile['active_player_count'], cacheFile['search_seconds_avg'], cacheFile['searching_players']
     p24Cache, paCache, uqCache = cacheFile['peak_24_hours'], cacheFile['peak_all_time'], cacheFile['unique_monthly']
-    if gcCache == 'Normal':
-        if slCache == 'normal':
-            status_text_en = strings.statusNormal_en.format(urlCache, slCache, scCache, pcCache)
-            status_text_ru = strings.statusNormal_ru.format(urlCache, scCache, pcCache)
-        elif not slCache == 'normal':
-            status_text_en = strings.statusNormal_en.format(urlCache, slCache, scCache, pcCache)
-            status_text_ru = strings.statusNormalSL_ru.format(urlCache, scCache, pcCache)
+
+    array = [gcCache, slCache, sCache, piCache]
+    array_ru = []
+    for data in array:
+        data_ru = translate(data)
+        array_ru.append(data_ru)
+    gcRCache, slRCache, sRCache, piRCache = array_ru[0], array_ru[1], array_ru[2], array_ru[3]
+
+    if gcCache != 'normal' or slCache != 'normal':
+        tick = '❌'
     else:
-        status_text_en = strings.statusWrong_en
-        status_text_ru = strings.statusWrong_ru
-    if sCache == 'normal':
-        mm_text_en = strings.mmNormal_en.format(apCache, spCache, ssCache)
-        mm_text_ru = strings.mmNormal_ru.format(apCache, spCache, ssCache)
-    elif not sCache == 'normal':
-        mm_text_en = strings.mmWrong_en 
-        mm_text_ru = strings.mmWrong_ru
+        tick = '✅'
+
+    status_text_en = strings.statusNormal_en.format(url, tick, gcCache, slCache, sCache, piCache)
+    status_text_ru = strings.statusNormal_ru.format(url, tick, gcRCache, slRCache, sRCache, piRCache)
+
+    mm_text_en = strings.mmNormal_en.format(scCache, pcCache, apCache, spCache, ssCache)
+    mm_text_ru = strings.mmNormal_ru.format(scCache, pcCache, apCache, spCache, ssCache)
+
     addInf_text_en = strings.additionalInfo_en.format(p24Cache, paCache, uqCache, tsCache)
     addInf_text_ru = strings.additionalInfo_ru.format(p24Cache, paCache, uqCache, tsRCache)
-    server_status_text_en = status_text_en + '\n\n' +  mm_text_en + '\n\n' + addInf_text_en
-    server_status_text_ru = status_text_ru + '\n\n' +  mm_text_ru + '\n\n' + addInf_text_ru
+
+    server_status_text_en = status_text_en +  mm_text_en + addInf_text_en
+    server_status_text_ru = status_text_ru +  mm_text_ru + addInf_text_ru
     return server_status_text_en, server_status_text_ru
 
 def get_devcount():
@@ -333,7 +337,7 @@ def send_server_status(message):
     '''Send the status of CS:GO servers'''
     cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
     wsCache = cacheFile['valve_webapi']
-    if wsCache == 'Normal':
+    if wsCache == 'normal':
         try:
             server_status_text_en, server_status_text_ru = get_server_status()
             if message.from_user.language_code == 'ru':
@@ -355,7 +359,7 @@ def send_devcount(message):
     '''Send the count of online devs'''
     cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
     wsCache = cacheFile['valve_webapi']
-    if wsCache == 'Normal':
+    if wsCache == 'normal':
         try:
             devcount_text_en, devcount_text_ru = get_devcount()
             if message.from_user.language_code == 'ru':
@@ -483,14 +487,22 @@ def time_converter():
 
     return tsCache, tsRCache, vdCache, vdRCache, tsVCache
 
+def translate(data):
+    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
+    en_list = ['normal', 'surge', 'delayed', 'medium', 'high', 'full']
+    ru_list = ['в норме', 'помехи', 'задержка', 'средняя', 'высокая', 'полная']
+    for en, ru in zip(en_list, ru_list):
+        if data in en:
+            data_ru = ru
+            return data_ru
 
 ### Guns archive ###
 
 
-def get_gun_info(temp_id):
+def get_gun_info(gun_id):
     '''Get archived data about guns'''
     cacheFile = file_manager.readJson(config.GUNS_CACHE_FILE_PATH)
-    raw_data = list(filter(lambda x:x["id"] == temp_id, cacheFile['data']))
+    raw_data = list(filter(lambda x:x["id"] == gun_id, cacheFile['data']))
     data = raw_data[0]
     key_list = []
     value_list = []
@@ -518,10 +530,10 @@ def get_gun_info(temp_id):
                                     armored_damage_stomach, unarmored_damage_stomach, armored_damage_leg, unarmored_damage_leg)
     return gun_data_text_en, gun_data_text_ru
 
-def send_gun_info(message, temp_id):
+def send_gun_info(message, gun_id):
     '''Send archived data about guns'''
     try:
-        gun_data_text_en, gun_data_text_ru = get_gun_info(temp_id)
+        gun_data_text_en, gun_data_text_ru = get_gun_info(gun_id)
         if message.from_user.language_code == 'ru':
                 text = gun_data_text_ru
                 markup = markup_guns_ru
@@ -605,7 +617,7 @@ def heavy(message):
 def dc(message):
     cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
     wsCache = cacheFile['valve_webapi']
-    if wsCache == 'Normal':
+    if wsCache == 'normal':
         try:
             if message.from_user.language_code == 'ru':
                 text = '📶 Выберите регион, который Вам интересен, чтобы получить информацию о дата-центрах:'
@@ -632,7 +644,7 @@ def back(message):
 def dc_europe(message):
     cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
     wsCache = cacheFile['valve_webapi']
-    if wsCache == 'Normal':
+    if wsCache == 'normal':
         if message.from_user.language_code == 'ru':
             text = '📍 Укажите регион...'
             markup = markup_DC_EU_ru            
@@ -648,7 +660,7 @@ def dc_europe(message):
 def dc_usa(message):
     cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
     wsCache = cacheFile['valve_webapi']
-    if wsCache == 'Normal':
+    if wsCache == 'normal':
         if message.from_user.language_code == 'ru':
             text = '📍 Укажите регион...'
             markup = markup_DC_USA_ru
@@ -664,7 +676,7 @@ def dc_usa(message):
 def dc_asia(message):
     cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
     wsCache = cacheFile['valve_webapi']
-    if wsCache == 'Normal':
+    if wsCache == 'normal':
         if message.from_user.language_code == 'ru':
             text = '📍 Укажите страну...'
             markup = markup_DC_Asia_ru
@@ -681,7 +693,7 @@ def dc_asia(message):
 
 def get_dc_africa():
     tsCache, tsRCache = time_converter()[0], time_converter()[1]
-    capacity, load, capacity_ru, load_ru, capacity_secondary, load_secondary, capacity_secondary_ru, load_secondary_ru, capacity_tertiary, load_tertiary, capacity_tertiary_ru, load_tertiary_ru, capacity_quaternary, load_quaternary, capacity_quaternary_ru, load_quaternary_ru = api_dc.africa_South()     
+    capacity, load, capacity_ru, load_ru = api_dc.africa_South()     
     africa_text_ru = strings.dc_africa_ru.format(load_ru, capacity_ru, tsRCache)
     africa_text_en = strings.dc_africa_en.format(load, capacity, tsCache)           
     return africa_text_en, africa_text_ru
@@ -689,7 +701,7 @@ def get_dc_africa():
 def send_dc_africa(message):
     cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
     wsCache = cacheFile['valve_webapi']
-    if wsCache == 'Normal':
+    if wsCache == 'normal':
         try:
             africa_text_en, africa_text_ru = get_dc_africa()
             if message.from_user.language_code == 'ru':
@@ -711,7 +723,7 @@ def send_dc_africa(message):
 
 def get_dc_australia():
     tsCache, tsRCache = time_converter()[0], time_converter()[1]
-    capacity, load, capacity_ru, load_ru, capacity_secondary, load_secondary, capacity_secondary_ru, load_secondary_ru, capacity_tertiary, load_tertiary, capacity_tertiary_ru, load_tertiary_ru, capacity_quaternary, load_quaternary, capacity_quaternary_ru, load_quaternary_ru = api_dc.australia()     
+    capacity, load, capacity_ru, load_ru = api_dc.australia()     
     australia_text_ru = strings.dc_australia_ru.format(load_ru, capacity_ru, tsRCache)
     australia_text_en = strings.dc_australia_en.format(load, capacity, tsCache)           
     return australia_text_en, australia_text_ru
@@ -719,7 +731,7 @@ def get_dc_australia():
 def send_dc_australia(message):
     cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
     wsCache = cacheFile['valve_webapi']
-    if wsCache == 'Normal':
+    if wsCache == 'normal':
         try:
             australia_text_en, australia_text_ru = get_dc_australia()
             if message.from_user.language_code == 'ru':
@@ -741,7 +753,7 @@ def send_dc_australia(message):
 
 def get_dc_eu_north():
     tsCache, tsRCache = time_converter()[0], time_converter()[1]
-    capacity, load, capacity_ru, load_ru, capacity_secondary, load_secondary, capacity_secondary_ru, load_secondary_ru, capacity_tertiary, load_tertiary, capacity_tertiary_ru, load_tertiary_ru, capacity_quaternary, load_quaternary, capacity_quaternary_ru, load_quaternary_ru = api_dc.eu_North()        
+    capacity, load, capacity_ru, load_ru = api_dc.eu_North()        
     eu_north_text_ru = strings.dc_north_eu_ru.format(load_ru, capacity_ru, tsRCache)
     eu_north_text_en = strings.dc_north_eu_en.format(load, capacity, tsCache)
     return eu_north_text_en, eu_north_text_ru
@@ -749,7 +761,7 @@ def get_dc_eu_north():
 def send_dc_eu_north(message):
     cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
     wsCache = cacheFile['valve_webapi']
-    if wsCache == 'Normal':
+    if wsCache == 'normal':
         try:
             eu_north_text_en, eu_north_text_ru = get_dc_eu_north()
             if message.from_user.language_code == 'ru':
@@ -769,7 +781,7 @@ def send_dc_eu_north(message):
 
 def get_dc_eu_west():
     tsCache, tsRCache = time_converter()[0], time_converter()[1]
-    capacity, load, capacity_ru, load_ru, capacity_secondary, load_secondary, capacity_secondary_ru, load_secondary_ru, capacity_tertiary, load_tertiary, capacity_tertiary_ru, load_tertiary_ru, capacity_quaternary, load_quaternary, capacity_quaternary_ru, load_quaternary_ru = api_dc.eu_West()
+    capacity, load, capacity_ru, load_ru, capacity_secondary, load_secondary, capacity_secondary_ru, load_secondary_ru = api_dc.eu_West()
     eu_west_text_ru = strings.dc_west_eu_ru.format(load_ru, capacity_ru, load_secondary_ru, capacity_secondary_ru, tsRCache)
     eu_west_text_en = strings.dc_west_eu_en.format(load, capacity, load_secondary, capacity_secondary, tsCache)
     return eu_west_text_en, eu_west_text_ru
@@ -777,7 +789,7 @@ def get_dc_eu_west():
 def send_dc_eu_west(message):
     cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
     wsCache = cacheFile['valve_webapi']
-    if wsCache == 'Normal':
+    if wsCache == 'normal':
         try:
             eu_west_text_en, eu_west_text_ru = get_dc_eu_west()
             if message.from_user.language_code == 'ru':
@@ -797,7 +809,7 @@ def send_dc_eu_west(message):
 
 def get_dc_eu_east():
     tsCache, tsRCache = time_converter()[0], time_converter()[1]
-    capacity, load, capacity_ru, load_ru, capacity_secondary, load_secondary, capacity_secondary_ru, load_secondary_ru, capacity_tertiary, load_tertiary, capacity_tertiary_ru, load_tertiary_ru, capacity_quaternary, load_quaternary, capacity_quaternary_ru, load_quaternary_ru = api_dc.eu_East()
+    capacity, load, capacity_ru, load_ru, capacity_secondary, load_secondary, capacity_secondary_ru, load_secondary_ru = api_dc.eu_East()
     eu_east_text_ru = strings.dc_east_eu_ru.format(load_ru, capacity_ru, load_secondary_ru, capacity_secondary_ru, tsRCache)
     eu_east_text_en = strings.dc_east_eu_en.format(load, capacity, load_secondary, capacity_secondary, tsCache)
     return eu_east_text_en, eu_east_text_ru
@@ -805,7 +817,7 @@ def get_dc_eu_east():
 def send_dc_eu_east(message):
     cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
     wsCache = cacheFile['valve_webapi']
-    if wsCache == 'Normal':
+    if wsCache == 'normal':
         try:
             eu_east_text_en, eu_east_text_ru = get_dc_eu_east()
             if message.from_user.language_code == 'ru':
@@ -827,7 +839,7 @@ def send_dc_eu_east(message):
 
 def get_dc_usa_north():
     tsCache, tsRCache = time_converter()[0], time_converter()[1]
-    capacity, load, capacity_ru, load_ru, capacity_secondary, load_secondary, capacity_secondary_ru, load_secondary_ru, capacity_tertiary, load_tertiary, capacity_tertiary_ru, load_tertiary_ru, capacity_quaternary, load_quaternary, capacity_quaternary_ru, load_quaternary_ru = api_dc.usa_North()   
+    capacity, load, capacity_ru, load_ru, capacity_secondary, load_secondary, capacity_secondary_ru, load_secondary_ru, capacity_tertiary, load_tertiary, capacity_tertiary_ru, load_tertiary_ru = api_dc.usa_North()   
     usa_north_text_ru = strings.dc_north_us_ru.format(load_ru, capacity_ru, load_secondary_ru, capacity_secondary_ru, load_tertiary_ru, capacity_tertiary_ru, tsRCache)
     usa_north_text_en = strings.dc_north_us_en.format(load, capacity, load_secondary, capacity_secondary, load_tertiary, capacity_tertiary, tsCache)
     return usa_north_text_en, usa_north_text_ru
@@ -835,7 +847,7 @@ def get_dc_usa_north():
 def send_dc_usa_north(message):
     cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
     wsCache = cacheFile['valve_webapi']
-    if wsCache == 'Normal':
+    if wsCache == 'normal':
         try:
             usa_north_text_en, usa_north_text_ru = get_dc_usa_north()
             if message.from_user.language_code == 'ru':        
@@ -855,7 +867,7 @@ def send_dc_usa_north(message):
 
 def get_dc_usa_south():
     tsCache, tsRCache = time_converter()[0], time_converter()[1]
-    capacity, load, capacity_ru, load_ru, capacity_secondary, load_secondary, capacity_secondary_ru, load_secondary_ru, capacity_tertiary, load_tertiary, capacity_tertiary_ru, load_tertiary_ru, capacity_quaternary, load_quaternary, capacity_quaternary_ru, load_quaternary_ru = api_dc.usa_South()      
+    capacity, load, capacity_ru, load_ru, capacity_secondary, load_secondary, capacity_secondary_ru, load_secondary_ru = api_dc.usa_South()      
     usa_south_text_ru = strings.dc_south_us_ru.format(load_ru, capacity_ru, load_secondary_ru, capacity_secondary_ru, tsRCache)
     usa_south_text_en = strings.dc_south_us_en.format(load, capacity, load_secondary, capacity_secondary, tsCache)
     return usa_south_text_en, usa_south_text_ru
@@ -863,7 +875,7 @@ def get_dc_usa_south():
 def send_dc_usa_south(message):
     cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
     wsCache = cacheFile['valve_webapi']
-    if wsCache == 'Normal':
+    if wsCache == 'normal':
         try:
             usa_south_text_en, usa_south_text_ru = get_dc_usa_south()
             if message.from_user.language_code == 'ru':        
@@ -893,7 +905,7 @@ def get_dc_south_america():
 def send_dc_south_america(message):
     cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
     wsCache = cacheFile['valve_webapi']
-    if wsCache == 'Normal':
+    if wsCache == 'normal':
         try:
             south_america_text_en, south_america_text_ru = get_dc_south_america()
             if message.from_user.language_code == 'ru':
@@ -915,7 +927,7 @@ def send_dc_south_america(message):
 
 def get_dc_india():
     tsCache, tsRCache = time_converter()[0], time_converter()[1]
-    capacity, load, capacity_ru, load_ru, capacity_secondary, load_secondary, capacity_secondary_ru, load_secondary_ru, capacity_tertiary, load_tertiary, capacity_tertiary_ru, load_tertiary_ru, capacity_quaternary, load_quaternary, capacity_quaternary_ru, load_quaternary_ru = api_dc.india()
+    capacity, load, capacity_ru, load_ru, capacity_secondary, load_secondary, capacity_secondary_ru, load_secondary_ru = api_dc.india()
     india_text_ru = strings.dc_india_ru.format(load_ru, capacity_ru, load_secondary_ru, capacity_secondary_ru, tsRCache)
     india_text_en = strings.dc_india_en.format(load, capacity, load_secondary, capacity_secondary, tsCache)
     return india_text_en, india_text_ru
@@ -923,7 +935,7 @@ def get_dc_india():
 def send_dc_india(message):
     cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
     wsCache = cacheFile['valve_webapi']
-    if wsCache == 'Normal':
+    if wsCache == 'normal':
         try:
             india_text_en, india_text_ru = get_dc_india()
             if message.from_user.language_code == 'ru':  
@@ -943,7 +955,7 @@ def send_dc_india(message):
 
 def get_dc_japan():
     tsCache, tsRCache = time_converter()[0], time_converter()[1]
-    capacity, load, capacity_ru, load_ru, capacity_secondary, load_secondary, capacity_secondary_ru, load_secondary_ru, capacity_tertiary, load_tertiary, capacity_tertiary_ru, load_tertiary_ru, capacity_quaternary, load_quaternary, capacity_quaternary_ru, load_quaternary_ru = api_dc.japan()
+    capacity, load, capacity_ru, load_ru = api_dc.japan()
     japan_text_ru = strings.dc_japan_ru.format(load_ru, capacity_ru, tsRCache)
     japan_text_en = strings.dc_japan_en.format(load, capacity, tsCache)
     return japan_text_en, japan_text_ru
@@ -951,7 +963,7 @@ def get_dc_japan():
 def send_dc_japan(message):
     cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
     wsCache = cacheFile['valve_webapi']
-    if wsCache == 'Normal':
+    if wsCache == 'normal':
         try:
             japan_text_en, japan_text_ru = get_dc_japan()
             if message.from_user.language_code == 'ru':
@@ -971,7 +983,7 @@ def send_dc_japan(message):
 
 def get_dc_china():
     tsCache, tsRCache = time_converter()[0], time_converter()[1]
-    capacity, load, capacity_ru, load_ru, capacity_secondary, load_secondary, capacity_secondary_ru, load_secondary_ru, capacity_tertiary, load_tertiary, capacity_tertiary_ru, load_tertiary_ru, capacity_quaternary, load_quaternary, capacity_quaternary_ru, load_quaternary_ru = api_dc.china()
+    capacity, load, capacity_ru, load_ru, capacity_secondary, load_secondary, capacity_secondary_ru, load_secondary_ru, capacity_tertiary, load_tertiary, capacity_tertiary_ru, load_tertiary_ru = api_dc.china()
     china_text_ru = strings.dc_china_ru.format(load_ru, capacity_ru, load_secondary_ru, capacity_secondary_ru, load_tertiary_ru, capacity_tertiary_ru, tsRCache)
     china_text_en = strings.dc_china_en.format(load, capacity, load_secondary, capacity_secondary, load_tertiary, capacity_tertiary, tsCache)
     return china_text_en, china_text_ru
@@ -979,7 +991,7 @@ def get_dc_china():
 def send_dc_china(message):
     cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
     wsCache = cacheFile['valve_webapi']
-    if wsCache == 'Normal':
+    if wsCache == 'normal':
         try:
             china_text_en, china_text_ru = get_dc_china()
             if message.from_user.language_code == 'ru':
@@ -999,7 +1011,7 @@ def send_dc_china(message):
 
 def get_dc_emirates():
     tsCache, tsRCache = time_converter()[0], time_converter()[1]
-    capacity, load, capacity_ru, load_ru, capacity_secondary, load_secondary, capacity_secondary_ru, load_secondary_ru, capacity_tertiary, load_tertiary, capacity_tertiary_ru, load_tertiary_ru, capacity_quaternary, load_quaternary, capacity_quaternary_ru, load_quaternary_ru = api_dc.emirates()     
+    capacity, load, capacity_ru, load_ru = api_dc.emirates()     
     emirates_text_ru = strings.dc_emirates_ru.format(load_ru, capacity_ru, tsRCache)
     emirates_text_en = strings.dc_emirates_en.format(load, capacity, tsCache)           
     return emirates_text_en, emirates_text_ru
@@ -1007,7 +1019,7 @@ def get_dc_emirates():
 def send_dc_emirates(message):
     cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
     wsCache = cacheFile['valve_webapi']
-    if wsCache == 'Normal':
+    if wsCache == 'normal':
         try:
             emirates_text_en, emirates_text_ru = get_dc_emirates()
             if message.from_user.language_code == 'ru':
@@ -1027,7 +1039,7 @@ def send_dc_emirates(message):
 
 def get_dc_singapore():
     tsCache, tsRCache = time_converter()[0], time_converter()[1]
-    capacity, load, capacity_ru, load_ru, capacity_secondary, load_secondary, capacity_secondary_ru, load_secondary_ru, capacity_tertiary, load_tertiary, capacity_tertiary_ru, load_tertiary_ru, capacity_quaternary, load_quaternary, capacity_quaternary_ru, load_quaternary_ru = api_dc.singapore()     
+    capacity, load, capacity_ru, load_ru = api_dc.singapore()     
     singapore_text_ru = strings.dc_singapore_ru.format(load_ru, capacity_ru, tsRCache)
     singapore_text_en = strings.dc_singapore_en.format(load, capacity, tsCache)           
     return singapore_text_en, singapore_text_ru
@@ -1035,7 +1047,7 @@ def get_dc_singapore():
 def send_dc_singapore(message):
     cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
     wsCache = cacheFile['valve_webapi']
-    if wsCache == 'Normal':
+    if wsCache == 'normal':
         try:
             singapore_text_en, singapore_text_ru = get_dc_singapore()
             if message.from_user.language_code == 'ru':
@@ -1055,7 +1067,7 @@ def send_dc_singapore(message):
 
 def get_dc_hong_kong():
     tsCache, tsRCache = time_converter()[0], time_converter()[1]
-    capacity, load, capacity_ru, load_ru, capacity_secondary, load_secondary, capacity_secondary_ru, load_secondary_ru, capacity_tertiary, load_tertiary, capacity_tertiary_ru, load_tertiary_ru, capacity_quaternary, load_quaternary, capacity_quaternary_ru, load_quaternary_ru = api_dc.hong_kong()     
+    capacity, load, capacity_ru, load_ru = api_dc.hong_kong()     
     hong_kong_text_ru = strings.dc_hong_kong_ru.format(load_ru, capacity_ru, tsRCache)
     hong_kong_text_en = strings.dc_hong_kong_en.format(load, capacity, tsCache)           
     return hong_kong_text_en, hong_kong_text_ru
@@ -1063,7 +1075,7 @@ def get_dc_hong_kong():
 def send_dc_hong_kong(message):
     cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
     wsCache = cacheFile['valve_webapi']
-    if wsCache == 'Normal':
+    if wsCache == 'normal':
         try:
             hong_kong_text_en, hong_kong_text_ru = get_dc_hong_kong()
             if message.from_user.language_code == 'ru':
@@ -1092,7 +1104,7 @@ def default_inline(inline_query):
     '''Inline mode'''
     cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
     wsCache = cacheFile['valve_webapi']
-    if wsCache == 'Normal':
+    if wsCache == 'normal':
         try:
             server_status_text_en, server_status_text_ru = get_server_status()
             devcount_text_en, devcount_text_ru = get_devcount()
@@ -1177,7 +1189,7 @@ def default_inline(inline_query):
 def inline_dc(inline_query):
     cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
     wsCache = cacheFile['valve_webapi']
-    if wsCache == 'Normal':
+    if wsCache == 'normal':
         try:
             eu_north_text_en, eu_north_text_ru = get_dc_eu_north()
             eu_east_text_en, eu_east_text_ru = get_dc_eu_east()
@@ -1284,7 +1296,7 @@ def inline_dc(inline_query):
 def inline_dc_australia(inline_query):
     cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
     wsCache = cacheFile['valve_webapi']
-    if wsCache == 'Normal':
+    if wsCache == 'normal':
         try:
             australia_text_en, australia_text_ru = get_dc_australia()
             try:
@@ -1313,7 +1325,7 @@ def inline_dc_australia(inline_query):
 def inline_dc_africa(inline_query):
     cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
     wsCache = cacheFile['valve_webapi']
-    if wsCache == 'Normal':
+    if wsCache == 'normal':
         try:
             africa_text_en, africa_text_ru = get_dc_africa()
             try:
@@ -1342,7 +1354,7 @@ def inline_dc_africa(inline_query):
 def inline_dc_south_america(inline_query):
     cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
     wsCache = cacheFile['valve_webapi']
-    if wsCache == 'Normal':
+    if wsCache == 'normal':
         try:
             south_america_text_en, south_america_text_ru = get_dc_south_america()
             try:
@@ -1371,7 +1383,7 @@ def inline_dc_south_america(inline_query):
 def inline_dc_europe(inline_query):
     cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
     wsCache = cacheFile['valve_webapi']
-    if wsCache == 'Normal':
+    if wsCache == 'normal':
         try:
             eu_north_text_en, eu_north_text_ru = get_dc_eu_north()
             eu_east_text_en, eu_east_text_ru = get_dc_eu_east()
@@ -1413,7 +1425,7 @@ def inline_dc_europe(inline_query):
 def inline_dc_eu_north(inline_query):
     cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
     wsCache = cacheFile['valve_webapi']
-    if wsCache == 'Normal':
+    if wsCache == 'normal':
         try:
             eu_north_text_en, eu_north_text_ru = get_dc_eu_north()
             try:
@@ -1443,7 +1455,7 @@ def inline_dc_eu_north(inline_query):
 def inline_dc_eu_east(inline_query):
     cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
     wsCache = cacheFile['valve_webapi']
-    if wsCache == 'Normal':
+    if wsCache == 'normal':
         try:
             eu_east_text_en, eu_east_text_ru = get_dc_eu_east()
             try:
@@ -1473,7 +1485,7 @@ def inline_dc_eu_east(inline_query):
 def inline_dc_eu_west(inline_query):
     cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
     wsCache = cacheFile['valve_webapi']
-    if wsCache == 'Normal':
+    if wsCache == 'normal':
         try:
             eu_west_text_en, eu_west_text_ru = get_dc_eu_west()
             try:
@@ -1503,7 +1515,7 @@ def inline_dc_eu_west(inline_query):
 def inline_dc_usa(inline_query):
     cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
     wsCache = cacheFile['valve_webapi']
-    if wsCache == 'Normal':
+    if wsCache == 'normal':
         try:
             usa_north_text_en, usa_north_text_ru = get_dc_usa_north()
             usa_south_text_en, usa_south_text_ru = get_dc_usa_south()
@@ -1538,7 +1550,7 @@ def inline_dc_usa(inline_query):
 def inline_dc_northern_usa(inline_query):
     cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
     wsCache = cacheFile['valve_webapi']
-    if wsCache == 'Normal':
+    if wsCache == 'normal':
         try:
             usa_north_text_en, usa_north_text_ru = get_dc_usa_north()
             try:
@@ -1567,7 +1579,7 @@ def inline_dc_northern_usa(inline_query):
 def inline_dc_southern_usa(inline_query):
     cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
     wsCache = cacheFile['valve_webapi']
-    if wsCache == 'Normal':
+    if wsCache == 'normal':
         try:
             usa_south_text_en, usa_south_text_ru = get_dc_usa_south()
             try:
@@ -1596,7 +1608,7 @@ def inline_dc_southern_usa(inline_query):
 def inline_dc_asia(inline_query):
     cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
     wsCache = cacheFile['valve_webapi']
-    if wsCache == 'Normal':
+    if wsCache == 'normal':
         try:
             china_text_en, china_text_ru = get_dc_china()
             emirates_text_en, emirates_text_ru = get_dc_emirates()
@@ -1656,7 +1668,7 @@ def inline_dc_asia(inline_query):
 def inline_dc_china(inline_query):
     cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
     wsCache = cacheFile['valve_webapi']
-    if wsCache == 'Normal':
+    if wsCache == 'normal':
         try:
             china_text_en, china_text_ru = get_dc_china()
             try:
@@ -1685,7 +1697,7 @@ def inline_dc_china(inline_query):
 def inline_dc_emirates(inline_query):
     cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
     wsCache = cacheFile['valve_webapi']
-    if wsCache == 'Normal':
+    if wsCache == 'normal':
         try:
             emirates_text_en, emirates_text_ru = get_dc_emirates()
             try:
@@ -1715,7 +1727,7 @@ def inline_dc_emirates(inline_query):
 def inline_dc_hong_kong(inline_query):
     cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
     wsCache = cacheFile['valve_webapi']
-    if wsCache == 'Normal':
+    if wsCache == 'normal':
         try:
             hong_kong_text_en, hong_kong_text_ru = get_dc_hong_kong()
             try:
@@ -1744,7 +1756,7 @@ def inline_dc_hong_kong(inline_query):
 def inline_dc_india(inline_query):
     cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
     wsCache = cacheFile['valve_webapi']
-    if wsCache == 'Normal':
+    if wsCache == 'normal':
         try:
             india_text_en, india_text_ru = get_dc_india()
             try:
@@ -1773,7 +1785,7 @@ def inline_dc_india(inline_query):
 def inline_dc_japan(inline_query):
     cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
     wsCache = cacheFile['valve_webapi']
-    if wsCache == 'Normal':
+    if wsCache == 'normal':
         try:
             japan_text_en, japan_text_ru = get_dc_japan()
             try:
@@ -1802,7 +1814,7 @@ def inline_dc_japan(inline_query):
 def inline_dc_singapore(inline_query):
     cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
     wsCache = cacheFile['valve_webapi']
-    if wsCache == 'Normal':
+    if wsCache == 'normal':
         try:
             singapore_text_en, singapore_text_ru = get_dc_singapore()
             try:

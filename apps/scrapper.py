@@ -23,7 +23,7 @@ class PeakOnline:
             peak24 = str(span[1]).replace('<span class="currentServers">', '').replace('</span>', '').replace(',', '')
             return int(peak24)
         except:
-            peak24 = 000
+            peak24 = 0
             return peak24
 
 
@@ -34,7 +34,7 @@ class Monthly:
             unique = soup.find("div", {"class": "monthly"}).string.replace(',', '')
             return int(unique)
         except:
-            unique = 000
+            unique = 0
             return unique
         
 class CSGOGameCoordinator:
@@ -62,7 +62,7 @@ class CSGOGameCoordinator:
             
             items = file_manager.readJson(config.SS_CACHE_FILE_PATH)
             delta = items['services'][4]
-            gc_status = delta[2]
+            gc_status = delta[2].lower()
 
             return gc_status
         except:
@@ -112,6 +112,6 @@ class GameVersion:
 
             return client_version, server_version, patch_version, version_timestamp
         except:
-            client_version = server_version = 000
-            patch_version = version_timestamp = 'N/A'
+            client_version = server_version = version_timestamp = 0
+            patch_version = 'N/A'
             return client_version, server_version, patch_version, version_timestamp
