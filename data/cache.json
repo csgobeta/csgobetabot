@@ -1,5 +1,6 @@
 {
-    "build_ID": "",
+    "public_build_ID": "",
+    "dpr_build_ID": "",
     "game_coordinator": "",
     "valve_webapi": "",
     "sessionsLogon": "",
