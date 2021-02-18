@@ -1,4 +1,4 @@
-TESTBOT = '' # Test Telegram Bot API Key
+TESTBOT = '' # Telegram Test Bot API Key
 CSGOBETABOT = '' # Telegram Bot API Key, more information: https://core.telegram.org/bots/api
 
 TEST_MODE = False # Test mode
@@ -8,24 +8,28 @@ if TEST_MODE:
 else:
     BOT_TOKEN = CSGOBETABOT
 
-KEY = '' # from https://steamcommunity.com/dev/apikey
-
 OWNER = '' # Telegram Bot Owner ID
 AQ = '' # Telegram Bot Owner ID
 
 CSGOBETACHAT = '' # Telegram Chat ID
 CSGOBETACHANNEL = '' # Telegram Channel ID
 
-LOGCHANNEL = '' # Telegram Channel ID
+LOGCHANNEL = '' # Telegram Log Channel ID
 
-STEAM_USERNAME = '' # Steam Username
-STEAM_PASS = '' # Steam Password
+STEAM_API_KEY = '' # from https://steamcommunity.com/dev/apikey
+STEAM_USERNAME = ''
+STEAM_PASS = ''
+
+TWITTER_API_KEY = '' # https://developer.twitter.com/en/apply-for-access
+TWITTER_API_KEY_S = ''
+TWITTER_TOKEN = ''
+TWITTER_TOKEN_S = ''
 
 CACHE_FILE_PATH = 'data/cache.json'
 SS_CACHE_FILE_PATH = 'data/ss_cache.json'
 GV_CACHE_FILE_PATH = 'data/gv_cache.json'
 GUNS_CACHE_FILE_PATH = 'data/guns_db.json'
 
-GRAPH_CACHE_FILE_PATH = ''
-GRAPH_IMG_FILE_PATH = ''
-GRAPH2_IMG_FILE_PATH = ''
+GRAPH_CACHE_FILE_PATH = 'data/chart.csv'
+GRAPH_IMG_FILE_PATH = 'data/graph.png'
+GRAPH2_IMG_FILE_PATH = 'data/graph_devs.png'
