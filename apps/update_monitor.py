@@ -1,5 +1,10 @@
 # based on: https://github.com/ericwoolard/CS-GO-Update-Notifier
 
+import os, sys
+currentdir = os.path.dirname(os.path.realpath(__file__))
+parentdir = os.path.dirname(currentdir)
+sys.path.append(parentdir)
+
 from steam.client import SteamClient
 import json
 from datetime import datetime
