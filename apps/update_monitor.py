@@ -1,9 +1,9 @@
 # based on: https://github.com/ericwoolard/CS-GO-Update-Notifier
 
-import os, sys
-currentdir = os.path.dirname(os.path.realpath(__file__))
+import sys, os, inspect
+currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 parentdir = os.path.dirname(currentdir)
-sys.path.append(parentdir)
+sys.path.insert(0, parentdir)
 
 from steam.client import SteamClient
 import json
@@ -35,21 +35,26 @@ def setup():
 def check_for_updates(client):
     while True:
         try:
-            currentBuild = 0
-            cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
-            cache_key_list = []
-            bIDCache = cacheFile['build_ID']
+            currentPublicBuild = 0
+            currentDPRBuild = 0
 
             for keys, values in client.get_product_info(apps=[730], timeout=15).items():
                 for k, v in values.items():
-                    currentBuild = v['depots']['branches']['public']['buildid']
+                    currentPublicBuild = v['depots']['branches']['public']['buildid']
+                    currentDPRBuild = v['depots']['branches']['dpr']['buildid']
 
+            cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
+            cache_key_list = []
             for keys, values in cacheFile.items():
                 cache_key_list.append(keys)
-            
-            if currentBuild != bIDCache:
-                file_manager.updateJson(config.CACHE_FILE_PATH, currentBuild, cache_key_list[0])
-                send_alert(currentBuild)
+
+            if currentPublicBuild != cacheFile['public_build_ID']:
+                file_manager.updateJson(config.CACHE_FILE_PATH, currentPublicBuild, cache_key_list[0])
+                send_alert(currentPublicBuild)
+
+            if currentDPRBuild != cacheFile['dpr_build_ID']:
+                file_manager.updateJson(config.CACHE_FILE_PATH, currentDPRBuild, cache_key_list[1])
+                send_alert_dpr(currentDPRBuild)
 
             time.sleep(10)
 
@@ -62,9 +67,19 @@ def check_for_updates(client):
             setup()
 
 
-def send_alert(currentBuild):
+def send_alert(currentPublicBuild):
     bot = telebot.TeleBot(config.BOT_TOKEN)
     text = strings.notiNewBuild_ru.format(currentBuild)
+    if not config.TEST_MODE:
+        chat_list = [config.CSGOBETACHAT, config.AQ]
+    else:
+        chat_list = [config.OWNER]
+    for chatID in chat_list:
+        bot.send_message(chatID, text, parse_mode='Markdown')
+
+def send_alert_dpr(currentDPRBuild):
+    bot = telebot.TeleBot(config.BOT_TOKEN)
+    text = strings.notiNewDPRBuild_ru.format(currentBuild)
     if not config.TEST_MODE:
         chat_list = [config.CSGOBETACHAT, config.AQ]
     else:

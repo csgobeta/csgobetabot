@@ -1,7 +1,7 @@
-import os, sys
-currentdir = os.path.dirname(os.path.realpath(__file__))
+import sys, os, inspect
+currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 parentdir = os.path.dirname(currentdir)
-sys.path.append(parentdir)
+sys.path.insert(0, parentdir)
 
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
@@ -77,7 +77,7 @@ def graph_maker():
 
             cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
             if cacheFile['graph_url'] != url:
-                file_manager.updateJson(config.CACHE_FILE_PATH, url, cache_key_list[21])
+                file_manager.updateJson(config.CACHE_FILE_PATH, url, cache_key_list[22])
 
             
             fig2, ax = plt.subplots(figsize=(10, 2.5))
@@ -114,7 +114,7 @@ def graph_maker():
 
             cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
             if cacheFile['graph_url2'] != url2:
-                file_manager.updateJson(config.CACHE_FILE_PATH, url2, cache_key_list[22])
+                file_manager.updateJson(config.CACHE_FILE_PATH, url2, cache_key_list[23])
 
         except AttributeError:
             error_message = traceback.format_exc()
