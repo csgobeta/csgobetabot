@@ -69,7 +69,7 @@ def check_for_updates(client):
 
 def send_alert(currentPublicBuild):
     bot = telebot.TeleBot(config.BOT_TOKEN)
-    text = strings.notiNewBuild_ru.format(currentBuild)
+    text = strings.notiNewBuild_ru.format(currentPublicBuild)
     if not config.TEST_MODE:
         chat_list = [config.CSGOBETACHAT, config.AQ]
     else:
@@ -79,13 +79,13 @@ def send_alert(currentPublicBuild):
 
 def send_alert_dpr(currentDPRBuild):
     bot = telebot.TeleBot(config.BOT_TOKEN)
-    text = strings.notiNewDPRBuild_ru.format(currentBuild)
+    text = strings.notiNewDPRBuild_ru.format(currentDPRBuild)
     if not config.TEST_MODE:
         chat_list = [config.CSGOBETACHAT, config.AQ]
     else:
         chat_list = [config.OWNER]
     for chatID in chat_list:
-        bot.send_message(chatID, text, parse_mode='Markdown')
+        bot.send_message(chatID, text, parse_mode='html')
 
 
 if __name__ == '__main__':
