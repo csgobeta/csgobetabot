@@ -124,5 +124,5 @@ def graph_maker():
             graph_maker()
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.DEBUG, format='%(process)d %(message)s')
+    logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
     graph_maker()

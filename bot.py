@@ -19,7 +19,7 @@ from apps.valve_api import ValveServersDataCentersAPI
 from apps import file_manager
 
 bot = telebot.TeleBot(config.BOT_TOKEN)
-telebot.logger.setLevel(logging.DEBUG)
+telebot.logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
 
 tz = pytz.timezone('UTC')
 tz_valve = pytz.timezone('America/Los_Angeles')

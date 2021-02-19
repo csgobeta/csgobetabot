@@ -89,5 +89,5 @@ def send_alert_dpr(currentDPRBuild):
 
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.DEBUG, format='%(process)d %(message)s')
+    logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
     setup()

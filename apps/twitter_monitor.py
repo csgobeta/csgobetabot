@@ -3,32 +3,23 @@ currentdir = os.path.dirname(os.path.realpath(__file__))
 parentdir = os.path.dirname(currentdir)
 sys.path.append(parentdir)
 
-from tweepy import StreamListener
-from tweepy import Stream
-import tweepy
+from tweepy import StreamListener, Stream, OAuthHandler
 
 import telebot
 import json
 import re
 
+import logging
 import config
 import strings
 
-auth = tweepy.OAuthHandler(config.TWITTER_API_KEY, config.TWITTER_API_KEY_S)
+auth = OAuthHandler(config.TWITTER_API_KEY, config.TWITTER_API_KEY_S)
 auth.set_access_token(config.TWITTER_TOKEN, config.TWITTER_TOKEN_S)
-
-api = tweepy.API(auth)
-
-try:
-    api.verify_credentials()
-    print("Authentication OK")
-except:
-    print("Error during authentication")
 
 class CSGOTwitterListener(StreamListener):
     def on_data(self, data):
         tweet = json.loads(data)
-        if tweet['user']['id'] == '353780675' and 'text' in tweet:
+        if 'user' in tweet and tweet['user']['id_str'] == config.CSGO_TWITTER_ID:
             clean_tweet = re.sub(r' http\S+', '', tweet['text'])
             bot = telebot.TeleBot(config.BOT_TOKEN)
             text = strings.notiNewTweet_ru.format(clean_tweet, tweet['id'])
@@ -45,6 +36,7 @@ class CSGOTwitterListener(StreamListener):
         return True
 
 if __name__ == '__main__':
-    listener = CSGOTwitterListener()
-    twitterStream = Stream(auth, listener)
+    logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
+    l = CSGOTwitterListener()
+    twitterStream = Stream(auth, l)
     twitterStream.filter(follow=[config.CSGO_TWITTER_ID])
