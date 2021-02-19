@@ -67,7 +67,7 @@ class CSGOGameCoordinator:
             return gc_status
         except:
             gc_status = 'N/A'
-            return gc_statuss
+            return gc_status
 
 class GameVersion:
     def get_gameVer(self):
