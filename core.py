@@ -47,7 +47,7 @@ def info_updater():
 
             time.sleep(40)
 
-        except AttributeError:
+        except:
             error_message = traceback.format_exc()
             now = str(datetime.now())
             print(f'{now} - Error:\n{error_message}\n\n\n')

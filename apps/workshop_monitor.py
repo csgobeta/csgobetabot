@@ -4,62 +4,56 @@ parentdir = os.path.dirname(currentdir)
 sys.path.append(parentdir)
 
 import requests
-from bs4 import BeautifulSoup
-
 import traceback
 import logging
+import telebot
 
 from datetime import datetime
 import time
 
-import telebot
-
 import config
 import strings
 
-url = 'https://steamcommunity.com/profiles/76561198082857351/myworkshopfiles/?appid=730&p=1&numperpage=18'
-headers = {'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:80.0) Gecko/20100101 Firefox/80.0'}
+workshop_url = f'https://api.steampowered.com/IPublishedFileService/GetUserFiles/v1/?key={config.STEAM_API_KEY}&steamid={config.CSGO_STEAM_PROFILE_ID}&appid=730&page=1&numperpage=18'
 
 def workshop_monitor():
-    soup = BeautifulSoup(requests.get(url, headers=headers).content, 'html.parser')
+    data = requests.get(workshop_url).json()
+    currentWorkshop = data['response']
     currentTags = []
-    for tag in soup.find_all(class_='ugc'):
-        currentTags.append(tag.get('data-publishedfileid'))
+    for tag in currentWorkshop['publishedfiledetails']:
+        currentTags.append(tag['publishedfileid'])
     while True:
         try:
-            soup = BeautifulSoup(requests.get(url, headers=headers).content, 'html.parser')
+            data = requests.get(workshop_url).json()
+            newWorkshop = data['response']
             newTags = []
-            for tag in soup.find_all(class_='ugc'):
-                newTags.append(tag.get('data-publishedfileid'))
+            for tag in newWorkshop['publishedfiledetails']:
+                newTags.append(tag['publishedfileid'])
             if len(newTags) == 0:
                 time.sleep(60)
                 continue
             else:
-                urlList, nameList = [], []
                 if currentTags != newTags:
                     tempTags = currentTags[:]
                     modifiedTags = [i for i in newTags if not i in tempTags or tempTags.remove(i)]
-                    workshop = soup.find('div', {'class': 'workshopBrowseItems'})
+
+                    mapNames = []
                     for tag in modifiedTags:
-                        urlPath = workshop.find_all('a', attrs={'class': 'ugc', 'data-publishedfileid': tag})
-                        for i in urlPath:
-                            newUrl = i['href']
-                            urlList.append(newUrl)
-                            newName = i.find_parent('div').find('div', attrs={'class': 'workshopItemTitle'}).string.split()[0]
-                            nameList.append(newName)
-                    data = list(zip(urlList, nameList))
-                    if len(data) < 2:
-                        for x, y in data:
-                            text = strings.notiNewMap_ru.format(y, x)
+                        name = list(filter(lambda x:x['publishedfileid'] == tag, newWorkshop['publishedfiledetails']))[0]['title'].split()[0]
+                        mapNames.append(name)
+
+                    delta = list(zip(mapNames, modifiedTags))
+                    if len(delta) < 2:   
+                        for x, y in delta:
+                            text = strings.notiNewMap_ru.format(x, y)
                         send_alert(text)
                     else:
-                        names = ' и '.join([', '.join(nameList[:-1]),nameList[-1]] if len(nameList) > 2 else nameList)
+                        names = ' и '.join([', '.join(mapNames[:-1]),mapNames[-1]] if len(mapNames) > 2 else mapNames)
                         text = strings.notiNewMaps_ru.format(names)
                         send_alert(text)
                 currentTags = newTags
                 time.sleep(60)
-
-        except AttributeError:
+        except:
             error_message = traceback.format_exc()
             now = str(datetime.now())
             print(f'{now} - Error:\n{error_message}\n\n\n')

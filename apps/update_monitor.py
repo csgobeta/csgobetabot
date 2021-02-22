@@ -58,7 +58,7 @@ def check_for_updates(client):
 
             time.sleep(10)
 
-        except AttributeError:
+        except:
             error_message = traceback.format_exc()
             now = str(datetime.now())
             print(f'{now} - Error:\n{error_message}\n\n\n')

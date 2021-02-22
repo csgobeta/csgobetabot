@@ -116,7 +116,7 @@ def graph_maker():
             if cacheFile['graph_url2'] != url2:
                 file_manager.updateJson(config.CACHE_FILE_PATH, url2, cache_key_list[23])
 
-        except AttributeError:
+        except:
             error_message = traceback.format_exc()
             now = str(datetime.now())
             print(f'{now} - Error:\n{error_message}\n\n\n')
