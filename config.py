@@ -24,6 +24,9 @@ TWITTER_API_KEY = '' # https://developer.twitter.com/en/apply-for-access
 TWITTER_API_KEY_S = ''
 TWITTER_TOKEN = ''
 TWITTER_TOKEN_S = ''
+
+CSGO_APP_ID = '730'
+CSGO_STEAM_PROFILE_ID = '76561198082857351'
 CSGO_TWITTER_ID = '353780675'
 
 CACHE_FILE_PATH = 'data/cache.json'
