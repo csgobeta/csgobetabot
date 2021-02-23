@@ -1,7 +1,9 @@
 import requests
+from bs4 import BeautifulSoup
+
 import json
 import re
-from bs4 import BeautifulSoup
+
 from datetime import datetime 
 
 from apps import file_manager

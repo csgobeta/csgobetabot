@@ -6,12 +6,11 @@ parentdir = os.path.dirname(currentdir)
 sys.path.insert(0, parentdir)
 
 from steam.client import SteamClient
-import json
+import telebot
+import logging
+
 from datetime import datetime
 import time
-import traceback
-import logging
-import telebot
 
 import config
 import strings
@@ -22,15 +21,9 @@ def setup():
     client = SteamClient()
     try:
         client.login(username=config.STEAM_USERNAME, password=config.STEAM_PASS)
-    except:
-        error_message = traceback.format_exc()
-        now = str(datetime.now())
-        print(f'{now} - Error:\n{error_message}\n\n\n')
-        time.sleep(60)
-        setup()
-        
-    check_for_updates(client)
-
+        check_for_updates(client)
+    except Exception as e:
+        print(f' - Error:\n{e}\n\n\n')
 
 def check_for_updates(client):
     while True:
@@ -58,13 +51,8 @@ def check_for_updates(client):
 
             time.sleep(10)
 
-        except:
-            error_message = traceback.format_exc()
-            now = str(datetime.now())
-            print(f'{now} - Error:\n{error_message}\n\n\n')
-            client.logout()
-            time.sleep(60)
-            setup()
+        except Exception as e:
+            print(f' - Error:\n{e}\n\n\n')
 
 
 def send_alert(currentPublicBuild):

@@ -1,10 +1,11 @@
 import json
+import logging
+import telebot
+
 from datetime import datetime
 import time
-import traceback
-import logging
+
 import config
-import telebot
 import strings
 
 from apps import file_manager
@@ -47,12 +48,8 @@ def info_updater():
 
             time.sleep(40)
 
-        except:
-            error_message = traceback.format_exc()
-            now = str(datetime.now())
-            print(f'{now} - Error:\n{error_message}\n\n\n')
-            time.sleep(60)
-            info_updater()
+        except Exception as e:
+            print(f' - Error:\n{e}\n\n\n')
             
 def send_alert_players(newVal):
     bot = telebot.TeleBot(config.BOT_TOKEN)

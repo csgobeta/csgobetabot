@@ -5,15 +5,16 @@ sys.path.insert(0, parentdir)
 
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
+
 import numpy as np
 import seaborn as sns
 import pandas as pd
-import logging
-from html_telegraph_poster import upload_image
 
 from datetime import datetime
 import time
-import traceback
+
+import logging
+from html_telegraph_poster import upload_image
 
 import config
 from apps import file_manager
@@ -116,12 +117,8 @@ def graph_maker():
             if cacheFile['graph_url2'] != url2:
                 file_manager.updateJson(config.CACHE_FILE_PATH, url2, cache_key_list[23])
 
-        except:
-            error_message = traceback.format_exc()
-            now = str(datetime.now())
-            print(f'{now} - Error:\n{error_message}\n\n\n')
-            time.sleep(60)
-            graph_maker()
+        except Exception as e:
+            print(f' - Error:\n{e}\n\n\n')
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(message)s', datefmt='%Y-%m-%d %H:%M:%S')

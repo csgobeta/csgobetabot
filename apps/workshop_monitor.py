@@ -4,7 +4,6 @@ parentdir = os.path.dirname(currentdir)
 sys.path.append(parentdir)
 
 import requests
-import traceback
 import logging
 import telebot
 
@@ -53,12 +52,8 @@ def workshop_monitor():
                         send_alert(text)
                 currentTags = newTags
                 time.sleep(60)
-        except:
-            error_message = traceback.format_exc()
-            now = str(datetime.now())
-            print(f'{now} - Error:\n{error_message}\n\n\n')
-            time.sleep(60)
-            workshop_monitor()
+        except Exception as e:
+            print(f' - Error:\n{e}\n\n\n')
 
 def send_alert(text):
     bot = telebot.TeleBot(config.BOT_TOKEN)

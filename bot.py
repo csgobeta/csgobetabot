@@ -1,13 +1,11 @@
 # -*- coding: utf-8 -*-
 
-import logging
-import json
-
 import time
 from datetime import date, datetime, timedelta
 import pytz
 from babel.dates import format_datetime
 
+import logging
 import telebot
 from telebot import types
 
