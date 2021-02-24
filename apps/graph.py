@@ -22,9 +22,11 @@ from apps import file_manager
 def graph_maker():
     while True:
         minutes = datetime.now().minute
+        seconds = datetime.now().second
+        microseconds = datetime.now().microsecond
         if minutes not in {0, 10, 20, 30, 40, 50}:
-            snooze = 10 - minutes%10
-            time.sleep(snooze * 60)
+            snooze = ((10 - minutes%10) * 60) - (seconds + microseconds/1000000.0)
+            time.sleep(snooze)
         else:
             try:
                 cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
