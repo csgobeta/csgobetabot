@@ -25,28 +25,39 @@ def graph_maker():
             t = datetime.utcnow()
             sleeptime = 600 - (t.second + t.microsecond/1000000.0)
             time.sleep(sleeptime)
-            
-            data = pd.read_csv(config.GRAPH_CACHE_FILE_PATH, parse_dates=['DateTime'])
+
             cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
+
             cache_key_list = []
             for keys, values in cacheFile.items():
                 cache_key_list.append(keys)
+
             player_count = cacheFile['online_player_count']
             dev_count = cacheFile['dev_player_count']
 
-            data.drop(0, axis=0, inplace=True)
-            temp_data = pd.DataFrame([[datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S'), player_count, dev_count]], columns=['DateTime', 'Players', 'Devs'])
-            new_data = pd.concat([data, temp_data])
+            old_player_data = pd.read_csv(config.PLAYER_CHART_FILE_PATH, parse_dates=['DateTime'])
+            old_dev_data = pd.read_csv(config.DEV_CHART_FILE_PATH, parse_dates=['DateTime'])
 
-            new_data.to_csv(config.GRAPH_CACHE_FILE_PATH, index=False)
+            old_player_data.drop(0, axis=0, inplace=True)
+            old_dev_data.drop(0, axis=0, inplace=True)
 
-            data = pd.read_csv(config.GRAPH_CACHE_FILE_PATH, parse_dates=['DateTime'])
+            temp_player_data = pd.DataFrame([[datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S'), player_count]], columns=['DateTime', 'Players'])
+            temp_dev_data = pd.DataFrame([[datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S'), dev_count]], columns=['DateTime', 'Devs'])
+
+            new_player_data = pd.concat([old_player_data, temp_player_data])
+            new_dev_data = pd.concat([old_dev_data, temp_dev_data])
+
+            new_player_data.to_csv(config.PLAYER_CHART_FILE_PATH, index=False)
+            new_dev_data.to_csv(config.DEV_CHART_FILE_PATH, index=False)
+
+            player_data = pd.read_csv(config.PLAYER_CHART_FILE_PATH, parse_dates=['DateTime'])
+            dev_data = pd.read_csv(config.DEV_CHART_FILE_PATH, parse_dates=['DateTime'])
 
             sns.set_style('whitegrid')
 
             fig, ax = plt.subplots(figsize=(10, 2.5))
-            ax.plot('DateTime', 'Players', data=data, color = 'red', linewidth = .7, marker='o', markevery=[-1])
-            ax.fill_between(data['DateTime'], data['Players'], 0, facecolor = 'red', color = 'red', alpha = .4)
+            ax.plot('DateTime', 'Players', data=player_data, color = 'red', linewidth = .7, marker='o', markevery=[-1])
+            ax.fill_between(player_data['DateTime'], player_data['Players'], 0, facecolor = 'red', color = 'red', alpha = .4)
 
             ax.margins(x=0)
             ax.grid(b=True, axis='y', linestyle='--', alpha=.3)
@@ -82,8 +93,8 @@ def graph_maker():
 
             
             fig2, ax = plt.subplots(figsize=(10, 2.5))
-            ax.plot('DateTime', 'Devs', data=data, color = 'red', linewidth = .7, marker='o', markevery=[-1])
-            ax.fill_between(data['DateTime'], data['Devs'], 0, facecolor = 'red', color = 'red', alpha = .4)
+            ax.plot('DateTime', 'Devs', data=dev_data, color = 'red', linewidth = .7, marker='o', markevery=[-1])
+            ax.fill_between(dev_data['DateTime'], dev_data['Devs'], 0, facecolor = 'red', color = 'red', alpha = .4)
 
             ax.margins(x=0)
             ax.grid(b=True, axis='y', linestyle='--', alpha=.3)
