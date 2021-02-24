@@ -34,6 +34,7 @@ SS_CACHE_FILE_PATH = 'data/ss_cache.json'
 GV_CACHE_FILE_PATH = 'data/gv_cache.json'
 GUNS_CACHE_FILE_PATH = 'data/guns_db.json'
 
-GRAPH_CACHE_FILE_PATH = 'data/chart.csv'
+PLAYER_CHART_FILE_PATH = 'data/player_chart.csv'
+DEV_CHART_FILE_PATH = 'data/dev_chart.csv'
 GRAPH_IMG_FILE_PATH = 'data/graph.png'
 GRAPH2_IMG_FILE_PATH = 'data/graph_devs.png'
