@@ -337,7 +337,7 @@ def send_server_status(message):
     '''Send the status of CS:GO servers'''
     data = pd.read_csv(config.USER_DB_FILE_PATH)
     if not data['UserID'].isin([message.from_user.id]).any():
-        new_data = pd.DataFrame([[message.from_user.first_name, message.from_user.id]], columns=['Name', 'UserID'])
+        new_data = pd.DataFrame([[message.from_user.first_name, message.from_user.id, message.from_user.language_code]], columns=['Name', 'UserID', 'Language'])
         pd.concat([data, new_data]).to_csv(config.USER_DB_FILE_PATH, index=False)
     cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
     wsCache = cacheFile['valve_webapi']
@@ -1856,7 +1856,7 @@ def welcome(message):
     '''First bot's message'''
     data = pd.read_csv(config.USER_DB_FILE_PATH)
     if not data['UserID'].isin([message.from_user.id]).any():
-        new_data = pd.DataFrame([[message.from_user.first_name, message.from_user.id]], columns=['Name', 'UserID'])
+        new_data = pd.DataFrame([[message.from_user.first_name, message.from_user.id, message.from_user.language_code]], columns=['Name', 'UserID', 'Language'])
         pd.concat([data, new_data]).to_csv(config.USER_DB_FILE_PATH, index=False)
     log(message)
     if message.chat.type == 'private':
