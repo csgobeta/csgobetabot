@@ -38,3 +38,6 @@ PLAYER_CHART_FILE_PATH = 'data/player_chart.csv'
 DEV_CHART_FILE_PATH = 'data/dev_chart.csv'
 GRAPH_IMG_FILE_PATH = 'data/graph.png'
 GRAPH2_IMG_FILE_PATH = 'data/graph_devs.png'
+
+USER_DB_FILE_PATH = 'data/user_db.csv'
+USER_MESSAGE_FILE_PATH = 'data/msg.txt'
