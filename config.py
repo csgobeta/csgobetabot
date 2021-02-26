@@ -41,4 +41,5 @@ USER_DB_FILE_PATH = 'data/csv/user_db.csv'
 GRAPH_IMG_FILE_PATH = 'data/img/graph.png'
 GRAPH2_IMG_FILE_PATH = 'data/img/graph_devs.png'
 
-USER_MESSAGE_FILE_PATH = 'data/msg.txt'
+USER_RU_MESSAGE_FILE_PATH = 'data/txt/msg_ru.txt'
+USER_EN_MESSAGE_FILE_PATH = 'data/txt/msg_en.txt'
