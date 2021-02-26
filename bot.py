@@ -5,6 +5,7 @@ from datetime import date, datetime, timedelta
 import pytz
 from babel.dates import format_datetime
 
+import pandas as pd
 import logging
 import telebot
 from telebot import types
@@ -253,14 +254,15 @@ markup_del = types.ReplyKeyboardRemove(False)
 ### Log setup ###
 
 
-def log(message):
+def log(message):   
     '''The bot sends log to log channel'''
     if not config.TEST_MODE:
         bot.send_message(config.LOGCHANNEL, message)
 
 def log_inline(inline_query):
     '''The bot sends inline query to log channel'''
-    bot.send_message(config.LOGCHANNEL, inline_query)
+    if not config.TEST_MODE:
+        bot.send_message(config.LOGCHANNEL, inline_query)
 
 
 ### Pull information ###
@@ -333,12 +335,16 @@ def get_gameversion():
 
 def send_server_status(message):
     '''Send the status of CS:GO servers'''
+    data = pd.read_csv(config.USER_DB_FILE_PATH)
+    if not data['UserID'].isin([message.from_user.id]).any():
+        new_data = pd.DataFrame([[message.from_user.first_name, message.from_user.id]], columns=['Name', 'UserID'])
+        pd.concat([data, new_data]).to_csv(config.USER_DB_FILE_PATH, index=False)
     cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
     wsCache = cacheFile['valve_webapi']
     if wsCache == 'normal':
         try:
             server_status_text_en, server_status_text_ru = get_server_status()
-            if message.from_user.language_code == 'ru':
+            if message.from_user.language_code in strings.CIS_lang_code:
                 text = server_status_text_ru
                 markup = markup_ru
             else:
@@ -360,7 +366,7 @@ def send_devcount(message):
     if wsCache == 'normal':
         try:
             devcount_text_en, devcount_text_ru = get_devcount()
-            if message.from_user.language_code == 'ru':
+            if message.from_user.language_code in strings.CIS_lang_code:
                     text = devcount_text_ru
                     markup = markup_ru
             else:    
@@ -379,7 +385,7 @@ def send_timer(message):
     '''Send drop cap reset time'''
     try:
         timer_text_en, timer_text_ru = get_timer()
-        if message.from_user.language_code == 'ru':
+        if message.from_user.language_code in strings.CIS_lang_code:
                 text = timer_text_ru
                 markup = markup_ru
         else:
@@ -394,7 +400,7 @@ def send_gameversion(message):
     '''Send the version of the game'''
     try:
         gameversion_text_en, gameversion_text_ru = get_gameversion()
-        if message.from_user.language_code == 'ru':
+        if message.from_user.language_code in strings.CIS_lang_code:
                 text = gameversion_text_ru
                 markup = markup_ru
         else:
@@ -407,7 +413,7 @@ def send_gameversion(message):
 
 def send_about_problem_valve_api(message):
     '''In case the bot can't get Valve's API'''
-    if message.from_user.language_code == 'ru':
+    if message.from_user.language_code in strings.CIS_lang_code:
         text = strings.wrongAPI_ru
         markup = markup_ru       
     else:
@@ -417,7 +423,7 @@ def send_about_problem_valve_api(message):
 
 def send_about_maintenance(message):
     '''In case weekly server update (on Tuesdays)'''
-    if message.from_user.language_code == 'ru':
+    if message.from_user.language_code in strings.CIS_lang_code:
         text = strings.maintenance_ru
         markup = markup_ru       
     else:
@@ -427,7 +433,7 @@ def send_about_maintenance(message):
 
 def send_about_problem_valve_api_inline(inline_query):
     try:
-        if inline_query.from_user.language_code == 'ru':
+        if inline_query.from_user.language_code in strings.CIS_lang_code:
             wrong_r = strings.wrongAPI_ru
             title_un = 'Нет данных'
             description_un = 'Не получилось связаться с API Valve'
@@ -443,7 +449,7 @@ def send_about_problem_valve_api_inline(inline_query):
 
 def send_about_maintenance_inline(inline_query):
     try:
-        if inline_query.from_user.language_code == 'ru':
+        if inline_query.from_user.language_code in strings.CIS_lang_code:
             maintenance_r = strings.maintenance_ru
             title_maintenance = 'Нет данных'
             maintenance = 'Еженедельное тех. обслуживание.'
@@ -459,7 +465,7 @@ def send_about_maintenance_inline(inline_query):
 
 def send_about_problem_bot(message):
     '''If anything goes wrong'''
-    if message.from_user.language_code == 'ru':
+    if message.from_user.language_code in strings.CIS_lang_code:
         text = strings.wrongBOT_ru
         markup = markup_ru
     else:
@@ -487,8 +493,8 @@ def time_converter():
 
 def translate(data):
     cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
-    en_list = ['normal', 'surge', 'delayed', 'idle', 'offline', 'N/A']
-    ru_list = ['в норме', 'помехи', 'задержка', 'бездействие', 'офлайн', 'N/A']
+    en_list = ['normal', 'surge', 'delayed', 'idle', 'offline', 'N/A', 'critical', 'internal server error']
+    ru_list = ['в норме', 'помехи', 'задержка', 'бездействие', 'офлайн', 'N/A', 'критическое', 'внутренняя ошибка сервера']
     for en, ru in zip(en_list, ru_list):
         if data in en:
             data_ru = ru
@@ -532,7 +538,7 @@ def send_gun_info(message, gun_id):
     '''Send archived data about guns'''
     try:
         gun_data_text_en, gun_data_text_ru = get_gun_info(gun_id)
-        if message.from_user.language_code == 'ru':
+        if message.from_user.language_code in strings.CIS_lang_code:
                 text = gun_data_text_ru
                 markup = markup_guns_ru
         else:
@@ -545,7 +551,7 @@ def send_gun_info(message, gun_id):
 
 def guns(message):
     try:
-        if message.from_user.language_code == 'ru':
+        if message.from_user.language_code in strings.CIS_lang_code:
             text = '#️⃣ Выберите категорию, которая Вас интересует:'
             markup = markup_guns_ru
         else:
@@ -558,7 +564,7 @@ def guns(message):
 
 def pistols(message):
     try:
-        if message.from_user.language_code == 'ru':
+        if message.from_user.language_code in strings.CIS_lang_code:
             text = '🔫 Выберите пистолет..'
             markup = markup_pistols_ru
         else:
@@ -571,7 +577,7 @@ def pistols(message):
 
 def smgs(message):
     try:
-        if message.from_user.language_code == 'ru':
+        if message.from_user.language_code in strings.CIS_lang_code:
             text = '🔫 Выберите пистолет-пулемёт..'
             markup = markup_smgs_ru
         else:
@@ -584,7 +590,7 @@ def smgs(message):
 
 def rifles(message):
     try:
-        if message.from_user.language_code == 'ru':
+        if message.from_user.language_code in strings.CIS_lang_code:
             text = '🔫 Выберите винтовку..'
             markup = markup_rifles_ru
         else:
@@ -597,7 +603,7 @@ def rifles(message):
 
 def heavy(message):
     try:
-        if message.from_user.language_code == 'ru':
+        if message.from_user.language_code in strings.CIS_lang_code:
             text = '🔫 Выберите тяжёлое оружие..'
             markup = markup_heavy_ru
         else:
@@ -617,7 +623,7 @@ def dc(message):
     wsCache = cacheFile['valve_webapi']
     if wsCache == 'normal':
         try:
-            if message.from_user.language_code == 'ru':
+            if message.from_user.language_code in strings.CIS_lang_code:
                 text = '📶 Выберите регион, который Вам интересен, чтобы получить информацию о дата-центрах:'
                 markup = markup_DC_ru
             else:
@@ -633,7 +639,7 @@ def dc(message):
         send_about_problem_valve_api(message)
 
 def back(message):
-    if message.from_user.language_code == 'ru':
+    if message.from_user.language_code in strings.CIS_lang_code:
         markup = markup_ru
     else:
         markup = markup_en
@@ -643,7 +649,7 @@ def dc_europe(message):
     cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
     wsCache = cacheFile['valve_webapi']
     if wsCache == 'normal':
-        if message.from_user.language_code == 'ru':
+        if message.from_user.language_code in strings.CIS_lang_code:
             text = '📍 Укажите регион...'
             markup = markup_DC_EU_ru            
         else:
@@ -659,7 +665,7 @@ def dc_usa(message):
     cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
     wsCache = cacheFile['valve_webapi']
     if wsCache == 'normal':
-        if message.from_user.language_code == 'ru':
+        if message.from_user.language_code in strings.CIS_lang_code:
             text = '📍 Укажите регион...'
             markup = markup_DC_USA_ru
         else:
@@ -675,7 +681,7 @@ def dc_asia(message):
     cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
     wsCache = cacheFile['valve_webapi']
     if wsCache == 'normal':
-        if message.from_user.language_code == 'ru':
+        if message.from_user.language_code in strings.CIS_lang_code:
             text = '📍 Укажите страну...'
             markup = markup_DC_Asia_ru
         else:
@@ -702,7 +708,7 @@ def send_dc_africa(message):
     if wsCache == 'normal':
         try:
             africa_text_en, africa_text_ru = get_dc_africa()
-            if message.from_user.language_code == 'ru':
+            if message.from_user.language_code in strings.CIS_lang_code:
                 text = africa_text_ru
                 markup = markup_DC_ru
             else:
@@ -732,7 +738,7 @@ def send_dc_australia(message):
     if wsCache == 'normal':
         try:
             australia_text_en, australia_text_ru = get_dc_australia()
-            if message.from_user.language_code == 'ru':
+            if message.from_user.language_code in strings.CIS_lang_code:
                 text = australia_text_ru
                 markup = markup_DC_ru
             else:
@@ -762,7 +768,7 @@ def send_dc_eu_north(message):
     if wsCache == 'normal':
         try:
             eu_north_text_en, eu_north_text_ru = get_dc_eu_north()
-            if message.from_user.language_code == 'ru':
+            if message.from_user.language_code in strings.CIS_lang_code:
                 text = eu_north_text_ru
                 markup = markup_DC_ru
             else:
@@ -790,7 +796,7 @@ def send_dc_eu_west(message):
     if wsCache == 'normal':
         try:
             eu_west_text_en, eu_west_text_ru = get_dc_eu_west()
-            if message.from_user.language_code == 'ru':
+            if message.from_user.language_code in strings.CIS_lang_code:
                 text = eu_west_text_ru
                 markup = markup_DC_ru
             else:
@@ -818,7 +824,7 @@ def send_dc_eu_east(message):
     if wsCache == 'normal':
         try:
             eu_east_text_en, eu_east_text_ru = get_dc_eu_east()
-            if message.from_user.language_code == 'ru':
+            if message.from_user.language_code in strings.CIS_lang_code:
                 text = eu_east_text_ru
                 markup = markup_DC_ru
             else:
@@ -848,7 +854,7 @@ def send_dc_usa_north(message):
     if wsCache == 'normal':
         try:
             usa_north_text_en, usa_north_text_ru = get_dc_usa_north()
-            if message.from_user.language_code == 'ru':        
+            if message.from_user.language_code in strings.CIS_lang_code:        
                 text = usa_north_text_ru
                 markup = markup_DC_ru
             else:
@@ -876,7 +882,7 @@ def send_dc_usa_south(message):
     if wsCache == 'normal':
         try:
             usa_south_text_en, usa_south_text_ru = get_dc_usa_south()
-            if message.from_user.language_code == 'ru':        
+            if message.from_user.language_code in strings.CIS_lang_code:        
                 text = usa_south_text_ru
                 markup = markup_DC_ru
             else:
@@ -906,7 +912,7 @@ def send_dc_south_america(message):
     if wsCache == 'normal':
         try:
             south_america_text_en, south_america_text_ru = get_dc_south_america()
-            if message.from_user.language_code == 'ru':
+            if message.from_user.language_code in strings.CIS_lang_code:
                 text = south_america_text_ru
                 markup = markup_DC_ru
             else:
@@ -936,7 +942,7 @@ def send_dc_india(message):
     if wsCache == 'normal':
         try:
             india_text_en, india_text_ru = get_dc_india()
-            if message.from_user.language_code == 'ru':  
+            if message.from_user.language_code in strings.CIS_lang_code:  
                 text = india_text_ru
                 markup = markup_DC_ru
             else:
@@ -964,7 +970,7 @@ def send_dc_japan(message):
     if wsCache == 'normal':
         try:
             japan_text_en, japan_text_ru = get_dc_japan()
-            if message.from_user.language_code == 'ru':
+            if message.from_user.language_code in strings.CIS_lang_code:
                 text = japan_text_ru
                 markup = markup_DC_ru
             else:
@@ -992,7 +998,7 @@ def send_dc_china(message):
     if wsCache == 'normal':
         try:
             china_text_en, china_text_ru = get_dc_china()
-            if message.from_user.language_code == 'ru':
+            if message.from_user.language_code in strings.CIS_lang_code:
                 text = china_text_ru
                 markup = markup_DC_ru
             else:
@@ -1020,7 +1026,7 @@ def send_dc_emirates(message):
     if wsCache == 'normal':
         try:
             emirates_text_en, emirates_text_ru = get_dc_emirates()
-            if message.from_user.language_code == 'ru':
+            if message.from_user.language_code in strings.CIS_lang_code:
                 text = emirates_text_ru
                 markup = markup_DC_ru
             else:
@@ -1048,7 +1054,7 @@ def send_dc_singapore(message):
     if wsCache == 'normal':
         try:
             singapore_text_en, singapore_text_ru = get_dc_singapore()
-            if message.from_user.language_code == 'ru':
+            if message.from_user.language_code in strings.CIS_lang_code:
                 text = singapore_text_ru
                 markup = markup_DC_ru
             else:
@@ -1076,7 +1082,7 @@ def send_dc_hong_kong(message):
     if wsCache == 'normal':
         try:
             hong_kong_text_en, hong_kong_text_ru = get_dc_hong_kong()
-            if message.from_user.language_code == 'ru':
+            if message.from_user.language_code in strings.CIS_lang_code:
                 text = hong_kong_text_ru
                 markup = markup_DC_ru
             else:
@@ -1109,7 +1115,7 @@ def default_inline(inline_query):
             timer_text_en, timer_text_ru = get_timer()
             gameversion_text_en, gameversion_text_ru = get_gameversion()
             try:
-                if inline_query.from_user.language_code == 'ru':
+                if inline_query.from_user.language_code in strings.CIS_lang_code:
                     status_r, dev_r, timer_r, gv_r = server_status_text_ru, devcount_text_ru, timer_text_ru, gameversion_text_ru
                     title_status, title_dev, title_timer, title_gv = 'Статус', 'Бета-версия', 'Сброс ограничений', 'Версия игры'
                     description_status = 'Проверить доступность серверов'
@@ -1138,7 +1144,7 @@ def default_inline(inline_query):
             timer_text_en, timer_text_ru = get_timer()
             gameversion_text_en, gameversion_text_ru = get_gameversion()
             try:
-                if inline_query.from_user.language_code == 'ru':
+                if inline_query.from_user.language_code in strings.CIS_lang_code:
                     maintenance_r, timer_r, gv_r = strings.maintenance_ru, timer_text_ru, gameversion_text_ru
                     title_maintenance, title_timer, title_gv = 'Нет данных', 'Сброс ограничений', 'Версия игры'
                     description_mntn = 'Еженедельное тех. обслуживание серверов'
@@ -1164,7 +1170,7 @@ def default_inline(inline_query):
             timer_text_en, timer_text_ru = get_timer()
             gameversion_text_en, gameversion_text_ru = get_gameversion()
             try:
-                if inline_query.from_user.language_code == 'ru':
+                if inline_query.from_user.language_code in strings.CIS_lang_code:
                     wrong_r, timer_r, gv_r = strings.wrongAPI_ru, timer_text_ru, gameversion_text_ru
                     title_un, title_timer, title_gv = 'Нет данных', 'Сброс ограничений', 'Версия игры'
                     description_un = 'Не получилось связаться с API Valve'
@@ -1208,7 +1214,7 @@ def inline_dc(inline_query):
             africa_text_en, africa_text_ru = get_dc_africa()            
             south_america_text_en, south_america_text_ru = get_dc_south_america()
             try:
-                if inline_query.from_user.language_code == 'ru':
+                if inline_query.from_user.language_code in strings.CIS_lang_code:
                     title_china = 'Китайские ДЦ'
                     title_emirates = 'Эмиратский ДЦ'
                     title_hong_kong = 'Гонконгский ДЦ'
@@ -1302,7 +1308,7 @@ def inline_dc_australia(inline_query):
         try:
             australia_text_en, australia_text_ru = get_dc_australia()
             try:
-                if inline_query.from_user.language_code == 'ru':
+                if inline_query.from_user.language_code in strings.CIS_lang_code:
                     title = 'Австралийский ДЦ'
                     r = australia_text_ru
                     description = 'Проверить состояние' 
@@ -1331,7 +1337,7 @@ def inline_dc_africa(inline_query):
         try:
             africa_text_en, africa_text_ru = get_dc_africa()
             try:
-                if inline_query.from_user.language_code == 'ru':
+                if inline_query.from_user.language_code in strings.CIS_lang_code:
                     title = 'Африканский ДЦ'
                     r = africa_text_ru
                     description = 'Проверить состояние'
@@ -1360,7 +1366,7 @@ def inline_dc_south_america(inline_query):
         try:
             south_america_text_en, south_america_text_ru = get_dc_south_america()
             try:
-                if inline_query.from_user.language_code == 'ru':
+                if inline_query.from_user.language_code in strings.CIS_lang_code:
                     title = 'Южноамериканские ДЦ'
                     r = south_america_text_ru
                     description = 'Проверить состояние'
@@ -1391,7 +1397,7 @@ def inline_dc_europe(inline_query):
             eu_east_text_en, eu_east_text_ru = get_dc_eu_east()
             eu_west_text_en, eu_west_text_ru = get_dc_eu_west()
             try:
-                if inline_query.from_user.language_code == 'ru':
+                if inline_query.from_user.language_code in strings.CIS_lang_code:
                     title_north = 'Североевропейский ДЦ'
                     title_east = 'Восточноевропейские ДЦ'
                     title_west = 'Западноевропейские ДЦ'
@@ -1431,7 +1437,7 @@ def inline_dc_eu_north(inline_query):
         try:
             eu_north_text_en, eu_north_text_ru = get_dc_eu_north()
             try:
-                if inline_query.from_user.language_code == 'ru':
+                if inline_query.from_user.language_code in strings.CIS_lang_code:
                     title = 'Североевропейский ДЦ'
                     r = eu_north_text_ru
                     description = 'Проверить состояние'
@@ -1461,7 +1467,7 @@ def inline_dc_eu_east(inline_query):
         try:
             eu_east_text_en, eu_east_text_ru = get_dc_eu_east()
             try:
-                if inline_query.from_user.language_code == 'ru':
+                if inline_query.from_user.language_code in strings.CIS_lang_code:
                     title = 'Восточноевропейские ДЦ'
                     r = eu_east_text_ru
                     description = 'Проверить состояние'
@@ -1491,7 +1497,7 @@ def inline_dc_eu_west(inline_query):
         try:
             eu_west_text_en, eu_west_text_ru = get_dc_eu_west()
             try:
-                if inline_query.from_user.language_code == 'ru':
+                if inline_query.from_user.language_code in strings.CIS_lang_code:
                     title = 'Западноевропейские ДЦ'
                     r = eu_west_text_ru
                     description = 'Проверить состояние'
@@ -1522,7 +1528,7 @@ def inline_dc_usa(inline_query):
             usa_north_text_en, usa_north_text_ru = get_dc_usa_north()
             usa_south_text_en, usa_south_text_ru = get_dc_usa_south()
             try:
-                if inline_query.from_user.language_code == 'ru':
+                if inline_query.from_user.language_code in strings.CIS_lang_code:
                     title_north = 'ДЦ северной части США'
                     title_south = 'ДЦ южной части США'
                     r_north = usa_north_text_ru
@@ -1556,7 +1562,7 @@ def inline_dc_northern_usa(inline_query):
         try:
             usa_north_text_en, usa_north_text_ru = get_dc_usa_north()
             try:
-                if inline_query.from_user.language_code == 'ru':
+                if inline_query.from_user.language_code in strings.CIS_lang_code:
                     title = 'ДЦ северной части США'
                     r = usa_north_text_ru
                     description = 'Проверить состояние'
@@ -1585,7 +1591,7 @@ def inline_dc_southern_usa(inline_query):
         try:
             usa_south_text_en, usa_south_text_ru = get_dc_usa_south()
             try:
-                if inline_query.from_user.language_code == 'ru':
+                if inline_query.from_user.language_code in strings.CIS_lang_code:
                     title = 'ДЦ южной части США'
                     r = usa_south_text_ru
                     description = 'Проверить состояние'
@@ -1619,7 +1625,7 @@ def inline_dc_asia(inline_query):
             japan_text_en, japan_text_ru = get_dc_japan()
             singapore_text_en, singapore_text_ru = get_dc_singapore()
             try:
-                if inline_query.from_user.language_code == 'ru':
+                if inline_query.from_user.language_code in strings.CIS_lang_code:
                     title_china = 'Китайские ДЦ'
                     title_emirates = 'Эмиратский ДЦ'
                     title_hong_kong = 'Гонконгский ДЦ'
@@ -1674,7 +1680,7 @@ def inline_dc_china(inline_query):
         try:
             china_text_en, china_text_ru = get_dc_china()
             try:
-                if inline_query.from_user.language_code == 'ru':
+                if inline_query.from_user.language_code in strings.CIS_lang_code:
                     title = 'Китайские ДЦ'
                     r = china_text_ru
                     description = 'Проверить состояние'
@@ -1703,7 +1709,7 @@ def inline_dc_emirates(inline_query):
         try:
             emirates_text_en, emirates_text_ru = get_dc_emirates()
             try:
-                if inline_query.from_user.language_code == 'ru':
+                if inline_query.from_user.language_code in strings.CIS_lang_code:
                     title = 'Эмиратский ДЦ'
                     r = emirates_text_ru
                     description = 'Проверить состояние'
@@ -1733,7 +1739,7 @@ def inline_dc_hong_kong(inline_query):
         try:
             hong_kong_text_en, hong_kong_text_ru = get_dc_hong_kong()
             try:
-                if inline_query.from_user.language_code == 'ru':
+                if inline_query.from_user.language_code in strings.CIS_lang_code:
                     title = 'Гонконгский ДЦ'
                     r = hong_kong_text_ru
                     description = 'Проверить состояние'
@@ -1762,7 +1768,7 @@ def inline_dc_india(inline_query):
         try:
             india_text_en, india_text_ru = get_dc_india()
             try:
-                if inline_query.from_user.language_code == 'ru':
+                if inline_query.from_user.language_code in strings.CIS_lang_code:
                     title = 'Индийские ДЦ'
                     r = india_text_ru
                     description = 'Проверить состояние'
@@ -1791,7 +1797,7 @@ def inline_dc_japan(inline_query):
         try:
             japan_text_en, japan_text_ru = get_dc_japan()
             try:
-                if inline_query.from_user.language_code == 'ru':
+                if inline_query.from_user.language_code in strings.CIS_lang_code:
                     title = 'Японский ДЦ'
                     r = japan_text_ru
                     description = 'Проверить состояние'
@@ -1820,7 +1826,7 @@ def inline_dc_singapore(inline_query):
         try:
             singapore_text_en, singapore_text_ru = get_dc_singapore()
             try:
-                if inline_query.from_user.language_code == 'ru':
+                if inline_query.from_user.language_code in strings.CIS_lang_code:
                     title = 'Сингапурский ДЦ'
                     r = singapore_text_ru
                     description = 'Проверить состояние'
@@ -1848,9 +1854,13 @@ def inline_dc_singapore(inline_query):
 @bot.message_handler(commands=['start'])
 def welcome(message):
     '''First bot's message'''
+    data = pd.read_csv(config.USER_DB_FILE_PATH)
+    if not data['UserID'].isin([message.from_user.id]).any():
+        new_data = pd.DataFrame([[message.from_user.first_name, message.from_user.id]], columns=['Name', 'UserID'])
+        pd.concat([data, new_data]).to_csv(config.USER_DB_FILE_PATH, index=False)
     log(message)
     if message.chat.type == 'private':
-        if message.from_user.language_code == 'ru':
+        if message.from_user.language_code in strings.CIS_lang_code:
             text = strings.cmdStart_ru.format(message.from_user.first_name)
             markup = markup_ru
         else:
@@ -1868,7 +1878,7 @@ def leave_feedback(message):
     '''Send feedback'''
     log(message)
     if message.chat.type == 'private':
-        if message.from_user.language_code == 'ru':
+        if message.from_user.language_code in strings.CIS_lang_code:
             text = strings.cmdFeedback_ru 
         else:
             text = strings.cmdFeedback_en
@@ -1884,7 +1894,7 @@ def get_feedback(message):
     '''Get feedback from users'''
     if message.text == '/cancel':
         log(message)
-        if message.from_user.language_code == 'ru':
+        if message.from_user.language_code in strings.CIS_lang_code:
             markup = markup_ru
         else:
             markup = markup_en
@@ -1898,7 +1908,7 @@ def get_feedback(message):
             bot.send_message(config.AQ, f'🆔 <a href="tg://user?id={message.from_user.id}">{message.from_user.id}</a>:', parse_mode='html', disable_notification=True)
             bot.forward_message(config.AQ, message.chat.id, message.message_id)
 
-        if message.from_user.language_code == 'ru':
+        if message.from_user.language_code in strings.CIS_lang_code:
             text = 'Отлично! Ваше сообщение отправлено.'
             markup = markup_ru
         else:
@@ -1912,7 +1922,7 @@ def help(message):
     '''/help message'''
     log(message)
     if message.chat.type == 'private':
-        if message.from_user.language_code == 'ru':
+        if message.from_user.language_code in strings.CIS_lang_code:
             text = strings.cmdHelp_ru
             markup = markup_ru
         else:
@@ -2041,7 +2051,7 @@ def answer(message):
 
 
             else:
-                if message.from_user.language_code == 'ru':
+                if message.from_user.language_code in strings.CIS_lang_code:
                     text = strings.unknownRequest_ru
                     markup = markup_ru
                 else: 
