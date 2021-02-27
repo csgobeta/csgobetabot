@@ -16,6 +16,7 @@ import strings
 from apps.timer import Reset
 from apps.valve_api import ValveServersDataCentersAPI
 from apps import file_manager
+from addons import buttons
 
 bot = telebot.TeleBot(config.BOT_TOKEN)
 telebot.logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
@@ -24,231 +25,6 @@ tz = pytz.timezone('UTC')
 tz_valve = pytz.timezone('America/Los_Angeles')
 api_dc = ValveServersDataCentersAPI()
 timer_drop = Reset()
-
-
-### Keyboard setup ###
-
-
-# English
-markup_en = types.ReplyKeyboardMarkup(row_width=2, resize_keyboard=True)
-server_status = types.KeyboardButton('Server status')
-devcount = types.KeyboardButton('Online devs')
-timer = types.KeyboardButton('Cap reset')
-dc = types.KeyboardButton('Data centers')
-gv = types.KeyboardButton('Game version')
-guns = types.KeyboardButton('Gun database')
-markup_en.add(server_status, dc, devcount, timer, gv, guns)
-
-# DC
-markup_DC = types.ReplyKeyboardMarkup(row_width=3, resize_keyboard=True)
-europe = types.KeyboardButton('Europe')
-asia = types.KeyboardButton('Asia')
-south_africa = types.KeyboardButton('South Africa')
-south_america = types.KeyboardButton('South America')
-australia = types.KeyboardButton('Australia')
-usa =  types.KeyboardButton('USA')
-back_button = types.KeyboardButton('⏪ Back')
-back_button_alt = types.KeyboardButton('⏪ Bаck')
-markup_DC.add(asia, australia, europe, south_africa, south_america, usa, back_button)
-
-# DC Asia
-markup_DC_Asia = types.ReplyKeyboardMarkup(row_width=3, resize_keyboard=True)
-india = types.KeyboardButton('India')
-emirates = types.KeyboardButton('Emirates')
-china = types.KeyboardButton('China')
-singapore = types.KeyboardButton('Singapore')
-hong_kong = types.KeyboardButton('Hong Kong')
-japan = types.KeyboardButton('Japan')
-markup_DC_Asia.add(china, emirates, hong_kong, india, japan, singapore, back_button_alt)
-
-# DC Europe
-markup_DC_EU = types.ReplyKeyboardMarkup(row_width=3, resize_keyboard=True)
-eu_West = types.KeyboardButton('West')
-eu_East = types.KeyboardButton('East')
-eu_North = types.KeyboardButton('North')
-markup_DC_EU.add(eu_East, eu_North, eu_West, back_button_alt)
-
-# DC USA
-markup_DC_USA = types.ReplyKeyboardMarkup(row_width=2, resize_keyboard=True)
-usa_Northwest = types.KeyboardButton('Nоrth')
-usa_Southwest = types.KeyboardButton('South')
-markup_DC_USA.add(usa_Northwest, usa_Southwest, back_button_alt)
-
-# Guns
-markup_guns = types.ReplyKeyboardMarkup(row_width=2, resize_keyboard=True)
-pistols = types.KeyboardButton('Pistols')
-smgs = types.KeyboardButton('SMGs')
-rifles = types.KeyboardButton('Rifles')
-heavy = types.KeyboardButton('Heavy')
-back_button = types.KeyboardButton('⏪ Back')
-back_button_alt_2 = types.KeyboardButton('⏪ Bасk')
-markup_guns.add(pistols, smgs, rifles, heavy, back_button)
-
-# Guns Russian
-markup_guns_ru = types.ReplyKeyboardMarkup(row_width=2, resize_keyboard=True)
-pistols = types.KeyboardButton('Пистолеты')
-smgs = types.KeyboardButton('Пистолеты-пулемёты')
-rifles = types.KeyboardButton('Винтовки')
-heavy = types.KeyboardButton('Тяжёлое оружие')
-Back_button_ru = types.KeyboardButton('⏪ Назад')
-back_button_alt_2_ru = types.KeyboardButton('⏪ Haзад')
-markup_guns_ru.add(pistols, smgs, rifles, heavy, Back_button_ru)
-
-# Pistols
-markup_pistols = types.ReplyKeyboardMarkup(row_width=4, resize_keyboard=True)
-usps = types.KeyboardButton('USP-S')
-p2000 = types.KeyboardButton('P2000')
-glock = types.KeyboardButton('Glock-18')
-dualies = types.KeyboardButton('Dual Berettas')
-p250 = types.KeyboardButton('P250')
-cz75 = types.KeyboardButton('CZ75-Auto')
-five_seven = types.KeyboardButton('Five-SeveN')
-tec = types.KeyboardButton('Tec-9')
-deagle = types.KeyboardButton('Desert Eagle')
-r8 = types.KeyboardButton('R8 Revolver')
-markup_pistols.add(usps, p2000, glock, dualies, p250, cz75, five_seven, tec, deagle, r8)
-markup_pistols.add(back_button_alt_2)
-
-# Pistols Russian
-markup_pistols_ru = types.ReplyKeyboardMarkup(row_width=4, resize_keyboard=True)
-usps = types.KeyboardButton('USP-S')
-p2000 = types.KeyboardButton('P2000')
-glock = types.KeyboardButton('Glock-18')
-dualies = types.KeyboardButton('Dual Berettas')
-p250 = types.KeyboardButton('P250')
-cz75 = types.KeyboardButton('CZ75-Auto')
-five_seven = types.KeyboardButton('Five-SeveN')
-tec = types.KeyboardButton('Tec-9')
-deagle = types.KeyboardButton('Desert Eagle')
-r8 = types.KeyboardButton('R8 Revolver')
-markup_pistols_ru.add(usps, p2000, glock, dualies, p250, cz75, five_seven, tec, deagle, r8)
-markup_pistols_ru.add(back_button_alt_2_ru)
-
-# SMGs
-markup_smgs = types.ReplyKeyboardMarkup(row_width=4, resize_keyboard=True)
-mp9 = types.KeyboardButton('MP9')
-mac10 = types.KeyboardButton('MAC-10')
-mp7 = types.KeyboardButton('MP7')
-mp5 = types.KeyboardButton('MP5-SD')
-ump = types.KeyboardButton('UMP-45')
-p90 = types.KeyboardButton('P90')
-pp = types.KeyboardButton('PP-Bizon')
-markup_smgs.add(mp9, mac10, mp7, mp5, ump, p90, pp)
-markup_smgs.add(back_button_alt_2)
-
-# SMGs Russian
-markup_smgs_ru = types.ReplyKeyboardMarkup(row_width=4, resize_keyboard=True)
-mp9 = types.KeyboardButton('MP9')
-mac10 = types.KeyboardButton('MAC-10')
-mp7 = types.KeyboardButton('MP7')
-mp5 = types.KeyboardButton('MP5-SD')
-ump = types.KeyboardButton('UMP-45')
-p90 = types.KeyboardButton('P90')
-pp = types.KeyboardButton('PP-Bizon')
-markup_smgs_ru.add(mp9, mac10, mp7, mp5, ump, p90, pp)
-markup_smgs_ru.add(back_button_alt_2_ru)
-
-# Rifles
-markup_rifles = types.ReplyKeyboardMarkup(row_width=4, resize_keyboard=True)
-famas = types.KeyboardButton('Famas')
-galil = types.KeyboardButton('Galil AR')
-m4a4 = types.KeyboardButton('M4A4')
-m4a1 = types.KeyboardButton('M4A1-S')
-ak = types.KeyboardButton('AK-47')
-aug = types.KeyboardButton('AUG')
-sg = types.KeyboardButton('SG 553')
-ssg = types.KeyboardButton('SSG 08')
-awp = types.KeyboardButton('AWP')
-scar = types.KeyboardButton('SCAR-20')
-g3sg1 = types.KeyboardButton('G3SG1')
-markup_rifles.add(famas, galil, m4a4, m4a1, ak, aug, sg, ssg, awp, scar, g3sg1)
-markup_rifles.add(back_button_alt_2)
-
-# Rifles Russian
-markup_rifles_ru = types.ReplyKeyboardMarkup(row_width=4, resize_keyboard=True)
-famas = types.KeyboardButton('Famas')
-galil = types.KeyboardButton('Galil AR')
-m4a4 = types.KeyboardButton('M4A4')
-m4a1 = types.KeyboardButton('M4A1-S')
-ak = types.KeyboardButton('AK-47')
-aug = types.KeyboardButton('AUG')
-sg = types.KeyboardButton('SG 553')
-ssg = types.KeyboardButton('SSG 08')
-awp = types.KeyboardButton('AWP')
-scar = types.KeyboardButton('SCAR-20')
-g3sg1 = types.KeyboardButton('G3SG1')
-markup_rifles_ru.add(famas, galil, m4a4, m4a1, ak, aug, sg, ssg, awp, scar, g3sg1)
-markup_rifles_ru.add(back_button_alt_2_ru)
-
-# Heavy
-markup_heavy = types.ReplyKeyboardMarkup(row_width=3, resize_keyboard=True)
-nova = types.KeyboardButton('Nova')
-xm1014 = types.KeyboardButton('XM1014')
-mag7 = types.KeyboardButton('MAG-7')
-sawedoff = types.KeyboardButton('Sawed-Off')
-m249 = types.KeyboardButton('M249')
-negev = types.KeyboardButton('Negev')
-markup_heavy.add(nova, xm1014, mag7, sawedoff, m249, negev)
-markup_heavy.add(back_button_alt_2)
-
-# Heavy Russian
-markup_heavy_ru = types.ReplyKeyboardMarkup(row_width=3, resize_keyboard=True)
-nova = types.KeyboardButton('Nova')
-xm1014 = types.KeyboardButton('XM1014')
-mag7 = types.KeyboardButton('MAG-7')
-sawedoff = types.KeyboardButton('Sawed-Off')
-m249 = types.KeyboardButton('M249')
-negev = types.KeyboardButton('Negev')
-markup_heavy_ru.add(nova, xm1014, mag7, sawedoff, m249, negev)
-markup_heavy_ru.add(back_button_alt_2_ru)
-
-# Russian
-markup_ru = types.ReplyKeyboardMarkup(row_width=2, resize_keyboard=True)
-server_status_ru = types.KeyboardButton('Статус серверов')
-devcount_ru = types.KeyboardButton('Разработчиков в игре')
-timer_ru = types.KeyboardButton('Сброс ограничений')
-dc_ru = types.KeyboardButton('Дата-центры')
-gv_ru = types.KeyboardButton('Версия игры')
-guns_ru = types.KeyboardButton('База данных оружий')
-markup_ru.add(server_status_ru, dc_ru, devcount_ru, timer_ru, gv_ru, guns_ru)
-
-# DC RU
-markup_DC_ru = types.ReplyKeyboardMarkup(row_width=3, resize_keyboard=True)
-Europe_ru = types.KeyboardButton('Европа')
-Asia_ru = types.KeyboardButton('Азия')
-Africa_ru = types.KeyboardButton('Южная Африка')
-South_America_ru = types.KeyboardButton('Южная Америка')
-Australia_ru = types.KeyboardButton('Австралия') 
-USA_ru =  types.KeyboardButton('США')
-Back_button_ru = types.KeyboardButton('⏪ Назад')
-Back_button_ru_alt = types.KeyboardButton('⏪ Нaзад')
-markup_DC_ru.add(Australia_ru, Asia_ru, Europe_ru, USA_ru, South_America_ru, Africa_ru, Back_button_ru)
-
-# DC Europe Russian
-markup_DC_EU_ru = types.ReplyKeyboardMarkup(row_width=3, resize_keyboard=True)
-eu_West_ru = types.KeyboardButton('Запад')
-eu_East_ru = types.KeyboardButton('Восток')
-eu_North_ru = types.KeyboardButton('Север')
-markup_DC_EU_ru.add(eu_East_ru, eu_West_ru, eu_North_ru, Back_button_ru_alt)
-
-# DC Asia Russian
-markup_DC_Asia_ru = types.ReplyKeyboardMarkup(row_width=3, resize_keyboard=True)
-india_ru = types.KeyboardButton('Индия')
-emirates_ru = types.KeyboardButton('Эмираты')
-china_ru = types.KeyboardButton('Китай')
-singapore_ru = types.KeyboardButton('Сингапур')
-hong_kong_ru = types.KeyboardButton('Гонконг')
-japan_ru = types.KeyboardButton('Япония')
-markup_DC_Asia_ru.add(hong_kong_ru, india_ru, china_ru, singapore_ru, emirates_ru, japan_ru, Back_button_ru_alt)
-
-# DC USA Russian
-markup_DC_USA_ru = types.ReplyKeyboardMarkup(row_width=2, resize_keyboard=True)
-usa_Northwest_ru = types.KeyboardButton('Сeвер')
-usa_Southwest_ru = types.KeyboardButton('Юг')
-markup_DC_USA_ru.add(usa_Northwest_ru, usa_Southwest_ru, Back_button_ru_alt)
-
-# Delete keyboard
-markup_del = types.ReplyKeyboardRemove(False)
 
 
 ### Log setup ###
@@ -272,11 +48,7 @@ def get_server_status():
     '''Get the status of CS:GO servers'''
     tsCache, tsRCache = time_converter()[0], time_converter()[1]
     cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
-    url = cacheFile['graph_url']
     gcCache, slCache, sCache, piCache = cacheFile['game_coordinator'], cacheFile['sessionsLogon'], cacheFile['scheduler'], cacheFile['steam_community']
-    pcCache, scCache = cacheFile['online_player_count'], cacheFile['online_server_count']
-    apCache, ssCache, spCache = cacheFile['active_player_count'], cacheFile['search_seconds_avg'], cacheFile['searching_players']
-    p24Cache, paCache, uqCache = cacheFile['peak_24_hours'], cacheFile['peak_all_time'], cacheFile['unique_monthly']
 
     array = [gcCache, slCache, sCache, piCache]
     array_ru = []
@@ -290,18 +62,29 @@ def get_server_status():
     else:
         tick = '✅'
 
-    status_text_en = strings.statusNormal_en.format(url, tick, gcCache, slCache, sCache, piCache)
-    status_text_ru = strings.statusNormal_ru.format(url, tick, gcRCache, slRCache, sRCache, piRCache)
+    status_text_en = strings.status_en.format(tick, gcCache, slCache, sCache, piCache, tsCache)
+    status_text_ru = strings.status_ru.format(tick, gcRCache, slRCache, sRCache, piRCache, tsRCache)
 
-    mm_text_en = strings.mmNormal_en.format(scCache, pcCache, apCache, spCache, ssCache)
-    mm_text_ru = strings.mmNormal_ru.format(scCache, pcCache, apCache, spCache, ssCache)
+    return status_text_en, status_text_ru
+
+def get_mm_stats():
+    tsCache, tsRCache = time_converter()[0], time_converter()[1]
+    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
+    url = cacheFile['graph_url']
+    pcCache, scCache = cacheFile['online_player_count'], cacheFile['online_server_count']
+    apCache, ssCache, spCache = cacheFile['active_player_count'], cacheFile['search_seconds_avg'], cacheFile['searching_players']
+    p24Cache, paCache, uqCache = cacheFile['peak_24_hours'], cacheFile['peak_all_time'], cacheFile['unique_monthly']
+
+    mm_text_en = strings.mm_en.format(url, scCache, pcCache, apCache, spCache, ssCache)
+    mm_text_ru = strings.mm_ru.format(url, scCache, pcCache, apCache, spCache, ssCache)
 
     addInf_text_en = strings.additionalInfo_en.format(p24Cache, paCache, uqCache, tsCache)
     addInf_text_ru = strings.additionalInfo_ru.format(p24Cache, paCache, uqCache, tsRCache)
 
-    server_status_text_en = status_text_en +  mm_text_en + addInf_text_en
-    server_status_text_ru = status_text_ru +  mm_text_ru + addInf_text_ru
-    return server_status_text_en, server_status_text_ru
+    mm_stats_text_en = mm_text_en + addInf_text_en
+    mm_stats_text_ru = mm_text_ru + addInf_text_ru
+
+    return mm_stats_text_en, mm_stats_text_ru
 
 def get_devcount():
     '''Get the count of online devs'''
@@ -335,21 +118,39 @@ def get_gameversion():
 
 def send_server_status(message):
     '''Send the status of CS:GO servers'''
-    data = pd.read_csv(config.USER_DB_FILE_PATH)
-    if not data['UserID'].isin([message.from_user.id]).any():
-        new_data = pd.DataFrame([[message.from_user.first_name, message.from_user.id, message.from_user.language_code]], columns=['Name', 'UserID', 'Language'])
-        pd.concat([data, new_data]).to_csv(config.USER_DB_FILE_PATH, index=False)
     cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
     wsCache = cacheFile['valve_webapi']
     if wsCache == 'normal':
         try:
-            server_status_text_en, server_status_text_ru = get_server_status()
+            status_text_en, status_text_ru = get_server_status()
             if message.from_user.language_code in strings.CIS_lang_code:
-                text = server_status_text_ru
-                markup = markup_ru
+                text = status_text_ru
+                markup = buttons.markup_ru
             else:
-                text = server_status_text_en
-                markup = markup_en
+                text = status_text_en
+                markup = buttons.markup_en
+            bot.send_message(message.chat.id, text, reply_markup=markup, parse_mode='html')
+        except Exception as e:
+            bot.send_message(config.LOGCHANNEL, f'❗️{e}')
+            send_about_problem_bot(message)
+    elif wsCache == 'maintenance':
+        send_about_maintenance(message)
+    else:
+        send_about_problem_valve_api(message)   
+
+def send_mm_stats(message):
+    '''Send the CS:GO matchmaking stats'''
+    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
+    wsCache = cacheFile['valve_webapi']
+    if wsCache == 'normal':
+        try:
+            mm_stats_text_en, mm_stats_text_ru = get_mm_stats()
+            if message.from_user.language_code in strings.CIS_lang_code:
+                text = mm_stats_text_ru
+                markup = buttons.markup_ru
+            else:
+                text = mm_stats_text_en
+                markup = buttons.markup_en
             bot.send_message(message.chat.id, text, reply_markup=markup, parse_mode='html')
         except Exception as e:
             bot.send_message(config.LOGCHANNEL, f'❗️{e}')
@@ -368,10 +169,10 @@ def send_devcount(message):
             devcount_text_en, devcount_text_ru = get_devcount()
             if message.from_user.language_code in strings.CIS_lang_code:
                     text = devcount_text_ru
-                    markup = markup_ru
+                    markup = buttons.markup_ru
             else:    
                     text = devcount_text_en
-                    markup = markup_en
+                    markup = buttons.markup_en
             bot.send_message(message.chat.id, text, reply_markup=markup, parse_mode='html') 
         except Exception as e:
             bot.send_message(config.LOGCHANNEL, f'❗️{e}')
@@ -387,10 +188,10 @@ def send_timer(message):
         timer_text_en, timer_text_ru = get_timer()
         if message.from_user.language_code in strings.CIS_lang_code:
                 text = timer_text_ru
-                markup = markup_ru
+                markup = buttons.markup_other_ru
         else:
                 text = timer_text_en
-                markup = markup_en
+                markup = buttons.markup_other_en
         bot.send_message(message.chat.id, text, reply_markup=markup) 
     except Exception as e:
         bot.send_message(config.LOGCHANNEL, f'❗️{e}')
@@ -402,10 +203,10 @@ def send_gameversion(message):
         gameversion_text_en, gameversion_text_ru = get_gameversion()
         if message.from_user.language_code in strings.CIS_lang_code:
                 text = gameversion_text_ru
-                markup = markup_ru
+                markup = buttons.markup_other_ru
         else:
                 text = gameversion_text_en
-                markup = markup_en
+                markup = buttons.markup_other_en
         bot.send_message(message.chat.id, text, reply_markup=markup, parse_mode='html') 
     except Exception as e:
         bot.send_message(config.LOGCHANNEL, f'❗️{e}')
@@ -415,20 +216,20 @@ def send_about_problem_valve_api(message):
     '''In case the bot can't get Valve's API'''
     if message.from_user.language_code in strings.CIS_lang_code:
         text = strings.wrongAPI_ru
-        markup = markup_ru       
+        markup = buttons.markup_ru       
     else:
         text = strings.wrongAPI_en
-        markup = markup_en   
+        markup = buttons.markup_en   
     bot.send_message(message.chat.id, text, reply_markup=markup)
 
 def send_about_maintenance(message):
     '''In case weekly server update (on Tuesdays)'''
     if message.from_user.language_code in strings.CIS_lang_code:
         text = strings.maintenance_ru
-        markup = markup_ru       
+        markup = buttons.markup_ru       
     else:
         text = strings.maintenance_en
-        markup = markup_en   
+        markup = buttons.markup_en   
     bot.send_message(message.chat.id, text, reply_markup=markup)
 
 def send_about_problem_valve_api_inline(inline_query):
@@ -467,10 +268,19 @@ def send_about_problem_bot(message):
     '''If anything goes wrong'''
     if message.from_user.language_code in strings.CIS_lang_code:
         text = strings.wrongBOT_ru
-        markup = markup_ru
+        markup = buttons.markup_ru
     else:
         text = strings.wrongBOT_en
-        markup = markup_en  
+        markup = buttons.markup_en  
+    bot.send_message(message.chat.id, text, reply_markup=markup)
+
+def other(message):
+    if message.from_user.language_code in strings.CIS_lang_code:
+        text = '📂 Выберите одну из дополнительных функций:'
+        markup = buttons.markup_other_ru
+    else:
+        text = '📂 Select one of the additional features:'
+        markup = buttons.markup_other_en
     bot.send_message(message.chat.id, text, reply_markup=markup)
 
 
@@ -499,6 +309,7 @@ def translate(data):
         if data in en:
             data_ru = ru
             return data_ru
+
 
 ### Guns archive ###
 
@@ -540,10 +351,10 @@ def send_gun_info(message, gun_id):
         gun_data_text_en, gun_data_text_ru = get_gun_info(gun_id)
         if message.from_user.language_code in strings.CIS_lang_code:
                 text = gun_data_text_ru
-                markup = markup_guns_ru
+                markup = buttons.markup_guns_ru
         else:
                 text = gun_data_text_en
-                markup = markup_guns
+                markup = buttons.markup_guns_en
         bot.send_message(message.chat.id, text, reply_markup=markup, parse_mode='html') 
     except Exception as e:
         bot.send_message(config.LOGCHANNEL, f'❗️{e}')
@@ -553,10 +364,10 @@ def guns(message):
     try:
         if message.from_user.language_code in strings.CIS_lang_code:
             text = '#️⃣ Выберите категорию, которая Вас интересует:'
-            markup = markup_guns_ru
+            markup = buttons.markup_guns_ru
         else:
             text = '#️⃣ Select the category, that you are interested in:'
-            markup = markup_guns
+            markup = buttons.markup_guns_en
         bot.send_message(message.chat.id, text, reply_markup=markup)
     except Exception as e:
         bot.send_message(config.LOGCHANNEL, f'❗️{e}')
@@ -566,10 +377,10 @@ def pistols(message):
     try:
         if message.from_user.language_code in strings.CIS_lang_code:
             text = '🔫 Выберите пистолет..'
-            markup = markup_pistols_ru
+            markup = buttons.markup_pistols_ru
         else:
-            text = '🔫 Choose the pistol..'
-            markup = markup_pistols
+            text = '🔫 Select the pistol..'
+            markup = buttons.markup_pistols_en
         bot.send_message(message.chat.id, text, reply_markup=markup)
     except Exception as e:
         bot.send_message(config.LOGCHANNEL, f'❗️{e}')
@@ -579,10 +390,10 @@ def smgs(message):
     try:
         if message.from_user.language_code in strings.CIS_lang_code:
             text = '🔫 Выберите пистолет-пулемёт..'
-            markup = markup_smgs_ru
+            markup = buttons.markup_smgs_ru
         else:
-            text = '🔫 Choose the SMG..'
-            markup = markup_smgs
+            text = '🔫 Select the SMG..'
+            markup = buttons.markup_smgs_en
         bot.send_message(message.chat.id, text, reply_markup=markup)
     except Exception as e:
         bot.send_message(config.LOGCHANNEL, f'❗️{e}')
@@ -592,10 +403,10 @@ def rifles(message):
     try:
         if message.from_user.language_code in strings.CIS_lang_code:
             text = '🔫 Выберите винтовку..'
-            markup = markup_rifles_ru
+            markup = buttons.markup_rifles_ru
         else:
-            text = '🔫 Choose the rifle..'
-            markup = markup_rifles
+            text = '🔫 Select the rifle..'
+            markup = buttons.markup_rifles_en
         bot.send_message(message.chat.id, text, reply_markup=markup)
     except Exception as e:
         bot.send_message(config.LOGCHANNEL, f'❗️{e}')
@@ -605,10 +416,10 @@ def heavy(message):
     try:
         if message.from_user.language_code in strings.CIS_lang_code:
             text = '🔫 Выберите тяжёлое оружие..'
-            markup = markup_heavy_ru
+            markup = buttons.markup_heavy_ru
         else:
-            text = '🔫 Choose the heavy gun..'
-            markup = markup_heavy
+            text = '🔫 Select the heavy gun..'
+            markup = buttons.markup_heavy_en
         bot.send_message(message.chat.id, text, reply_markup=markup)
     except Exception as e:
         bot.send_message(config.LOGCHANNEL, f'❗️{e}')
@@ -625,10 +436,10 @@ def dc(message):
         try:
             if message.from_user.language_code in strings.CIS_lang_code:
                 text = '📶 Выберите регион, который Вам интересен, чтобы получить информацию о дата-центрах:'
-                markup = markup_DC_ru
+                markup = buttons.markup_DC_ru
             else:
                 text = '📶 Select the region, that you are interested in, to get information about the data centers:'
-                markup = markup_DC
+                markup = buttons.markup_DC_en
             bot.send_message(message.chat.id, text, reply_markup=markup)
         except Exception as e:
             bot.send_message(config.LOGCHANNEL, f'❗️{e}')
@@ -640,9 +451,9 @@ def dc(message):
 
 def back(message):
     if message.from_user.language_code in strings.CIS_lang_code:
-        markup = markup_ru
+        markup = buttons.markup_ru
     else:
-        markup = markup_en
+        markup = buttons.markup_en
     bot.send_message(message.chat.id, '👌', reply_markup=markup)
 
 def dc_europe(message):
@@ -651,10 +462,10 @@ def dc_europe(message):
     if wsCache == 'normal':
         if message.from_user.language_code in strings.CIS_lang_code:
             text = '📍 Укажите регион...'
-            markup = markup_DC_EU_ru            
+            markup = buttons.markup_DC_EU_ru            
         else:
             text = '📍 Specify the region...'
-            markup = markup_DC_EU
+            markup = buttons.markup_DC_EU_en
         bot.send_message(message.chat.id, text, reply_markup=markup)
     elif wsCache == 'maintenance':
         send_about_maintenance(message)
@@ -667,10 +478,10 @@ def dc_usa(message):
     if wsCache == 'normal':
         if message.from_user.language_code in strings.CIS_lang_code:
             text = '📍 Укажите регион...'
-            markup = markup_DC_USA_ru
+            markup = buttons.markup_DC_USA_ru
         else:
             text = '📍 Specify the region...'
-            markup = markup_DC_USA
+            markup = buttons.markup_DC_USA_en
         bot.send_message(message.chat.id, text, reply_markup=markup)
     elif wsCache == 'maintenance':
         send_about_maintenance(message)
@@ -683,10 +494,10 @@ def dc_asia(message):
     if wsCache == 'normal':
         if message.from_user.language_code in strings.CIS_lang_code:
             text = '📍 Укажите страну...'
-            markup = markup_DC_Asia_ru
+            markup = buttons.markup_DC_Asia_ru
         else:
             text = '📍 Specify the country...'
-            markup = markup_DC_Asia
+            markup = buttons.markup_DC_Asia_en
         bot.send_message(message.chat.id, text, reply_markup=markup)
     elif wsCache == 'maintenance':
         send_about_maintenance(message)
@@ -710,10 +521,10 @@ def send_dc_africa(message):
             africa_text_en, africa_text_ru = get_dc_africa()
             if message.from_user.language_code in strings.CIS_lang_code:
                 text = africa_text_ru
-                markup = markup_DC_ru
+                markup = buttons.markup_DC_ru
             else:
                 text = africa_text_en
-                markup = markup_DC
+                markup = buttons.markup_DC_en
             bot.send_message(message.chat.id, text, reply_markup=markup)
         except Exception as e:
             bot.send_message(config.LOGCHANNEL, f'❗️{e}')
@@ -740,10 +551,10 @@ def send_dc_australia(message):
             australia_text_en, australia_text_ru = get_dc_australia()
             if message.from_user.language_code in strings.CIS_lang_code:
                 text = australia_text_ru
-                markup = markup_DC_ru
+                markup = buttons.markup_DC_ru
             else:
                 text = australia_text_en
-                markup = markup_DC
+                markup = buttons.markup_DC_en
             bot.send_message(message.chat.id, text, reply_markup=markup)
         except Exception as e:
             bot.send_message(config.LOGCHANNEL, f'❗️{e}')
@@ -770,10 +581,10 @@ def send_dc_eu_north(message):
             eu_north_text_en, eu_north_text_ru = get_dc_eu_north()
             if message.from_user.language_code in strings.CIS_lang_code:
                 text = eu_north_text_ru
-                markup = markup_DC_ru
+                markup = buttons.markup_DC_ru
             else:
                 text = eu_north_text_en
-                markup = markup_DC
+                markup = buttons.markup_DC_en
             bot.send_message(message.chat.id, text, reply_markup=markup)
         except Exception as e:
             bot.send_message(config.LOGCHANNEL, f'❗️{e}')
@@ -798,10 +609,10 @@ def send_dc_eu_west(message):
             eu_west_text_en, eu_west_text_ru = get_dc_eu_west()
             if message.from_user.language_code in strings.CIS_lang_code:
                 text = eu_west_text_ru
-                markup = markup_DC_ru
+                markup = buttons.markup_DC_ru
             else:
                 text = eu_west_text_en
-                markup = markup_DC
+                markup = buttons.markup_DC_en
             bot.send_message(message.chat.id, text, reply_markup=markup)
         except Exception as e:
             bot.send_message(config.LOGCHANNEL, f'❗️{e}')
@@ -826,10 +637,10 @@ def send_dc_eu_east(message):
             eu_east_text_en, eu_east_text_ru = get_dc_eu_east()
             if message.from_user.language_code in strings.CIS_lang_code:
                 text = eu_east_text_ru
-                markup = markup_DC_ru
+                markup = buttons.markup_DC_ru
             else:
                 text = eu_east_text_en
-                markup = markup_DC
+                markup = buttons.markup_DC_en
             bot.send_message(message.chat.id, text, reply_markup=markup)
         except Exception as e:
             bot.send_message(config.LOGCHANNEL, f'❗️{e}')
@@ -856,10 +667,10 @@ def send_dc_usa_north(message):
             usa_north_text_en, usa_north_text_ru = get_dc_usa_north()
             if message.from_user.language_code in strings.CIS_lang_code:        
                 text = usa_north_text_ru
-                markup = markup_DC_ru
+                markup = buttons.markup_DC_ru
             else:
                 text = usa_north_text_en
-                markup = markup_DC
+                markup = buttons.markup_DC_en
             bot.send_message(message.chat.id, text, reply_markup=markup)        
         except Exception as e:
             bot.send_message(config.LOGCHANNEL, f'❗️{e}')
@@ -884,10 +695,10 @@ def send_dc_usa_south(message):
             usa_south_text_en, usa_south_text_ru = get_dc_usa_south()
             if message.from_user.language_code in strings.CIS_lang_code:        
                 text = usa_south_text_ru
-                markup = markup_DC_ru
+                markup = buttons.markup_DC_ru
             else:
                 text = usa_south_text_en
-                markup = markup_DC
+                markup = buttons.markup_DC_en
             bot.send_message(message.chat.id, text, reply_markup=markup)
         except Exception as e:
             bot.send_message(config.LOGCHANNEL, f'❗️{e}')
@@ -914,10 +725,10 @@ def send_dc_south_america(message):
             south_america_text_en, south_america_text_ru = get_dc_south_america()
             if message.from_user.language_code in strings.CIS_lang_code:
                 text = south_america_text_ru
-                markup = markup_DC_ru
+                markup = buttons.markup_DC_ru
             else:
                 text = south_america_text_en
-                markup = markup_DC
+                markup = buttons.markup_DC_en
             bot.send_message(message.chat.id, text)
         except Exception as e:
             bot.send_message(config.LOGCHANNEL, f'❗️{e}')
@@ -944,10 +755,10 @@ def send_dc_india(message):
             india_text_en, india_text_ru = get_dc_india()
             if message.from_user.language_code in strings.CIS_lang_code:  
                 text = india_text_ru
-                markup = markup_DC_ru
+                markup = buttons.markup_DC_ru
             else:
                 text = india_text_en
-                markup = markup_DC
+                markup = buttons.markup_DC_en
             bot.send_message(message.chat.id, text, reply_markup=markup)
         except Exception as e:
             bot.send_message(config.LOGCHANNEL, f'❗️{e}')
@@ -972,10 +783,10 @@ def send_dc_japan(message):
             japan_text_en, japan_text_ru = get_dc_japan()
             if message.from_user.language_code in strings.CIS_lang_code:
                 text = japan_text_ru
-                markup = markup_DC_ru
+                markup = buttons.markup_DC_ru
             else:
                 text = japan_text_en
-                markup = markup_DC
+                markup = buttons.markup_DC_en
             bot.send_message(message.chat.id, text, reply_markup=markup)        
         except Exception as e:
             bot.send_message(config.LOGCHANNEL, f'❗️{e}')
@@ -1000,10 +811,10 @@ def send_dc_china(message):
             china_text_en, china_text_ru = get_dc_china()
             if message.from_user.language_code in strings.CIS_lang_code:
                 text = china_text_ru
-                markup = markup_DC_ru
+                markup = buttons.markup_DC_ru
             else:
                 text = china_text_en
-                markup = markup_DC
+                markup = buttons.markup_DC_en
             bot.send_message(message.chat.id, text, reply_markup=markup)
         except Exception as e:
             bot.send_message(config.LOGCHANNEL, f'❗️{e}')
@@ -1028,10 +839,10 @@ def send_dc_emirates(message):
             emirates_text_en, emirates_text_ru = get_dc_emirates()
             if message.from_user.language_code in strings.CIS_lang_code:
                 text = emirates_text_ru
-                markup = markup_DC_ru
+                markup = buttons.markup_DC_ru
             else:
                 text = emirates_text_en
-                markup = markup_DC
+                markup = buttons.markup_DC_en
             bot.send_message(message.chat.id, text, reply_markup=markup)
         except Exception as e:
             bot.send_message(config.LOGCHANNEL, f'❗️{e}')
@@ -1056,10 +867,10 @@ def send_dc_singapore(message):
             singapore_text_en, singapore_text_ru = get_dc_singapore()
             if message.from_user.language_code in strings.CIS_lang_code:
                 text = singapore_text_ru
-                markup = markup_DC_ru
+                markup = buttons.markup_DC_ru
             else:
                 text = singapore_text_en
-                markup = markup_DC
+                markup = buttons.markup_DC_en
             bot.send_message(message.chat.id, text, reply_markup=markup)
         except Exception as e:
             bot.send_message(config.LOGCHANNEL, f'❗️{e}')
@@ -1084,10 +895,10 @@ def send_dc_hong_kong(message):
             hong_kong_text_en, hong_kong_text_ru = get_dc_hong_kong()
             if message.from_user.language_code in strings.CIS_lang_code:
                 text = hong_kong_text_ru
-                markup = markup_DC_ru
+                markup = buttons.markup_DC_ru
             else:
                 text = hong_kong_text_en
-                markup = markup_DC
+                markup = buttons.markup_DC_en
             bot.send_message(message.chat.id, text, reply_markup=markup)
         except Exception as e:
             bot.send_message(config.LOGCHANNEL, f'❗️{e}')
@@ -1110,30 +921,34 @@ def default_inline(inline_query):
     wsCache = cacheFile['valve_webapi']
     if wsCache == 'normal':
         try:
-            server_status_text_en, server_status_text_ru = get_server_status()
+            status_text_en, status_text_ru = get_server_status()
+            mm_stats_text_en, mm_stats_text_ru = get_mm_stats()
             devcount_text_en, devcount_text_ru = get_devcount()
             timer_text_en, timer_text_ru = get_timer()
             gameversion_text_en, gameversion_text_ru = get_gameversion()
             try:
                 if inline_query.from_user.language_code in strings.CIS_lang_code:
-                    status_r, dev_r, timer_r, gv_r = server_status_text_ru, devcount_text_ru, timer_text_ru, gameversion_text_ru
-                    title_status, title_dev, title_timer, title_gv = 'Статус', 'Бета-версия', 'Сброс ограничений', 'Версия игры'
+                    status_r, mm_r, dev_r, timer_r, gv_r = status_text_ru, mm_stats_text_ru, devcount_text_ru, timer_text_ru, gameversion_text_ru 
+                    title_status, title_mm, title_dev, title_timer, title_gv = 'Состояние серверов', 'Статистика ММ', 'Бета-версия', 'Сброс ограничений', 'Версия игры'
                     description_status = 'Проверить доступность серверов'
-                    description_dev = 'Показать количество онлайн разработчиков'
+                    description_mm = 'Посмотреть количество онлайн игроков'
+                    description_dev = 'Узнать количество онлайн разработчиков'
                     description_timer = 'Время до сброса ограничений опыта и дропа'
                     description_gv = 'Проверить последнюю версию игры'
                 else:
-                    status_r, dev_r, timer_r, gv_r = server_status_text_en, devcount_text_en, timer_text_en, gameversion_text_en
-                    title_status, title_dev, title_timer, title_gv = 'Status', 'Beta version', 'Drop cap reset', 'Game version'
+                    status_r, mm_r, dev_r, timer_r, gv_r = status_text_en, mm_stats_text_ru, devcount_text_en, timer_text_en, gameversion_text_en
+                    title_status, title_mm, title_dev, title_timer, title_gv = 'Server status', 'MM stats', 'Beta version', 'Drop cap reset', 'Game version'
                     description_status = 'Check the availability of the servers'
+                    description_mm = 'Check the count of online players'
                     description_dev = 'Show the count of in-game developers'
                     description_timer = 'Time left until experience and drop cap reset'
                     description_gv = 'Check the latest game version'
                 r = types.InlineQueryResultArticle('1', title_status, input_message_content = types.InputTextMessageContent(status_r, parse_mode='html'), thumb_url='https://telegra.ph/file/57ba2b279c53d69d72481.jpg', description=description_status)
-                r2 = types.InlineQueryResultArticle('2', title_dev, input_message_content = types.InputTextMessageContent(dev_r, parse_mode='html'), thumb_url='https://telegra.ph/file/24b05cea99de936fd12bf.jpg', description=description_dev)
-                r3 = types.InlineQueryResultArticle('3', title_timer, input_message_content = types.InputTextMessageContent(timer_r), thumb_url='https://telegra.ph/file/6948255408689d2f6a472.jpg', description=description_timer)
-                r4 = types.InlineQueryResultArticle('4', title_gv, input_message_content = types.InputTextMessageContent(gv_r, parse_mode='html'), thumb_url='https://telegra.ph/file/82d8df1e9f5140da70232.jpg', description=description_gv)
-                bot.answer_inline_query(inline_query.id, [r, r2, r3, r4], cache_time=5)
+                r2 = types.InlineQueryResultArticle('2', title_mm, input_message_content = types.InputTextMessageContent(mm_r, parse_mode='html'), thumb_url='https://telegra.ph/file/8b640b85f6d62f8ed2900.jpg', description=description_mm)
+                r3 = types.InlineQueryResultArticle('3', title_dev, input_message_content = types.InputTextMessageContent(dev_r, parse_mode='html'), thumb_url='https://telegra.ph/file/24b05cea99de936fd12bf.jpg', description=description_dev)
+                r4 = types.InlineQueryResultArticle('4', title_timer, input_message_content = types.InputTextMessageContent(timer_r), thumb_url='https://telegra.ph/file/6948255408689d2f6a472.jpg', description=description_timer)
+                r5 = types.InlineQueryResultArticle('5', title_gv, input_message_content = types.InputTextMessageContent(gv_r, parse_mode='html'), thumb_url='https://telegra.ph/file/82d8df1e9f5140da70232.jpg', description=description_gv)
+                bot.answer_inline_query(inline_query.id, [r, r2, r3, r4, r5], cache_time=5)
                 log_inline(inline_query)
             except Exception as e:
                 bot.send_message(config.LOGCHANNEL, f'❗️{e}\n\n↩️ inline_query')
@@ -1862,10 +1677,10 @@ def welcome(message):
     if message.chat.type == 'private':
         if message.from_user.language_code in strings.CIS_lang_code:
             text = strings.cmdStart_ru.format(message.from_user.first_name)
-            markup = markup_ru
+            markup = buttons.markup_ru
         else:
             text = strings.cmdStart_en.format(message.from_user.first_name)
-            markup = markup_en
+            markup = buttons.markup_en
         bot.send_message(message.chat.id, text, reply_markup=markup)
     else:
         try:
@@ -1882,7 +1697,7 @@ def leave_feedback(message):
             text = strings.cmdFeedback_ru 
         else:
             text = strings.cmdFeedback_en
-        bot.send_message(message.chat.id, text, parse_mode='html', reply_markup=markup_del)
+        bot.send_message(message.chat.id, text, parse_mode='html', reply_markup=buttons.markup_del)
         bot.register_next_step_handler(message, get_feedback)
     else:
         try:
@@ -1895,9 +1710,9 @@ def get_feedback(message):
     if message.text == '/cancel':
         log(message)
         if message.from_user.language_code in strings.CIS_lang_code:
-            markup = markup_ru
+            markup = buttons.markup_ru
         else:
-            markup = markup_en
+            markup = buttons.markup_en
         bot.send_message(message.chat.id, '👍', reply_markup=markup)
 
     else:
@@ -1910,10 +1725,10 @@ def get_feedback(message):
 
         if message.from_user.language_code in strings.CIS_lang_code:
             text = 'Отлично! Ваше сообщение отправлено.'
-            markup = markup_ru
+            markup = buttons.markup_ru
         else:
             text = 'Awesome! Your message has been sent.'
-            markup = markup_en
+            markup = buttons.markup_en
 
         bot.send_message(message.chat.id, text, reply_to_message_id=message.message_id,reply_markup=markup)
 
@@ -1924,10 +1739,10 @@ def help(message):
     if message.chat.type == 'private':
         if message.from_user.language_code in strings.CIS_lang_code:
             text = strings.cmdHelp_ru
-            markup = markup_ru
+            markup = buttons.markup_ru
         else:
             text = strings.cmdHelp_en
-            markup = markup_en
+            markup = buttons.markup_en
         bot.send_message(message.chat.id, text, parse_mode='html', reply_markup=markup, disable_web_page_preview=True)
     else:
         try:
@@ -1938,7 +1753,7 @@ def help(message):
 @bot.message_handler(commands=['delkey'])
 def delete_keyboard(message):
     bot.delete_message(message.chat.id, message.message_id)
-    bot.send_message(message.chat.id, '👍', reply_markup=markup_del)
+    bot.send_message(message.chat.id, '👍', reply_markup=buttons.markup_del)
     time.sleep(10)
     bot.delete_message(message.chat.id, message.message_id+1)
 
@@ -1954,12 +1769,23 @@ def answer(message):
         if message.chat.type == 'private':
             bot.send_chat_action(message.chat.id, 'typing')
 
+            data = pd.read_csv(config.USER_DB_FILE_PATH)
+            if not data['UserID'].isin([message.from_user.id]).any():
+                new_data = pd.DataFrame([[message.from_user.first_name, message.from_user.id, message.from_user.language_code]], columns=['Name', 'UserID', 'Language'])
+                pd.concat([data, new_data]).to_csv(config.USER_DB_FILE_PATH, index=False)
+
             if message.text.lower() in strings.status_tags:
                 send_server_status(message)
-            
+
+            elif message.text.lower() in strings.mm_tags:
+                send_mm_stats(message)
+
             elif message.text.lower() in strings.dev_count_tags:
                 send_devcount(message)
     
+            elif message.text.lower() == 'other' or message.text.lower() == 'другое':
+                other(message)
+
             elif message.text.lower() in strings.cap_reset_tags:
                 send_timer(message)
 
@@ -1968,6 +1794,11 @@ def answer(message):
 
             elif message.text.lower() in strings.gun_tags:
                 guns(message)
+
+            elif message.text.lower() in strings.gun_name_list:
+                for gName, gId in zip(strings.gun_name_list, strings.gun_id_list):
+                    if message.text.lower() == gName:
+                        send_gun_info(message, gId)
 
             elif message.text.lower() == 'pistols' or message.text.lower() == 'пистолеты':
                 pistols(message)
@@ -2035,11 +1866,6 @@ def answer(message):
             elif message.text.lower() in strings.hong_kongese_tags:
                 send_dc_hong_kong(message)
 
-            elif message.text.lower() in strings.gun_name_list:
-                for gName, gId in zip(strings.gun_name_list, strings.gun_id_list):
-                    if message.text.lower() == gName:
-                        send_gun_info(message, gId)
-
             elif message.text == '⏪ Back' or message.text == '⏪ Назад':
                 back(message)
 
@@ -2048,15 +1874,17 @@ def answer(message):
                 
             elif message.text == '⏪ Bасk' or message.text == '⏪ Haзад':
                 guns(message)
-
+                
+            elif message.text == '⏪ Вack' or message.text == '⏪ Haзaд':
+                other(message)
 
             else:
                 if message.from_user.language_code in strings.CIS_lang_code:
                     text = strings.unknownRequest_ru
-                    markup = markup_ru
+                    markup = buttons.markup_ru
                 else: 
                     text = strings.unknownRequest_en
-                    markup = markup_en
+                    markup = buttons.markup_en
 
                 bot.send_message(message.chat.id, text, reply_markup=markup)
                 

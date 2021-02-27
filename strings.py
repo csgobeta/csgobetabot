@@ -12,15 +12,16 @@ cmdFeedback_ru = '💬 Пожалуйста, расскажите о Ваших 
 '''Text for Status'''
 status_tags = ['server status', 'статус серверов', '/status']
 # English
-statusNormal_en = '<a href="{}">⁠</a>{} Server status:\n\n• Game coordinator: {}\n• Server connection: {}\n• Matchmaking scheduler: {}\n• Player inventories: {}\n\n'
+status_en = '⁠{} Server status:\n\n• Game coordinator: {}\n• Server connection: {}\n• Matchmaking scheduler: {}\n• Player inventories: {}\n\nUpdated on: {} UTC'
 # Russian
-statusNormal_ru = '<a href="{}">⁠</a>{} Состояние серверов:\n\n• Игровой координатор: {}\n• Подключение к серверам: {}\n• Планировщик матчмейкинга: {}\n• Инвентари игроков: {}\n\n'
+status_ru = '{} Состояние серверов:\n\n• Игровой координатор: {}\n• Подключение к серверам: {}\n• Планировщик матчмейкинга: {}\n• Инвентари игроков: {}\n\nОбновлено: {} UTC'
 
 '''Text for Matchmaking'''
+mm_tags = ['mm stats', 'статистика мм', '/mm']
 # English
-mmNormal_en = '📊 Matchmaking statistics:\n\n• Online servers: {:,}\n• Online players: {:,}\n• Active players: {:,}\n• Searching players: {:,}\n• Average search time: {}s\n\n'
+mm_en = '<a href="{}">‎</a>📊 Matchmaking statistics:\n\n• Online servers: {:,}\n• Online players: {:,}\n• Active players: {:,}\n• Searching players: {:,}\n• Average search time: {}s\n\n'
 # Russian
-mmNormal_ru = '📊 Статистика матчмейкинга:\n\n• Онлайн серверов: {:,}\n• Онлайн игроков: {:,}\n• Активных игроков: {:,}\n• Игроков в поиске: {:,}\n• Среднее время поиска: {} с.\n\n'
+mm_ru = '<a href="{}">‎</a>⁠📊 Статистика матчмейкинга:\n\n• Онлайн серверов: {:,}\n• Онлайн игроков: {:,}\n• Активных игроков: {:,}\n• Игроков в поиске: {:,}\n• Среднее время поиска: {} с.\n\n'
 
 '''Text for Additional info'''
 # English
