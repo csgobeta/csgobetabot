@@ -32,7 +32,7 @@ def coordinator_status():
         if game_coordinator != cacheFile['game_coordinator']:
             file_manager.updateJson(config.CACHE_FILE_PATH, game_coordinator, cache_key_list[2])
 
-    client.login(username=config.STEAM_USERNAME, password=config.STEAM_PASS)
+    client.login(username=config.STEAM_USERNAME_ALT, password=config.STEAM_PASS_ALT)
     client.run_forever()
 
 if __name__ == '__main__':
