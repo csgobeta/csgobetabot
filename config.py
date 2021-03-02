@@ -19,6 +19,8 @@ LOGCHANNEL = '' # Telegram Log Channel ID
 STEAM_API_KEY = '' # from https://steamcommunity.com/dev/apikey
 STEAM_USERNAME = ''
 STEAM_PASS = ''
+STEAM_USERNAME_ALT = ''
+STEAM_PASS_ALT = ''
 
 TWITTER_API_KEY = '' # https://developer.twitter.com/en/apply-for-access
 TWITTER_API_KEY_S = ''
