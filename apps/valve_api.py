@@ -34,9 +34,9 @@ class ValveServersAPI:
 
             return webapi_status, sessionsLogon, steam_community, scheduler, timestamp, online_servers, active_players, search_seconds_avg, searching_players, datacenters
         except:
-            webapi_status = scheduler = sessionsLogon = steam_community = 'N/A'
+            webapi_status = scheduler = sessionsLogon = steam_community = datacenters = 'N/A'
             timestamp = online_servers = active_players = search_seconds_avg = searching_players = 0
-            return webapi_status, sessionsLogon, steam_community, scheduler, timestamp, online_servers, active_players, search_seconds_avg, searching_players
+            return webapi_status, sessionsLogon, steam_community, scheduler, timestamp, online_servers, active_players, search_seconds_avg, searching_players, datacenters
             
     def get_players(self):
         try:
