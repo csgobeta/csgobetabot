@@ -5,13 +5,13 @@
     "valve_webapi": "",
     "sessionsLogon": "",
     "steam_community": "",
-    "online_player_count": "",
-    "server_timestamp": "",
     "scheduler": "",
+    "server_timestamp": "",
     "online_server_count": "",
     "active_player_count": "",
     "search_seconds_avg": "",
     "searching_players": "",
+    "online_player_count": "",
     "dev_player_count": "",
     "dev_all_time_peak": 5,
     "peak_24_hours": "",
@@ -22,5 +22,7 @@
     "patch_version": "",
     "version_timestamp": "",
     "graph_url": "",
-    "graph_url2": ""
+    "graph_url2": "",
+    "datacenters": {
+    }
 }
