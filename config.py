@@ -30,8 +30,6 @@ CSGO_STEAM_PROFILE_ID = '76561198082857351'
 CSGO_TWITTER_ID = '353780675'
 
 CACHE_FILE_PATH = 'data/json/cache.json'
-SS_CACHE_FILE_PATH = 'data/json/ss_cache.json'
-GV_CACHE_FILE_PATH = 'data/json/gv_cache.json'
 GUNS_CACHE_FILE_PATH = 'data/json/guns_db.json'
 
 PLAYER_CHART_FILE_PATH = 'data/csv/player_chart.csv'
