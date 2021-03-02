@@ -19,9 +19,9 @@ status_ru = '{} Состояние серверов:\n\n• Игровой ко�
 '''Text for Matchmaking'''
 mm_tags = ['mm stats', 'статистика мм', '/mm']
 # English
-mm_en = '<a href="{}">‎</a>📊 Matchmaking statistics:\n\n• Online servers: {:,}\n• Online players: {:,}\n• Active players: {:,}\n• Searching players: {:,}\n• Average search time: {}s\n\n'
+mm_en = '<a href="{}"></a>📊 Matchmaking statistics:\n\n• Online servers: {:,}\n• Online players: {:,}\n• Active players: {:,}\n• Searching players: {:,}\n• Average search time: {}s\n\n'
 # Russian
-mm_ru = '<a href="{}">‎</a>⁠📊 Статистика матчмейкинга:\n\n• Онлайн серверов: {:,}\n• Онлайн игроков: {:,}\n• Активных игроков: {:,}\n• Игроков в поиске: {:,}\n• Среднее время поиска: {} с.\n\n'
+mm_ru = '<a href="{}"></a>⁠📊 Статистика матчмейкинга:\n\n• Онлайн серверов: {:,}\n• Онлайн игроков: {:,}\n• Активных игроков: {:,}\n• Игроков в поиске: {:,}\n• Среднее время поиска: {} с.\n\n'
 
 '''Text for Additional info'''
 # English
@@ -105,6 +105,7 @@ notiNewDevPeak_ru = '👁 Зарегистрирован новый рекорд
 notiNewTweet_ru = '💬 Официальный аккаунт CS:GO в Twitter:\n\n«{}».\n\n🔗 twitter.com/csgo/status/{}'
 
 '''Text for DC'''
+dc_tags = ['data centers', 'дата-центры', '/dc']
 # English
 dc_africa_en = '🇿🇦 South Africaʼs DC status:\n\n• Location: Johannesburg\n• Load: {}\n• Capacity: {}\n\nUpdated on: {} UTC'
 dc_australia_en = '🇦🇺 Australiaʼs DC status:\n\n• Location: Sydney\n• Load: {}\n• Capacity: {}\n\nUpdated on: {} UTC'
@@ -135,11 +136,6 @@ dc_china_ru = '🇨🇳 Состояние дата-центров Китая: \
 dc_emirates_ru = '🇦🇪 Состояние дата-центра Эмиратов:\n\n• Расположение: Дубай\n• Загруженность: {}\n• Доступность: {}\n\nОбновлено: {} UTC'
 dc_singapore_ru = '🇸🇬 Состояние дата-центра Сингапура:\n\n• Загруженность: {}\n• Доступность: {}\n\nОбновлено: {} UTC'
 dc_hong_kong_ru = '🇭🇰 Состояние дата-центра Гонконга:\n\n• Загруженность: {}\n• Доступность: {}\n\nОбновлено: {} UTC'
-
-
-'''Language codes'''
-CIS_lang_code = ['ru', 'uk', 'be', 'uz', 'kk']
-
 '''Tags for inline DC'''
 # General
 dc_tags = ['dc', 'data center', 'data centers', 
@@ -154,59 +150,90 @@ asian_tags = ['as', 'asia',
 american_tags = ['na', 'north america', 'usa', 'united states', 
                     'северная америка', 'сша', 'соединённые штаты', 
                     '/usa']
-australian_tags = ['au', 'australia', 'sydney', 
-                    'австралия', 'сидней', 
-                    '/australia']
-african_tags = ['za', 'africa', 'south africa', 'johannesburg', 
-                    'африка', 'южная африка', 'йоханнесбург']
-
-# Detailed
-south_american_tags = ['sa', 'south america', 'brazil', 'sao paolo', 'chile', 'santiago', 'peru', 'lima', 'argentina', 'buenos aires',
-                    'южная америка', 'бразилия', 'сан-паулу', 'сан паулу', 'чили', 'сантьяго', 'перу', 'лима', 'аргентина', 'буэнос-айрес', 'буэнос айрес',
-                    '/south_africa']
-north_european_tags = ['north europe', 'sweden', 'stockholm', 
+'''Tags for inline DC'''
+# General
+australian_tags = ['dc', 'data center', 'data centers',
+                'дц', 'дата центер', 'дата центры', 'дата-центер', 'дата-центры',
+                'au', 'australia', 'sydney',
+                'австралия', 'сидней']
+african_tags = ['dc', 'data center', 'data centers',
+                'дц', 'дата центер', 'дата центры', 'дата-центер', 'дата-центры',
+                'za', 'africa', 'south africa', 'johannesburg',
+                'африка', 'южная африка', 'йоханнесбург']
+south_american_tags = ['dc', 'data center', 'data centers',
+                    'дц', 'дата центер', 'дата центры', 'дата-центер', 'дата-центры',
+                    'sa', 'south america', 'brazil', 'sao paolo', 'chile', 'santiago', 'peru', 'lima', 'argentina', 'buenos aires',
+                    'южная америка', 'бразилия', 'сан-паулу', 'сан паулу', 'чили', 'сантьяго', 'перу', 'лима', 'аргентина', 'буэнос-айрес', 'буэнос айрес']
+north_european_tags = ['dc', 'data center', 'data centers',
+                    'дц', 'дата центер', 'дата центры', 'дата-центер', 'дата-центры',
+                    'eu', 'europe',
+                    'европа', 
+                    'north europe', 'sweden', 'stockholm', 
                     'северная европа', 'швеция', 'стокгольм', 
-                    'north', 'север', '/eu_north']
-east_european_tags = ['east europe', 'austria', 'vienna', 'poland', 'warsaw', 
+                    'north', 'север']
+east_european_tags = ['dc', 'data center', 'data centers', 
+                    'дц', 'дата центер', 'дата центры', 'дата-центер', 
+                    'дата-центры', 'eu', 'europe', 'европа', '/europe', 
+                    'east europe', 'austria', 'vienna', 'poland', 'warsaw', 
                     'восточная европа', 'австрия', 'вена', 'польша', 'варшава',
-                    'east', 'восток', '/eu_east']
-west_european_tags = ['west europe', 'germany', 'frankfurt', 'spain', 'madrid', 
+                    'east', 'восток']
+west_european_tags = ['dc', 'data center', 'data centers', 
+                    'дц', 'дата центер', 'дата центры', 'дата-центер', 
+                    'дата-центры','/dc', 'eu', 'europe', 'европа', '/europe',
+                    'west europe', 'germany', 'frankfurt', 'spain', 'madrid', 
                     'западная европа', 'германия', 'франкфурт', 'испания', 'мадрид', 
                     'west', 'запад', '/eu_west']
-northern_usa_tags = ['northcentral', 'northeast', 'northwest', 'chicago', 'sterling', 'moses lake', 
+northern_usa_tags = ['na', 'north america', 'usa', 'united states', 
+                    'северная америка', 'сша', 'соединённые штаты', 
+                    '/usa', 'dc', 'data center', 'data centers', 
+                    'дц', 'дата центер', 'дата центры', 'дата-центер', 
+                    'дата-центры','/dc', 'northcentral', 'northeast', 'northwest', 'chicago', 'sterling', 'moses lake', 
                     'северо-центр', 'северо-восток', 'северо-запад', 'чикаго', 'стерлинг', 'мозес лейк', 
                     'nоrth', 'сeвер', '/usa_north']
-southern_usa_tags = ['southeast', 'southwest', 'los angeles', 'atalanta', 
+southern_usa_tags = ['na', 'north america', 'usa', 'united states', 
+                    'северная америка', 'сша', 'соединённые штаты', 
+                    '/usa', 'dc', 'data center', 'data centers', 
+                    'дц', 'дата центер', 'дата центры', 'дата-центер', 
+                    'дата-центры','/dc', 'southeast', 'southwest', 'los angeles', 'atalanta', 
                     'юго-запад', 'юго-восток', 'лос-анджелес', 'лос анджелес', 'атланта', 
                     'south', 'юг', '/usa_south']
-chinese_tags = ['china', 'shanghai', 'tianjin', 'guangzhou', 
+chinese_tags = ['as', 'asia', 'азия', '/asia', 'dc', 'data center', 'data centers', 
+                    'дц', 'дата центер', 'дата центры', 'дата-центер', 
+                    'дата-центры','/dc', 'china', 'shanghai', 'tianjin', 'guangzhou', 
                     'китай', 'шанхай', 'тяньцзинь', 'гуанчжоу',
                     '/china']
-emirati_tags = ['emirates', 'dubai', 
+emirati_tags = ['as', 'asia', 'азия', '/asia', 'dc', 'data center', 'data centers', 
+                    'дц', 'дата центер', 'дата центры', 'дата-центер', 
+                    'дата-центры','/dc', 'emirates', 'dubai', 
                     'эмираты', 'дубай',
                     '/emirates']
-hong_kongese_tags = ['hong kong', 
+hong_kongese_tags = ['as', 'asia', 'азия', '/asia', 'dc', 'data center', 'data centers', 
+                    'дц', 'дата центер', 'дата центры', 'дата-центер', 
+                    'дата-центры','/dc', 'hong kong', 
                     'гонконг',
                     '/hong_kong']
-indian_tags = ['india', 'mumbai', 'chennai', 
+indian_tags = ['as', 'asia', 'азия', '/asia', 'dc', 'data center', 'data centers', 
+                    'дц', 'дата центер', 'дата центры', 'дата-центер', 
+                    'дата-центры','/dc', 'india', 'mumbai', 'chennai', 
                     'индия', 'мумбаи',  'ченнай',
                     '/india']
-japanese_tags = ['japan', 'tokyo', 
+japanese_tags = ['as', 'asia', 'азия', '/asia', 'dc', 'data center', 'data centers', 
+                    'дц', 'дата центер', 'дата центры', 'дата-центер', 
+                    'дата-центры','/dc', 'japan', 'tokyo', 
                     'япония', 'токио',
                     '/japan']
-singaporean_tags = ['singapore', 
+singaporean_tags = ['as', 'asia', 'азия', '/asia', 'dc', 'data center', 'data centers', 
+                    'дц', 'дата центер', 'дата центры', 'дата-центер', 
+                    'дата-центры','/dc', 'singapore', 
                     'сингапур',
                     '/singapore']
 
 """Text for Archive data"""
 #Russian
 gun_data_ru = '🗂 Детальная информация про {}:\n\n• Происхождение: {}\n• Стоимость: {}$\n• Обойма: {}/{}\n• Скорострельность: {} в/м.\n• Награда за убийство: {}$\n• Мобильность: {} ед.\n\n• Бронепробиваемость: {}%\n• Дальность поражения (стоя / сидя): {} / {} м.\n\n• Время, за которое достаётся оружие: {} с.\n• Перезарядка: {} / {} с.\n(готовность обоймы / готовность к стрельбе)\n\n💢 Информация об уроне:\n(противник в броне / без брони)\n\n• Голова: {} / {}\n• Грудь и руки: {} / {}\n• Живот: {} / {}\n• Ноги: {} / {}'
-origin_list_ru = ['Германия', 'Австрия', 'Италия', 'Швейцария', 'Чехия', 'Бельгия', 'Швеция', 'Израль',
-                'Соединённые Штаты', 'Россия', 'Франция', 'Соединённое Королевство', 'Южная Африка']
 #English
 gun_data_en = '🗂 Detailed information about {}:\n\n• Origin: {}\n• Cost: ${}\n• Clip size: {}/{}\n• Fire rate: {} RPM\n• Kill reward: ${}\n• Movement speed: {} units\n\n• Armor penetration: {}%\n• Range accuracy (stand / crouch): {}m / {}m\n\n• Draw time: {}s\n• Reload time: {}s / {}s\n(clip ready / fire ready)\n\n💢 Damage information:\n(enemy with armor / without armor)\n\n• Head: {} / {}\n• Chest and arms: {} / {}\n• Stomach: {} / {}\n• Legs: {} / {}'
-origin_list_en = ['Germany', 'Austria', 'Italy', 'Switzerland', 'Czech Republic', 'Belgium', 'Sweden', 'Israel',
-                'United States', 'Russia', 'France', 'United Kingdom', 'South Africa']
+
 ###
 gun_name_list = ['usp-s', 'p2000', 'glock-18', 'dual berettas', 'p250', 'cz75-auto', 'five-seven', 'tec-9', 'desert eagle', 'r8 revolver',
                 'mp9', 'mac-10', 'mp7', 'mp5-sd', 'ump-45','p90', 'pp-bizon', 'famas', 'galil ar', 'm4a4', 'm4a1-s', 'ak-47', 'aug',

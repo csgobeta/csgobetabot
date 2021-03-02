@@ -6,71 +6,75 @@ from datetime import datetime
 import time
 
 import config
-import strings
+from plugins import strings
 
 from apps import file_manager
 from apps.valve_api import ValveServersAPI
-from apps.scrapper import PeakOnline, Monthly, CSGOGameCoordinator, GameVersion
+from apps.scrapper import PeakOnline, Monthly, GameVersion
 
 api = ValveServersAPI()
 peak_count = PeakOnline()
 month_unique = Monthly()
-gc = CSGOGameCoordinator()
 gv = GameVersion()
 
 def info_updater():
     while True:
         try:
+            print('\nNew session started..\n')
             cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
 
             cache_key_list = []
             cache_value_list = []
+            value_list = []
+            playerCount = api.get_players()
+            devCount = api.get_devs()
+            overallData = api.get_status()
             for keys, values in cacheFile.items():
                 cache_key_list.append(keys)
                 cache_value_list.append(values)
-                
-            value_list = [ cacheFile['public_build_ID'], cacheFile['dpr_build_ID'], gc.get_status(), api.check_status(), api.get_status()[1], api.get_status()[7], api.get_players(), api.get_status()[4],
-            api.get_status()[0], api.get_status()[2], api.get_status()[3], api.get_status()[5], api.get_status()[6], api.get_devs(),
-            cacheFile['dev_all_time_peak'], peak_count.get_peak(), cacheFile['peak_all_time'], month_unique.get_unique(),
-            gv.get_gameVer()[0], gv.get_gameVer()[1], gv.get_gameVer()[2], gv.get_gameVer()[3], cacheFile['graph_url'], cacheFile['graph_url2']]
+
+            for data in [cacheFile['public_build_ID'], cacheFile['dpr_build_ID'], cacheFile['game_coordinator']]:
+                value_list.append(data)
+            for data in overallData[0:9]:
+                value_list.append(data)
+            for data in [playerCount, devCount, cacheFile['dev_all_time_peak'], peak_count.get_peak(), cacheFile['peak_all_time'], month_unique.get_unique()]:
+                value_list.append(data)
+            for data in gv.get_gameVer():
+                value_list.append(data)
+            for data in [cacheFile['graph_url'], cacheFile['graph_url2']]:
+                value_list.append(data)
+            for data in overallData[9:10]:
+                value_list.append(data)
 
             for values, cache_values, cache_keys in zip(value_list, cache_value_list, cache_key_list):
                 if values != cache_values:
                     file_manager.updateJson(config.CACHE_FILE_PATH, values, cache_keys)
                     
-            if api.get_players() > cacheFile['peak_all_time']:
-                file_manager.updateJson(config.CACHE_FILE_PATH, api.get_players(), cache_key_list[16])
-                send_alert_players(api.get_players())
+            if playerCount > cacheFile['peak_all_time']:
+                file_manager.updateJson(config.CACHE_FILE_PATH, playerCount, cache_key_list[16])
+                send_alert(playerCount)
 
-            if api.get_devs() > cacheFile['dev_all_time_peak']:
-                file_manager.updateJson(config.CACHE_FILE_PATH, api.get_devs(), cache_key_list[14])
-                send_alert(api.get_devs())
+            if devCount > cacheFile['dev_all_time_peak']:
+                file_manager.updateJson(config.CACHE_FILE_PATH, devCount, cache_key_list[14])
+                send_alert(devCount)
 
             time.sleep(40)
 
         except Exception as e:
             print(f' - Error:\n{e}\n\n\n')
             
-def send_alert_players(newVal):
+def send_alert(newVal):
     bot = telebot.TeleBot(config.BOT_TOKEN)
-    text = strings.notiNewPlayerPeak_ru.format(newVal)
+    if newVal < 100:
+        text = strings.notiNewDevPeak_ru.format(newVal)
+    else:
+        text = strings.notiNewPlayerPeak_ru.format(newVal)
     if not config.TEST_MODE:
         chat_list = [config.CSGOBETACHAT, config.AQ]
     else:
         chat_list = [config.OWNER]
     for chatID in chat_list:
         bot.send_message(chatID, text, parse_mode='Markdown')
-            
-def send_alert_devs(newVal):
-    bot = telebot.TeleBot(config.BOT_TOKEN)
-    text = strings.notiNewDevPeak_ru.format(newVal)
-    if not config.TEST_MODE:
-        chat_list = [config.CSGOBETACHAT, config.AQ]
-    else:
-        chat_list = [config.OWNER]
-    for chatID in chat_list:
-        bot.send_message(chatID, text, parse_mode='Markdown')
-
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(message)s', datefmt='%Y-%m-%d %H:%M:%S')

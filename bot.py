@@ -2,29 +2,32 @@
 
 import time
 from datetime import date, datetime, timedelta
+
 import pytz
 from babel.dates import format_datetime
 
 import pandas as pd
+
 import logging
+import config
+
 import telebot
 from telebot import types
+import random
 
-import config
-import strings
-
-from apps.timer import Reset
-from apps.valve_api import ValveServersDataCentersAPI
 from apps import file_manager
-from addons import buttons
+from apps.timer import Reset
+
+from plugins import buttons
+from plugins import strings
 
 bot = telebot.TeleBot(config.BOT_TOKEN)
 telebot.logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
 
 tz = pytz.timezone('UTC')
 tz_valve = pytz.timezone('America/Los_Angeles')
-api_dc = ValveServersDataCentersAPI()
 timer_drop = Reset()
+CIS_lang_codes = ['ru', 'uk', 'be', 'uz', 'kk']
 
 
 ### Log setup ###
@@ -123,7 +126,7 @@ def send_server_status(message):
     if wsCache == 'normal':
         try:
             status_text_en, status_text_ru = get_server_status()
-            if message.from_user.language_code in strings.CIS_lang_code:
+            if message.from_user.language_code in CIS_lang_codes:
                 text = status_text_ru
                 markup = buttons.markup_ru
             else:
@@ -145,7 +148,7 @@ def send_mm_stats(message):
     if wsCache == 'normal':
         try:
             mm_stats_text_en, mm_stats_text_ru = get_mm_stats()
-            if message.from_user.language_code in strings.CIS_lang_code:
+            if message.from_user.language_code in CIS_lang_codes:
                 text = mm_stats_text_ru
                 markup = buttons.markup_ru
             else:
@@ -167,7 +170,7 @@ def send_devcount(message):
     if wsCache == 'normal':
         try:
             devcount_text_en, devcount_text_ru = get_devcount()
-            if message.from_user.language_code in strings.CIS_lang_code:
+            if message.from_user.language_code in CIS_lang_codes:
                     text = devcount_text_ru
                     markup = buttons.markup_ru
             else:    
@@ -186,7 +189,7 @@ def send_timer(message):
     '''Send drop cap reset time'''
     try:
         timer_text_en, timer_text_ru = get_timer()
-        if message.from_user.language_code in strings.CIS_lang_code:
+        if message.from_user.language_code in CIS_lang_codes:
                 text = timer_text_ru
                 markup = buttons.markup_other_ru
         else:
@@ -201,7 +204,7 @@ def send_gameversion(message):
     '''Send the version of the game'''
     try:
         gameversion_text_en, gameversion_text_ru = get_gameversion()
-        if message.from_user.language_code in strings.CIS_lang_code:
+        if message.from_user.language_code in CIS_lang_codes:
                 text = gameversion_text_ru
                 markup = buttons.markup_other_ru
         else:
@@ -214,7 +217,7 @@ def send_gameversion(message):
 
 def send_about_problem_valve_api(message):
     '''In case the bot can't get Valve's API'''
-    if message.from_user.language_code in strings.CIS_lang_code:
+    if message.from_user.language_code in CIS_lang_codes:
         text = strings.wrongAPI_ru
         markup = buttons.markup_ru       
     else:
@@ -224,7 +227,7 @@ def send_about_problem_valve_api(message):
 
 def send_about_maintenance(message):
     '''In case weekly server update (on Tuesdays)'''
-    if message.from_user.language_code in strings.CIS_lang_code:
+    if message.from_user.language_code in CIS_lang_codes:
         text = strings.maintenance_ru
         markup = buttons.markup_ru       
     else:
@@ -234,7 +237,7 @@ def send_about_maintenance(message):
 
 def send_about_problem_valve_api_inline(inline_query):
     try:
-        if inline_query.from_user.language_code in strings.CIS_lang_code:
+        if inline_query.from_user.language_code in CIS_lang_codes:
             wrong_r = strings.wrongAPI_ru
             title_un = 'Нет данных'
             description_un = 'Не получилось связаться с API Valve'
@@ -250,7 +253,7 @@ def send_about_problem_valve_api_inline(inline_query):
 
 def send_about_maintenance_inline(inline_query):
     try:
-        if inline_query.from_user.language_code in strings.CIS_lang_code:
+        if inline_query.from_user.language_code in CIS_lang_codes:
             maintenance_r = strings.maintenance_ru
             title_maintenance = 'Нет данных'
             maintenance = 'Еженедельное тех. обслуживание.'
@@ -266,7 +269,7 @@ def send_about_maintenance_inline(inline_query):
 
 def send_about_problem_bot(message):
     '''If anything goes wrong'''
-    if message.from_user.language_code in strings.CIS_lang_code:
+    if message.from_user.language_code in CIS_lang_codes:
         text = strings.wrongBOT_ru
         markup = buttons.markup_ru
     else:
@@ -275,7 +278,7 @@ def send_about_problem_bot(message):
     bot.send_message(message.chat.id, text, reply_markup=markup)
 
 def other(message):
-    if message.from_user.language_code in strings.CIS_lang_code:
+    if message.from_user.language_code in CIS_lang_codes:
         text = '📂 Выберите одну из дополнительных функций:'
         markup = buttons.markup_other_ru
     else:
@@ -303,8 +306,8 @@ def time_converter():
 
 def translate(data):
     cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
-    en_list = ['normal', 'surge', 'delayed', 'idle', 'offline', 'N/A', 'critical', 'internal server error']
-    ru_list = ['в норме', 'помехи', 'задержка', 'бездействие', 'офлайн', 'N/A', 'критическое', 'внутренняя ошибка сервера']
+    en_list = ['low', 'medium', 'high', 'full', 'normal', 'surge', 'delayed', 'idle', 'offline', 'N/A', 'critical', 'internal server error']
+    ru_list = ['низкая', 'средняя', 'высокая', 'полная', 'в норме', 'помехи', 'задержка', 'бездействие', 'офлайн', 'N/A', 'критическое', 'внутренняя ошибка сервера']
     for en, ru in zip(en_list, ru_list):
         if data in en:
             data_ru = ru
@@ -330,9 +333,13 @@ def get_gun_info(gun_id):
     fire_rate, kill_reward, movement_speed = value_list[6], value_list[10], value_list[8]
     armor_penetration, accurate_range_stand, accurate_range_crouch = value_list[9], value_list[11], value_list[12]
     draw_time, reload_clip_ready, reload_fire_ready = value_list[13], value_list[14], value_list[15]
+    origin_list_ru = ['Германия', 'Австрия', 'Италия', 'Швейцария', 'Чехия', 'Бельгия', 'Швеция', 'Израль',
+                'Соединённые Штаты', 'Россия', 'Франция', 'Соединённое Королевство', 'Южная Африка']
+    origin_list_en = ['Germany', 'Austria', 'Italy', 'Switzerland', 'Czech Republic', 'Belgium', 'Sweden', 'Israel',
+                'United States', 'Russia', 'France', 'United Kingdom', 'South Africa']
     unarmored_damage_head, unarmored_damage_chest_and_arm, unarmored_damage_stomach, unarmored_damage_leg = value_list[16], value_list[17], value_list[18], value_list[19]
     armored_damage_head, armored_damage_chest_and_arm, armored_damage_stomach, armored_damage_leg = value_list[20], value_list[21], value_list[22], value_list[23]
-    for en, ru in zip(strings.origin_list_en, strings.origin_list_ru):
+    for en, ru in zip(origin_list_en, origin_list_ru):
         if origin in en:
             origin_ru = ru
     gun_data_text_en = strings.gun_data_en.format(name, origin, price, clip_size, reserve_ammo, fire_rate, kill_reward, movement_speed,
@@ -349,7 +356,7 @@ def send_gun_info(message, gun_id):
     '''Send archived data about guns'''
     try:
         gun_data_text_en, gun_data_text_ru = get_gun_info(gun_id)
-        if message.from_user.language_code in strings.CIS_lang_code:
+        if message.from_user.language_code in CIS_lang_codes:
                 text = gun_data_text_ru
                 markup = buttons.markup_guns_ru
         else:
@@ -362,7 +369,7 @@ def send_gun_info(message, gun_id):
 
 def guns(message):
     try:
-        if message.from_user.language_code in strings.CIS_lang_code:
+        if message.from_user.language_code in CIS_lang_codes:
             text = '#️⃣ Выберите категорию, которая Вас интересует:'
             markup = buttons.markup_guns_ru
         else:
@@ -375,7 +382,7 @@ def guns(message):
 
 def pistols(message):
     try:
-        if message.from_user.language_code in strings.CIS_lang_code:
+        if message.from_user.language_code in CIS_lang_codes:
             text = '🔫 Выберите пистолет..'
             markup = buttons.markup_pistols_ru
         else:
@@ -388,7 +395,7 @@ def pistols(message):
 
 def smgs(message):
     try:
-        if message.from_user.language_code in strings.CIS_lang_code:
+        if message.from_user.language_code in CIS_lang_codes:
             text = '🔫 Выберите пистолет-пулемёт..'
             markup = buttons.markup_smgs_ru
         else:
@@ -401,7 +408,7 @@ def smgs(message):
 
 def rifles(message):
     try:
-        if message.from_user.language_code in strings.CIS_lang_code:
+        if message.from_user.language_code in CIS_lang_codes:
             text = '🔫 Выберите винтовку..'
             markup = buttons.markup_rifles_ru
         else:
@@ -414,7 +421,7 @@ def rifles(message):
 
 def heavy(message):
     try:
-        if message.from_user.language_code in strings.CIS_lang_code:
+        if message.from_user.language_code in CIS_lang_codes:
             text = '🔫 Выберите тяжёлое оружие..'
             markup = buttons.markup_heavy_ru
         else:
@@ -434,7 +441,7 @@ def dc(message):
     wsCache = cacheFile['valve_webapi']
     if wsCache == 'normal':
         try:
-            if message.from_user.language_code in strings.CIS_lang_code:
+            if message.from_user.language_code in CIS_lang_codes:
                 text = '📶 Выберите регион, который Вам интересен, чтобы получить информацию о дата-центрах:'
                 markup = buttons.markup_DC_ru
             else:
@@ -450,7 +457,7 @@ def dc(message):
         send_about_problem_valve_api(message)
 
 def back(message):
-    if message.from_user.language_code in strings.CIS_lang_code:
+    if message.from_user.language_code in CIS_lang_codes:
         markup = buttons.markup_ru
     else:
         markup = buttons.markup_en
@@ -460,7 +467,7 @@ def dc_europe(message):
     cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
     wsCache = cacheFile['valve_webapi']
     if wsCache == 'normal':
-        if message.from_user.language_code in strings.CIS_lang_code:
+        if message.from_user.language_code in CIS_lang_codes:
             text = '📍 Укажите регион...'
             markup = buttons.markup_DC_EU_ru            
         else:
@@ -476,7 +483,7 @@ def dc_usa(message):
     cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
     wsCache = cacheFile['valve_webapi']
     if wsCache == 'normal':
-        if message.from_user.language_code in strings.CIS_lang_code:
+        if message.from_user.language_code in CIS_lang_codes:
             text = '📍 Укажите регион...'
             markup = buttons.markup_DC_USA_ru
         else:
@@ -492,7 +499,7 @@ def dc_asia(message):
     cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
     wsCache = cacheFile['valve_webapi']
     if wsCache == 'normal':
-        if message.from_user.language_code in strings.CIS_lang_code:
+        if message.from_user.language_code in CIS_lang_codes:
             text = '📍 Укажите страну...'
             markup = buttons.markup_DC_Asia_ru
         else:
@@ -508,7 +515,15 @@ def dc_asia(message):
 
 def get_dc_africa():
     tsCache, tsRCache = time_converter()[0], time_converter()[1]
-    capacity, load, capacity_ru, load_ru = api_dc.africa_South()     
+    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
+    africa_dc = cacheFile['datacenters']['South Africa']
+    capacity, load = africa_dc['capacity'], africa_dc['load']
+    array = [capacity, load]
+    array_ru = []
+    for data in array:
+        data_ru = translate(data)
+        array_ru.append(data_ru)
+    capacity_ru, load_ru = array_ru[0], array_ru[1]
     africa_text_ru = strings.dc_africa_ru.format(load_ru, capacity_ru, tsRCache)
     africa_text_en = strings.dc_africa_en.format(load, capacity, tsCache)           
     return africa_text_en, africa_text_ru
@@ -519,7 +534,7 @@ def send_dc_africa(message):
     if wsCache == 'normal':
         try:
             africa_text_en, africa_text_ru = get_dc_africa()
-            if message.from_user.language_code in strings.CIS_lang_code:
+            if message.from_user.language_code in CIS_lang_codes:
                 text = africa_text_ru
                 markup = buttons.markup_DC_ru
             else:
@@ -538,7 +553,15 @@ def send_dc_africa(message):
 
 def get_dc_australia():
     tsCache, tsRCache = time_converter()[0], time_converter()[1]
-    capacity, load, capacity_ru, load_ru = api_dc.australia()     
+    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
+    australia_dc = cacheFile['datacenters']['Australia']
+    capacity, load = australia_dc['capacity'], australia_dc['load']
+    array = [capacity, load]
+    array_ru = []
+    for data in array:
+        data_ru = translate(data)
+        array_ru.append(data_ru)
+    capacity_ru, load_ru = array_ru[0], array_ru[1]
     australia_text_ru = strings.dc_australia_ru.format(load_ru, capacity_ru, tsRCache)
     australia_text_en = strings.dc_australia_en.format(load, capacity, tsCache)           
     return australia_text_en, australia_text_ru
@@ -549,7 +572,7 @@ def send_dc_australia(message):
     if wsCache == 'normal':
         try:
             australia_text_en, australia_text_ru = get_dc_australia()
-            if message.from_user.language_code in strings.CIS_lang_code:
+            if message.from_user.language_code in CIS_lang_codes:
                 text = australia_text_ru
                 markup = buttons.markup_DC_ru
             else:
@@ -568,7 +591,15 @@ def send_dc_australia(message):
 
 def get_dc_eu_north():
     tsCache, tsRCache = time_converter()[0], time_converter()[1]
-    capacity, load, capacity_ru, load_ru = api_dc.eu_North()        
+    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
+    sweden_dc = cacheFile['datacenters']['EU North']
+    capacity, load = sweden_dc['capacity'], sweden_dc['load']
+    array = [capacity, load]
+    array_ru = []
+    for data in array:
+        data_ru = translate(data)
+        array_ru.append(data_ru)
+    capacity_ru, load_ru = array_ru[0], array_ru[1]
     eu_north_text_ru = strings.dc_north_eu_ru.format(load_ru, capacity_ru, tsRCache)
     eu_north_text_en = strings.dc_north_eu_en.format(load, capacity, tsCache)
     return eu_north_text_en, eu_north_text_ru
@@ -579,7 +610,7 @@ def send_dc_eu_north(message):
     if wsCache == 'normal':
         try:
             eu_north_text_en, eu_north_text_ru = get_dc_eu_north()
-            if message.from_user.language_code in strings.CIS_lang_code:
+            if message.from_user.language_code in CIS_lang_codes:
                 text = eu_north_text_ru
                 markup = buttons.markup_DC_ru
             else:
@@ -596,7 +627,17 @@ def send_dc_eu_north(message):
 
 def get_dc_eu_west():
     tsCache, tsRCache = time_converter()[0], time_converter()[1]
-    capacity, load, capacity_ru, load_ru, capacity_secondary, load_secondary, capacity_secondary_ru, load_secondary_ru = api_dc.eu_West()
+    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
+    germany_dc = cacheFile['datacenters']['EU West']
+    spain_dc = cacheFile['datacenters']['Spain']
+    capacity, load = germany_dc['capacity'], germany_dc['load']
+    capacity_secondary, load_secondary = spain_dc['capacity'], spain_dc['load']
+    array = [capacity, load, capacity_secondary, load_secondary]
+    array_ru = []
+    for data in array:
+        data_ru = translate(data)
+        array_ru.append(data_ru)
+    capacity_ru, load_ru, capacity_secondary_ru, load_secondary_ru = array_ru[0], array_ru[1], array_ru[2], array_ru[3]
     eu_west_text_ru = strings.dc_west_eu_ru.format(load_ru, capacity_ru, load_secondary_ru, capacity_secondary_ru, tsRCache)
     eu_west_text_en = strings.dc_west_eu_en.format(load, capacity, load_secondary, capacity_secondary, tsCache)
     return eu_west_text_en, eu_west_text_ru
@@ -607,7 +648,7 @@ def send_dc_eu_west(message):
     if wsCache == 'normal':
         try:
             eu_west_text_en, eu_west_text_ru = get_dc_eu_west()
-            if message.from_user.language_code in strings.CIS_lang_code:
+            if message.from_user.language_code in CIS_lang_codes:
                 text = eu_west_text_ru
                 markup = buttons.markup_DC_ru
             else:
@@ -624,7 +665,17 @@ def send_dc_eu_west(message):
 
 def get_dc_eu_east():
     tsCache, tsRCache = time_converter()[0], time_converter()[1]
-    capacity, load, capacity_ru, load_ru, capacity_secondary, load_secondary, capacity_secondary_ru, load_secondary_ru = api_dc.eu_East()
+    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
+    austria_dc = cacheFile['datacenters']['EU East']
+    poland_dc = cacheFile['datacenters']['Poland']
+    capacity, load = austria_dc['capacity'], austria_dc['load']
+    capacity_secondary, load_secondary = poland_dc['capacity'], poland_dc['load']
+    array = [capacity, load, capacity_secondary, load_secondary]
+    array_ru = []
+    for data in array:
+        data_ru = translate(data)
+        array_ru.append(data_ru)
+    capacity_ru, load_ru, capacity_secondary_ru, load_secondary_ru = array_ru[0], array_ru[1], array_ru[2], array_ru[3]
     eu_east_text_ru = strings.dc_east_eu_ru.format(load_ru, capacity_ru, load_secondary_ru, capacity_secondary_ru, tsRCache)
     eu_east_text_en = strings.dc_east_eu_en.format(load, capacity, load_secondary, capacity_secondary, tsCache)
     return eu_east_text_en, eu_east_text_ru
@@ -635,7 +686,7 @@ def send_dc_eu_east(message):
     if wsCache == 'normal':
         try:
             eu_east_text_en, eu_east_text_ru = get_dc_eu_east()
-            if message.from_user.language_code in strings.CIS_lang_code:
+            if message.from_user.language_code in CIS_lang_codes:
                 text = eu_east_text_ru
                 markup = buttons.markup_DC_ru
             else:
@@ -654,7 +705,19 @@ def send_dc_eu_east(message):
 
 def get_dc_usa_north():
     tsCache, tsRCache = time_converter()[0], time_converter()[1]
-    capacity, load, capacity_ru, load_ru, capacity_secondary, load_secondary, capacity_secondary_ru, load_secondary_ru, capacity_tertiary, load_tertiary, capacity_tertiary_ru, load_tertiary_ru = api_dc.usa_North()   
+    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
+    chicago_dc = cacheFile['datacenters']['US Northcentral']
+    sterling_dc = cacheFile['datacenters']['US Northeast']
+    moseslake_dc = cacheFile['datacenters']['US Northwest']
+    capacity, load = chicago_dc['capacity'], chicago_dc['load']
+    capacity_secondary, load_secondary = sterling_dc['capacity'], sterling_dc['load']
+    capacity_tertiary, load_tertiary = moseslake_dc['capacity'], moseslake_dc['load']
+    array = [capacity, load, capacity_secondary, load_secondary, capacity_tertiary, load_tertiary]
+    array_ru = []
+    for data in array:
+        data_ru = translate(data)
+        array_ru.append(data_ru)
+    capacity_ru, load_ru, capacity_secondary_ru, load_secondary_ru, capacity_tertiary_ru, load_tertiary_ru = array_ru[0], array_ru[1], array_ru[2], array_ru[3], array_ru[4], array_ru[5] 
     usa_north_text_ru = strings.dc_north_us_ru.format(load_ru, capacity_ru, load_secondary_ru, capacity_secondary_ru, load_tertiary_ru, capacity_tertiary_ru, tsRCache)
     usa_north_text_en = strings.dc_north_us_en.format(load, capacity, load_secondary, capacity_secondary, load_tertiary, capacity_tertiary, tsCache)
     return usa_north_text_en, usa_north_text_ru
@@ -665,7 +728,7 @@ def send_dc_usa_north(message):
     if wsCache == 'normal':
         try:
             usa_north_text_en, usa_north_text_ru = get_dc_usa_north()
-            if message.from_user.language_code in strings.CIS_lang_code:        
+            if message.from_user.language_code in CIS_lang_codes:        
                 text = usa_north_text_ru
                 markup = buttons.markup_DC_ru
             else:
@@ -682,7 +745,17 @@ def send_dc_usa_north(message):
 
 def get_dc_usa_south():
     tsCache, tsRCache = time_converter()[0], time_converter()[1]
-    capacity, load, capacity_ru, load_ru, capacity_secondary, load_secondary, capacity_secondary_ru, load_secondary_ru = api_dc.usa_South()      
+    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
+    losangeles_dc = cacheFile['datacenters']['US Southwest']
+    atlanta_dc = cacheFile['datacenters']['US Southeast']
+    capacity, load = losangeles_dc['capacity'], losangeles_dc['load']
+    capacity_secondary, load_secondary = atlanta_dc['capacity'], atlanta_dc['load']
+    array = [capacity, load, capacity_secondary, load_secondary]
+    array_ru = []
+    for data in array:
+        data_ru = translate(data)
+        array_ru.append(data_ru)
+    capacity_ru, load_ru, capacity_secondary_ru, load_secondary_ru = array_ru[0], array_ru[1], array_ru[2], array_ru[3]    
     usa_south_text_ru = strings.dc_south_us_ru.format(load_ru, capacity_ru, load_secondary_ru, capacity_secondary_ru, tsRCache)
     usa_south_text_en = strings.dc_south_us_en.format(load, capacity, load_secondary, capacity_secondary, tsCache)
     return usa_south_text_en, usa_south_text_ru
@@ -693,7 +766,7 @@ def send_dc_usa_south(message):
     if wsCache == 'normal':
         try:
             usa_south_text_en, usa_south_text_ru = get_dc_usa_south()
-            if message.from_user.language_code in strings.CIS_lang_code:        
+            if message.from_user.language_code in CIS_lang_codes:        
                 text = usa_south_text_ru
                 markup = buttons.markup_DC_ru
             else:
@@ -712,7 +785,21 @@ def send_dc_usa_south(message):
 
 def get_dc_south_america():
     tsCache, tsRCache = time_converter()[0], time_converter()[1]
-    capacity, load, capacity_ru, load_ru, capacity_secondary, load_secondary, capacity_secondary_ru, load_secondary_ru, capacity_tertiary, load_tertiary, capacity_tertiary_ru, load_tertiary_ru, capacity_quaternary, load_quaternary, capacity_quaternary_ru, load_quaternary_ru = api_dc.america_South()
+    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
+    brazil_dc = cacheFile['datacenters']['Brazil']
+    chile_dc = cacheFile['datacenters']['Chile']
+    peru_dc = cacheFile['datacenters']['Peru']
+    argentina_dc = cacheFile['datacenters']['Argentina']
+    capacity, load = brazil_dc['capacity'], brazil_dc['load']
+    capacity_secondary, load_secondary = chile_dc['capacity'], chile_dc['load']
+    capacity_tertiary, load_tertiary = peru_dc['capacity'], peru_dc['load']
+    capacity_quaternary, load_quaternary = argentina_dc['capacity'], argentina_dc['load']
+    array = [capacity, load, capacity_secondary, load_secondary, capacity_tertiary, load_tertiary, capacity_quaternary, load_quaternary]
+    array_ru = []
+    for data in array:
+        data_ru = translate(data)
+        array_ru.append(data_ru)
+    capacity_ru, load_ru, capacity_secondary_ru, load_secondary_ru, capacity_tertiary_ru, load_tertiary_ru, capacity_quaternary_ru, load_quaternary_ru = array_ru[0], array_ru[1], array_ru[2], array_ru[3], array_ru[4], array_ru[5], array_ru[6], array_ru[7] 
     south_america_text_ru = strings.dc_south_america_ru.format(load_ru, capacity_ru, load_secondary_ru, capacity_secondary_ru, load_tertiary_ru, capacity_tertiary_ru, load_quaternary_ru, capacity_quaternary_ru, tsRCache)
     south_america_text_en = strings.dc_south_america_en.format(load, capacity, load_secondary, capacity_secondary, load_tertiary, capacity_tertiary, load_quaternary, capacity_quaternary, tsCache)
     return south_america_text_en, south_america_text_ru
@@ -723,7 +810,7 @@ def send_dc_south_america(message):
     if wsCache == 'normal':
         try:
             south_america_text_en, south_america_text_ru = get_dc_south_america()
-            if message.from_user.language_code in strings.CIS_lang_code:
+            if message.from_user.language_code in CIS_lang_codes:
                 text = south_america_text_ru
                 markup = buttons.markup_DC_ru
             else:
@@ -742,7 +829,17 @@ def send_dc_south_america(message):
 
 def get_dc_india():
     tsCache, tsRCache = time_converter()[0], time_converter()[1]
-    capacity, load, capacity_ru, load_ru, capacity_secondary, load_secondary, capacity_secondary_ru, load_secondary_ru = api_dc.india()
+    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
+    mumbai_dc = cacheFile['datacenters']['India']
+    chennai_dc = cacheFile['datacenters']['India East']
+    capacity, load = mumbai_dc['capacity'], mumbai_dc['load']
+    capacity_secondary, load_secondary = chennai_dc['capacity'], chennai_dc['load']
+    array = [capacity, load, capacity_secondary, load_secondary]
+    array_ru = []
+    for data in array:
+        data_ru = translate(data)
+        array_ru.append(data_ru)
+    capacity_ru, load_ru, capacity_secondary_ru, load_secondary_ru = array_ru[0], array_ru[1], array_ru[2], array_ru[3]
     india_text_ru = strings.dc_india_ru.format(load_ru, capacity_ru, load_secondary_ru, capacity_secondary_ru, tsRCache)
     india_text_en = strings.dc_india_en.format(load, capacity, load_secondary, capacity_secondary, tsCache)
     return india_text_en, india_text_ru
@@ -753,7 +850,7 @@ def send_dc_india(message):
     if wsCache == 'normal':
         try:
             india_text_en, india_text_ru = get_dc_india()
-            if message.from_user.language_code in strings.CIS_lang_code:  
+            if message.from_user.language_code in CIS_lang_codes:  
                 text = india_text_ru
                 markup = buttons.markup_DC_ru
             else:
@@ -770,7 +867,15 @@ def send_dc_india(message):
 
 def get_dc_japan():
     tsCache, tsRCache = time_converter()[0], time_converter()[1]
-    capacity, load, capacity_ru, load_ru = api_dc.japan()
+    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
+    japan_dc = cacheFile['datacenters']['Japan']
+    capacity, load = japan_dc['capacity'], japan_dc['load']
+    array = [capacity, load]
+    array_ru = []
+    for data in array:
+        data_ru = translate(data)
+        array_ru.append(data_ru)
+    capacity_ru, load_ru = array_ru[0], array_ru[1]
     japan_text_ru = strings.dc_japan_ru.format(load_ru, capacity_ru, tsRCache)
     japan_text_en = strings.dc_japan_en.format(load, capacity, tsCache)
     return japan_text_en, japan_text_ru
@@ -781,7 +886,7 @@ def send_dc_japan(message):
     if wsCache == 'normal':
         try:
             japan_text_en, japan_text_ru = get_dc_japan()
-            if message.from_user.language_code in strings.CIS_lang_code:
+            if message.from_user.language_code in CIS_lang_codes:
                 text = japan_text_ru
                 markup = buttons.markup_DC_ru
             else:
@@ -798,7 +903,19 @@ def send_dc_japan(message):
 
 def get_dc_china():
     tsCache, tsRCache = time_converter()[0], time_converter()[1]
-    capacity, load, capacity_ru, load_ru, capacity_secondary, load_secondary, capacity_secondary_ru, load_secondary_ru, capacity_tertiary, load_tertiary, capacity_tertiary_ru, load_tertiary_ru = api_dc.china()
+    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
+    shanghai_dc = cacheFile['datacenters']['China Shanghai']
+    tianjin_dc = cacheFile['datacenters']['China Tianjin']
+    guangzhou_dc = cacheFile['datacenters']['China Guangzhou']
+    capacity, load = shanghai_dc['capacity'], shanghai_dc['load']
+    capacity_secondary, load_secondary = tianjin_dc['capacity'], tianjin_dc['load']
+    capacity_tertiary, load_tertiary = guangzhou_dc['capacity'], guangzhou_dc['load']
+    array = [capacity, load, capacity_secondary, load_secondary, capacity_tertiary, load_tertiary]
+    array_ru = []
+    for data in array:
+        data_ru = translate(data)
+        array_ru.append(data_ru)
+    capacity_ru, load_ru, capacity_secondary_ru, load_secondary_ru, capacity_tertiary_ru, load_tertiary_ru = array_ru[0], array_ru[1], array_ru[2], array_ru[3], array_ru[4], array_ru[5] 
     china_text_ru = strings.dc_china_ru.format(load_ru, capacity_ru, load_secondary_ru, capacity_secondary_ru, load_tertiary_ru, capacity_tertiary_ru, tsRCache)
     china_text_en = strings.dc_china_en.format(load, capacity, load_secondary, capacity_secondary, load_tertiary, capacity_tertiary, tsCache)
     return china_text_en, china_text_ru
@@ -809,7 +926,7 @@ def send_dc_china(message):
     if wsCache == 'normal':
         try:
             china_text_en, china_text_ru = get_dc_china()
-            if message.from_user.language_code in strings.CIS_lang_code:
+            if message.from_user.language_code in CIS_lang_codes:
                 text = china_text_ru
                 markup = buttons.markup_DC_ru
             else:
@@ -826,7 +943,15 @@ def send_dc_china(message):
 
 def get_dc_emirates():
     tsCache, tsRCache = time_converter()[0], time_converter()[1]
-    capacity, load, capacity_ru, load_ru = api_dc.emirates()     
+    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
+    emirates_dc = cacheFile['datacenters']['Emirates']
+    capacity, load = emirates_dc['capacity'], emirates_dc['load']
+    array = [capacity, load]
+    array_ru = []
+    for data in array:
+        data_ru = translate(data)
+        array_ru.append(data_ru)
+    capacity_ru, load_ru = array_ru[0], array_ru[1] 
     emirates_text_ru = strings.dc_emirates_ru.format(load_ru, capacity_ru, tsRCache)
     emirates_text_en = strings.dc_emirates_en.format(load, capacity, tsCache)           
     return emirates_text_en, emirates_text_ru
@@ -837,7 +962,7 @@ def send_dc_emirates(message):
     if wsCache == 'normal':
         try:
             emirates_text_en, emirates_text_ru = get_dc_emirates()
-            if message.from_user.language_code in strings.CIS_lang_code:
+            if message.from_user.language_code in CIS_lang_codes:
                 text = emirates_text_ru
                 markup = buttons.markup_DC_ru
             else:
@@ -854,7 +979,15 @@ def send_dc_emirates(message):
 
 def get_dc_singapore():
     tsCache, tsRCache = time_converter()[0], time_converter()[1]
-    capacity, load, capacity_ru, load_ru = api_dc.singapore()     
+    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
+    singapore_dc = cacheFile['datacenters']['Singapore']
+    capacity, load = singapore_dc['capacity'], singapore_dc['load']
+    array = [capacity, load]
+    array_ru = []
+    for data in array:
+        data_ru = translate(data)
+        array_ru.append(data_ru)
+    capacity_ru, load_ru = array_ru[0], array_ru[1] 
     singapore_text_ru = strings.dc_singapore_ru.format(load_ru, capacity_ru, tsRCache)
     singapore_text_en = strings.dc_singapore_en.format(load, capacity, tsCache)           
     return singapore_text_en, singapore_text_ru
@@ -865,7 +998,7 @@ def send_dc_singapore(message):
     if wsCache == 'normal':
         try:
             singapore_text_en, singapore_text_ru = get_dc_singapore()
-            if message.from_user.language_code in strings.CIS_lang_code:
+            if message.from_user.language_code in CIS_lang_codes:
                 text = singapore_text_ru
                 markup = buttons.markup_DC_ru
             else:
@@ -882,7 +1015,15 @@ def send_dc_singapore(message):
 
 def get_dc_hong_kong():
     tsCache, tsRCache = time_converter()[0], time_converter()[1]
-    capacity, load, capacity_ru, load_ru = api_dc.hong_kong()     
+    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
+    hongkong_dc = cacheFile['datacenters']['Hong Kong']
+    capacity, load = hongkong_dc['capacity'], hongkong_dc['load']
+    array = [capacity, load]
+    array_ru = []
+    for data in array:
+        data_ru = translate(data)
+        array_ru.append(data_ru)
+    capacity_ru, load_ru = array_ru[0], array_ru[1] 
     hong_kong_text_ru = strings.dc_hong_kong_ru.format(load_ru, capacity_ru, tsRCache)
     hong_kong_text_en = strings.dc_hong_kong_en.format(load, capacity, tsCache)           
     return hong_kong_text_en, hong_kong_text_ru
@@ -893,7 +1034,7 @@ def send_dc_hong_kong(message):
     if wsCache == 'normal':
         try:
             hong_kong_text_en, hong_kong_text_ru = get_dc_hong_kong()
-            if message.from_user.language_code in strings.CIS_lang_code:
+            if message.from_user.language_code in CIS_lang_codes:
                 text = hong_kong_text_ru
                 markup = buttons.markup_DC_ru
             else:
@@ -917,750 +1058,113 @@ def send_dc_hong_kong(message):
 @bot.inline_handler(lambda query: len(query.query) == 0)
 def default_inline(inline_query):
     '''Inline mode'''
-    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
-    wsCache = cacheFile['valve_webapi']
-    if wsCache == 'normal':
-        try:
-            status_text_en, status_text_ru = get_server_status()
-            mm_stats_text_en, mm_stats_text_ru = get_mm_stats()
-            devcount_text_en, devcount_text_ru = get_devcount()
-            timer_text_en, timer_text_ru = get_timer()
-            gameversion_text_en, gameversion_text_ru = get_gameversion()
-            try:
-                if inline_query.from_user.language_code in strings.CIS_lang_code:
-                    status_r, mm_r, dev_r, timer_r, gv_r = status_text_ru, mm_stats_text_ru, devcount_text_ru, timer_text_ru, gameversion_text_ru 
-                    title_status, title_mm, title_dev, title_timer, title_gv = 'Состояние серверов', 'Статистика ММ', 'Бета-версия', 'Сброс ограничений', 'Версия игры'
-                    description_status = 'Проверить доступность серверов'
-                    description_mm = 'Посмотреть количество онлайн игроков'
-                    description_dev = 'Узнать количество онлайн разработчиков'
-                    description_timer = 'Время до сброса ограничений опыта и дропа'
-                    description_gv = 'Проверить последнюю версию игры'
-                else:
-                    status_r, mm_r, dev_r, timer_r, gv_r = status_text_en, mm_stats_text_ru, devcount_text_en, timer_text_en, gameversion_text_en
-                    title_status, title_mm, title_dev, title_timer, title_gv = 'Server status', 'MM stats', 'Beta version', 'Drop cap reset', 'Game version'
-                    description_status = 'Check the availability of the servers'
-                    description_mm = 'Check the count of online players'
-                    description_dev = 'Show the count of in-game developers'
-                    description_timer = 'Time left until experience and drop cap reset'
-                    description_gv = 'Check the latest game version'
-                r = types.InlineQueryResultArticle('1', title_status, input_message_content = types.InputTextMessageContent(status_r, parse_mode='html'), thumb_url='https://telegra.ph/file/57ba2b279c53d69d72481.jpg', description=description_status)
-                r2 = types.InlineQueryResultArticle('2', title_mm, input_message_content = types.InputTextMessageContent(mm_r, parse_mode='html'), thumb_url='https://telegra.ph/file/8b640b85f6d62f8ed2900.jpg', description=description_mm)
-                r3 = types.InlineQueryResultArticle('3', title_dev, input_message_content = types.InputTextMessageContent(dev_r, parse_mode='html'), thumb_url='https://telegra.ph/file/24b05cea99de936fd12bf.jpg', description=description_dev)
-                r4 = types.InlineQueryResultArticle('4', title_timer, input_message_content = types.InputTextMessageContent(timer_r), thumb_url='https://telegra.ph/file/6948255408689d2f6a472.jpg', description=description_timer)
-                r5 = types.InlineQueryResultArticle('5', title_gv, input_message_content = types.InputTextMessageContent(gv_r, parse_mode='html'), thumb_url='https://telegra.ph/file/82d8df1e9f5140da70232.jpg', description=description_gv)
-                bot.answer_inline_query(inline_query.id, [r, r2, r3, r4, r5], cache_time=5)
-                log_inline(inline_query)
-            except Exception as e:
-                bot.send_message(config.LOGCHANNEL, f'❗️{e}\n\n↩️ inline_query')
-        except Exception as e:
-            bot.send_message(config.LOGCHANNEL, f'❗️{e}\n\n↩️ inline_query')
-    elif wsCache == 'maintenance':
-        try:
-            timer_text_en, timer_text_ru = get_timer()
-            gameversion_text_en, gameversion_text_ru = get_gameversion()
-            try:
-                if inline_query.from_user.language_code in strings.CIS_lang_code:
-                    maintenance_r, timer_r, gv_r = strings.maintenance_ru, timer_text_ru, gameversion_text_ru
-                    title_maintenance, title_timer, title_gv = 'Нет данных', 'Сброс ограничений', 'Версия игры'
-                    description_mntn = 'Еженедельное тех. обслуживание серверов'
-                    description_timer = 'Время до сброса ограничений опыта и дропа'
-                    description_gv = 'Проверить последнюю версию игры'
-                else:
-                    maintenance_r, timer_r, gv_r = strings.maintenance_en, timer_text_en, gameversion_text_en
-                    title_maintenance, title_timer, title_gv = 'No data', 'Drop cap reset', 'Game version'
-                    description_mntn = 'Weekly server maintenance'
-                    description_timer = 'Time left until experience and drop cap reset'
-                    description_gv = 'Check the latest game version'
-                r = types.InlineQueryResultArticle('1', title_maintenance, input_message_content = types.InputTextMessageContent(maintenance_r), thumb_url='https://telegra.ph/file/6120ece0aab30d8c59d07.jpg', description=description_mntn)
-                r2 = types.InlineQueryResultArticle('2', title_timer, input_message_content = types.InputTextMessageContent(timer_r), thumb_url='https://telegra.ph/file/6948255408689d2f6a472.jpg', description=description_timer)
-                r4 = types.InlineQueryResultArticle('3', title_gv, input_message_content = types.InputTextMessageContent(gv_r, parse_mode='html'), thumb_url='https://telegra.ph/file/82d8df1e9f5140da70232.jpg', description=description_gv)
-                bot.answer_inline_query(inline_query.id, [r, r2, r3], cache_time=5)
-                log_inline(inline_query)
-            except Exception as e:
-                bot.send_message(config.LOGCHANNEL, f'❗️Error: {e}\n\n↩️ inline_query')
-        except Exception as e:
-            bot.send_message(config.LOGCHANNEL, f'❗️Error: {e}\n\n↩️ inline_query')
-    else:
-        try:
-            timer_text_en, timer_text_ru = get_timer()
-            gameversion_text_en, gameversion_text_ru = get_gameversion()
-            try:
-                if inline_query.from_user.language_code in strings.CIS_lang_code:
-                    wrong_r, timer_r, gv_r = strings.wrongAPI_ru, timer_text_ru, gameversion_text_ru
-                    title_un, title_timer, title_gv = 'Нет данных', 'Сброс ограничений', 'Версия игры'
-                    description_un = 'Не получилось связаться с API Valve'
-                    description_timer = 'Время до сброса ограничений опыта и дропа'
-                    description_gv = 'Проверить последнюю версию игры'
-                else:
-                    wrong_r, timer_r, gv_r = strings.wrongAPI_en, timer_text_en, gameversion_text_en
-                    title_un, title_timer, title_gv = 'No data', 'Drop cap reset', 'Game version'
-                    description_un = 'Unable to call Valve API'
-                    description_timer = 'Time left until experience and drop cap reset'
-                    description_gv = 'Check the latest game version'
-                r = types.InlineQueryResultArticle('1', title_un, input_message_content = types.InputTextMessageContent(wrong_r), thumb_url='https://telegra.ph/file/b9d408e334795b014ee5c.jpg', description=description_un)
-                r2 = types.InlineQueryResultArticle('2', title_timer, input_message_content = types.InputTextMessageContent(timer_r), thumb_url='https://telegra.ph/file/6948255408689d2f6a472.jpg', description=description_timer)
-                r3 = types.InlineQueryResultArticle('3', title_gv, input_message_content = types.InputTextMessageContent(gv_r, parse_mode='html'), thumb_url='https://telegra.ph/file/82d8df1e9f5140da70232.jpg', description=description_gv)
-                bot.answer_inline_query(inline_query.id, [r, r2, r3], cache_time=5)
-                log_inline(inline_query)
-            except Exception as e:
-                bot.send_message(config.LOGCHANNEL, f'❗️Error: {e}\n\n↩️ inline_query')
-        except Exception as e:
-            bot.send_message(config.LOGCHANNEL, f'❗️{e}\n\n↩️ inline_query')
+    log_inline(inline_query)
+    try:
+        status_text_en, status_text_ru = get_server_status()
+        mm_stats_text_en, mm_stats_text_ru = get_mm_stats()
+        devcount_text_en, devcount_text_ru = get_devcount()
+        timer_text_en, timer_text_ru = get_timer()
+        gameversion_text_en, gameversion_text_ru = get_gameversion()
+        cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
+        wsCache = cacheFile['valve_webapi']
+        if wsCache == 'normal':
+            thumbs = ['https://telegra.ph/file/8b640b85f6d62f8ed2900.jpg', 'https://telegra.ph/file/57ba2b279c53d69d72481.jpg',
+                        'https://telegra.ph/file/24b05cea99de936fd12bf.jpg', 'https://telegra.ph/file/6948255408689d2f6a472.jpg',
+                        'https://telegra.ph/file/82d8df1e9f5140da70232.jpg']
+            if inline_query.from_user.language_code in CIS_lang_codes:
+                data = [status_text_ru, mm_stats_text_ru, devcount_text_ru, timer_text_ru, gameversion_text_ru]
+                titles = ['Состояние серверов', 'Статистика ММ', 'Бета-версия', 'Сброс ограничений', 'Версия игры']
+                descriptions = ['Проверить доступность серверов', 'Посмотреть количество онлайн игроков', 'Узнать количество онлайн разработчиков',
+                                'Время до сброса ограничений опыта и дропа', 'Проверить последнюю версию игры']
+            else:
+                data = [status_text_en, mm_stats_text_ru, devcount_text_en, timer_text_en, gameversion_text_en]
+                titles = ['Server status', 'MM stats', 'Beta version', 'Drop cap reset', 'Game version']
+                descriptions = ['Check the availability of the servers', 'Check the count of online players', 'Show the count of in-game developers',
+                                'Time left until experience and drop cap reset', 'Check the latest game version']
+            results = []
+            for data, tt, desc, thumb in zip(data, titles, descriptions, thumbs):
+                results.append(types.InlineQueryResultArticle(random.randint(0,9999), tt, input_message_content=types.InputTextMessageContent(data, parse_mode='html'), thumb_url=thumb, description=desc))
+            bot.answer_inline_query(inline_query.id, results, cache_time=5)
+        elif wsCache == 'maintenance':
+            send_about_maintenance_inline(inline_query)
+        else:
+            send_about_problem_valve_api_inline(inline_query)
+    except Exception as e:
+        bot.send_message(config.LOGCHANNEL, f'❗️{e}\n\n↩️ inline_query')
 
 # DC
-@bot.inline_handler(lambda query: query.query.lower() in strings.dc_tags)
+@bot.inline_handler(lambda query: len(query.query) >= 0)
 def inline_dc(inline_query):
-    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
-    wsCache = cacheFile['valve_webapi']
-    if wsCache == 'normal':
-        try:
-            eu_north_text_en, eu_north_text_ru = get_dc_eu_north()
-            eu_east_text_en, eu_east_text_ru = get_dc_eu_east()
-            eu_west_text_en, eu_west_text_ru = get_dc_eu_west()
-            usa_north_text_en, usa_north_text_ru = get_dc_usa_north()
-            usa_south_text_en, usa_south_text_ru = get_dc_usa_south()
-            china_text_en, china_text_ru = get_dc_china()
-            emirates_text_en, emirates_text_ru = get_dc_emirates()
-            hong_kong_text_en, hong_kong_text_ru = get_dc_hong_kong()
-            india_text_en, india_text_ru = get_dc_india()
-            japan_text_en, japan_text_ru = get_dc_japan()
-            singapore_text_en, singapore_text_ru = get_dc_singapore()
-            australia_text_en, australia_text_ru = get_dc_australia()
-            africa_text_en, africa_text_ru = get_dc_africa()            
-            south_america_text_en, south_america_text_ru = get_dc_south_america()
-            try:
-                if inline_query.from_user.language_code in strings.CIS_lang_code:
-                    title_china = 'Китайские ДЦ'
-                    title_emirates = 'Эмиратский ДЦ'
-                    title_hong_kong = 'Гонконгский ДЦ'
-                    title_india = 'Индийские ДЦ'
-                    title_japan = 'Японский ДЦ'
-                    title_singapore = 'Сингапурский ДЦ'
-                    title_eu_north = 'Североевропейский ДЦ'
-                    title_eu_east = 'Восточноевропейские ДЦ'
-                    title_eu_west = 'Западноевропейские ДЦ'
-                    title_usa_north = 'ДЦ северной части США'
-                    title_usa_south = 'ДЦ южной части США'
-                    title_australia = 'Австралийский ДЦ'
-                    title_africa = 'Африканский ДЦ'
-                    title_south_america = 'Южноамериканские ДЦ' 
-                    r_africa = africa_text_ru
-                    r_australia = australia_text_ru
-                    r_usa_north = usa_north_text_ru
-                    r_usa_south = usa_south_text_ru
-                    r_eu_north = eu_north_text_ru
-                    r_eu_east = eu_east_text_ru
-                    r_eu_west = eu_west_text_ru
-                    r_china = china_text_ru
-                    r_emirates = emirates_text_ru
-                    r_hong_kong = hong_kong_text_ru
-                    r_india = india_text_ru
-                    r_japan = japan_text_ru
-                    r_singapore = singapore_text_ru
-                    r_south_america = south_america_text_ru
-                    description = 'Проверить состояние'
-                else:
-                    title_usa_north = 'Northern USA DC'
-                    title_usa_south = 'Southern USA DC'
-                    title_eu_north = 'North European DC'
-                    title_eu_east = 'East European DC'
-                    title_eu_west = 'West European DC'
-                    title_china = 'Chinese DC'
-                    title_emirates = 'Emirati DC'
-                    title_hong_kong = 'Hong Kongese DC'
-                    title_india = 'Indian DC'
-                    title_japan= 'Japanese DC'
-                    title_singapore = 'Singaporean DC'
-                    title_australia = 'Australian DC'
-                    title_africa = 'African DC'
-                    title_south_america = 'South American DC'
-                    r_africa = africa_text_en
-                    r_australia = australia_text_en
-                    r_usa_north = usa_north_text_en
-                    r_usa_south = usa_south_text_en
-                    r_eu_north = eu_north_text_en
-                    r_eu_east = eu_east_text_en
-                    r_eu_west = eu_west_text_en
-                    r_china = china_text_en
-                    r_emirates = emirates_text_en
-                    r_hong_kong = hong_kong_text_en
-                    r_india = india_text_en
-                    r_japan = japan_text_en
-                    r_singapore = singapore_text_en
-                    r_south_america = south_america_text_en
-                    description = 'Check the status'
-                r = types.InlineQueryResultArticle('1', title_eu_north, input_message_content = types.InputTextMessageContent(r_eu_north), thumb_url='https://telegra.ph/file/4d269cb98aadaae391024.jpg', description=description)
-                r2 = types.InlineQueryResultArticle('2', title_eu_east, input_message_content = types.InputTextMessageContent(r_eu_east), thumb_url='https://telegra.ph/file/4d269cb98aadaae391024.jpg', description=description)
-                r3 = types.InlineQueryResultArticle('3', title_eu_west, input_message_content = types.InputTextMessageContent(r_eu_west), thumb_url='https://telegra.ph/file/4d269cb98aadaae391024.jpg', description=description)
-                r4 = types.InlineQueryResultArticle('4', title_emirates, input_message_content = types.InputTextMessageContent(r_emirates), thumb_url='https://telegra.ph/file/1de1e51e62b79cae5181a.jpg', description=description)
-                r5 = types.InlineQueryResultArticle('5', title_china, input_message_content = types.InputTextMessageContent(r_china), thumb_url='https://telegra.ph/file/ff0dad30ae32144d7cd0c.jpg', description=description)
-                r6 = types.InlineQueryResultArticle('6', title_hong_kong, input_message_content = types.InputTextMessageContent(r_hong_kong), thumb_url='https://telegra.ph/file/0b209e65c421910419f34.jpg', description=description)
-                r7 = types.InlineQueryResultArticle('7', title_india, input_message_content = types.InputTextMessageContent(r_india), thumb_url='https://telegra.ph/file/b2213992b750940113b69.jpg', description=description)
-                r8 = types.InlineQueryResultArticle('8', title_japan, input_message_content = types.InputTextMessageContent(r_japan), thumb_url='https://telegra.ph/file/11b6601a3e60940d59c88.jpg', description=description)
-                r9 = types.InlineQueryResultArticle('9', title_singapore, input_message_content = types.InputTextMessageContent(r_singapore), thumb_url='https://telegra.ph/file/1c2121ceec5d1482173d5.jpg', description=description)
-                r10 = types.InlineQueryResultArticle('10', title_africa, input_message_content = types.InputTextMessageContent(r_africa), thumb_url='https://telegra.ph/file/12628c8193b48302722e8.jpg', description=description)
-                r11 = types.InlineQueryResultArticle('11', title_usa_north, input_message_content = types.InputTextMessageContent(r_usa_north), thumb_url='https://telegra.ph/file/06119c30872031d1047d0.jpg', description=description)
-                r12 = types.InlineQueryResultArticle('12', title_usa_south, input_message_content = types.InputTextMessageContent(r_usa_south), thumb_url='https://telegra.ph/file/06119c30872031d1047d0.jpg', description=description)                
-                r13 = types.InlineQueryResultArticle('13', title_australia, input_message_content = types.InputTextMessageContent(r_australia), thumb_url='https://telegra.ph/file/5dc6beef1556ea852284c.jpg', description=description)
-                r14 = types.InlineQueryResultArticle('14', title_south_america, input_message_content = types.InputTextMessageContent(r_south_america), thumb_url='https://telegra.ph/file/60f8226ea5d72815bef57.jpg', description=description)
-                bot.answer_inline_query(inline_query.id, [r, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14], cache_time=5)
-                log_inline(inline_query)
-            except Exception as e:
-                bot.send_message(config.LOGCHANNEL, f'❗️{e}\n\n↩️ inline_query')
-        except Exception as e:
-            bot.send_message(config.LOGCHANNEL, f'❗️{e}\n\n↩️ inline_query')
-    elif wsCache == 'maintenance':
-        send_about_maintenance_inline(inline_query)
-    else:
-        send_about_problem_valve_api_inline(inline_query)
-
-# General Australia
-@bot.inline_handler(lambda query: query.query.lower() in strings.australian_tags)
-def inline_dc_australia(inline_query):
-    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
-    wsCache = cacheFile['valve_webapi']
-    if wsCache == 'normal':
-        try:
-            australia_text_en, australia_text_ru = get_dc_australia()
-            try:
-                if inline_query.from_user.language_code in strings.CIS_lang_code:
-                    title = 'Австралийский ДЦ'
-                    r = australia_text_ru
-                    description = 'Проверить состояние' 
-                else:
-                    title = 'Australian DC'
-                    r = australia_text_en
-                    description = 'Check the status'
-                r = types.InlineQueryResultArticle('1', title, input_message_content = types.InputTextMessageContent(r), thumb_url='https://telegra.ph/file/5dc6beef1556ea852284c.jpg', description=description)
-                bot.answer_inline_query(inline_query.id, [r], cache_time=5)
-                log_inline(inline_query)
-            except Exception as e:
-                bot.send_message(config.LOGCHANNEL, f'❗️{e}\n\n↩️ inline_query')
-        except Exception as e:
-            bot.send_message(config.LOGCHANNEL, f'❗️{e}\n\n↩️ inline_query')
-    elif wsCache == 'maintenance':
-        send_about_maintenance_inline(inline_query)
-    else:
-        send_about_problem_valve_api_inline(inline_query)
-
-# General Africa
-@bot.inline_handler(lambda query: query.query.lower() in strings.african_tags)
-def inline_dc_africa(inline_query):
-    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
-    wsCache = cacheFile['valve_webapi']
-    if wsCache == 'normal':
-        try:
-            africa_text_en, africa_text_ru = get_dc_africa()
-            try:
-                if inline_query.from_user.language_code in strings.CIS_lang_code:
-                    title = 'Африканский ДЦ'
-                    r = africa_text_ru
-                    description = 'Проверить состояние'
-                else:
-                    title = 'African DC'
-                    r = africa_text_en
-                    description = 'Check the status'
-                r = types.InlineQueryResultArticle('1', title, input_message_content = types.InputTextMessageContent(r), thumb_url='https://telegra.ph/file/12628c8193b48302722e8.jpg', description=description)
-                bot.answer_inline_query(inline_query.id, [r], cache_time=5)
-                log_inline(inline_query)
-            except Exception as e:
-                bot.send_message(config.LOGCHANNEL, f'❗️{e}\n\n↩️ inline_query')
-        except Exception as e:
-            bot.send_message(config.LOGCHANNEL, f'❗️{e}\n\n↩️ inline_query')
-    elif wsCache == 'maintenance':
-        send_about_maintenance_inline(inline_query)
-    else:
-        send_about_problem_valve_api_inline(inline_query)
-
-# General South America
-@bot.inline_handler(lambda query: query.query.lower() in strings.south_american_tags)
-def inline_dc_south_america(inline_query):
-    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
-    wsCache = cacheFile['valve_webapi']
-    if wsCache == 'normal':
-        try:
-            south_america_text_en, south_america_text_ru = get_dc_south_america()
-            try:
-                if inline_query.from_user.language_code in strings.CIS_lang_code:
-                    title = 'Южноамериканские ДЦ'
-                    r = south_america_text_ru
-                    description = 'Проверить состояние'
-                else:
-                    title = 'South American DC'
-                    r = south_america_text_en
-                    description = 'Check the status'
-                r = types.InlineQueryResultArticle('1', title, input_message_content = types.InputTextMessageContent(r), thumb_url='https://telegra.ph/file/60f8226ea5d72815bef57.jpg', description=description)
-                bot.answer_inline_query(inline_query.id, [r], cache_time=5)
-                log_inline(inline_query)
-            except Exception as e:
-                bot.send_message(config.LOGCHANNEL, f'❗️{e}\n\n↩️ inline_query')
-        except Exception as e:
-            bot.send_message(config.LOGCHANNEL, f'❗️{e}\n\n↩️ inline_query')
-    elif wsCache == 'maintenance':
-        send_about_maintenance_inline(inline_query)
-    else:
-        send_about_problem_valve_api_inline(inline_query)
-
-# General Europe
-@bot.inline_handler(lambda query: query.query.lower() in strings.european_tags)
-def inline_dc_europe(inline_query):
-    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
-    wsCache = cacheFile['valve_webapi']
-    if wsCache == 'normal':
-        try:
-            eu_north_text_en, eu_north_text_ru = get_dc_eu_north()
-            eu_east_text_en, eu_east_text_ru = get_dc_eu_east()
-            eu_west_text_en, eu_west_text_ru = get_dc_eu_west()
-            try:
-                if inline_query.from_user.language_code in strings.CIS_lang_code:
-                    title_north = 'Североевропейский ДЦ'
-                    title_east = 'Восточноевропейские ДЦ'
-                    title_west = 'Западноевропейские ДЦ'
-                    r_north = eu_north_text_ru
-                    r_east = eu_east_text_ru
-                    r_west = eu_west_text_ru
-                    description = 'Проверить состояние'
-                else:
-                    title_north = 'North European DC'
-                    title_east = 'East European DC'
-                    title_west = 'West European DC'
-                    r_north = eu_north_text_en
-                    r_east = eu_east_text_en
-                    r_west = eu_west_text_en
-                    description = 'Check the status'
-                r = types.InlineQueryResultArticle('1', title_north, input_message_content = types.InputTextMessageContent(r_north), thumb_url='https://telegra.ph/file/4d269cb98aadaae391024.jpg', description=description)
-                r2 = types.InlineQueryResultArticle('2', title_east, input_message_content = types.InputTextMessageContent(r_east), thumb_url='https://telegra.ph/file/4d269cb98aadaae391024.jpg', description=description)
-                r3 = types.InlineQueryResultArticle('3', title_west, input_message_content = types.InputTextMessageContent(r_west), thumb_url='https://telegra.ph/file/4d269cb98aadaae391024.jpg', description=description)
-                
-                bot.answer_inline_query(inline_query.id, [r, r2, r3], cache_time=5)
-                log_inline(inline_query)
-            except Exception as e:
-                bot.send_message(config.LOGCHANNEL, f'❗️{e}\n\n↩️ inline_query')
-        except Exception as e:
-            bot.send_message(config.LOGCHANNEL, f'❗️{e}\n\n↩️ inline_query')
-    elif wsCache == 'maintenance':
-        send_about_maintenance_inline(inline_query)
-    else:
-        send_about_problem_valve_api_inline(inline_query)
-
-# Detailed North Europe
-@bot.inline_handler(lambda query: query.query.lower() in strings.north_european_tags)
-def inline_dc_eu_north(inline_query):
-    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
-    wsCache = cacheFile['valve_webapi']
-    if wsCache == 'normal':
-        try:
-            eu_north_text_en, eu_north_text_ru = get_dc_eu_north()
-            try:
-                if inline_query.from_user.language_code in strings.CIS_lang_code:
-                    title = 'Североевропейский ДЦ'
-                    r = eu_north_text_ru
-                    description = 'Проверить состояние'
-                else:
-                    title = 'North European DC'
-                    r = eu_north_text_en
-                    description = 'Check the status'
-                r = types.InlineQueryResultArticle('1', title, input_message_content = types.InputTextMessageContent(r), thumb_url='https://telegra.ph/file/4d269cb98aadaae391024.jpg', description=description)
-                
-                bot.answer_inline_query(inline_query.id, [r], cache_time=5)
-                log_inline(inline_query)
-            except Exception as e:
-                bot.send_message(config.LOGCHANNEL, f'❗️{e}\n\n↩️ inline_query')
-        except Exception as e:
-            bot.send_message(config.LOGCHANNEL, f'❗️{e}\n\n↩️ inline_query')
-    elif wsCache == 'maintenance':
-        send_about_maintenance_inline(inline_query)
-    else:
-        send_about_problem_valve_api_inline(inline_query)
-
-# Detailed East Europe
-@bot.inline_handler(lambda query: query.query.lower() in strings.east_european_tags)
-def inline_dc_eu_east(inline_query):
-    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
-    wsCache = cacheFile['valve_webapi']
-    if wsCache == 'normal':
-        try:
-            eu_east_text_en, eu_east_text_ru = get_dc_eu_east()
-            try:
-                if inline_query.from_user.language_code in strings.CIS_lang_code:
-                    title = 'Восточноевропейские ДЦ'
-                    r = eu_east_text_ru
-                    description = 'Проверить состояние'
-                else:
-                    title = 'East European DC'
-                    r = eu_east_text_en
-                    description = 'Check the status'
-                r = types.InlineQueryResultArticle('1', title, input_message_content = types.InputTextMessageContent(r), thumb_url='https://telegra.ph/file/4d269cb98aadaae391024.jpg', description=description)
-                
-                bot.answer_inline_query(inline_query.id, [r], cache_time=5)
-                log_inline(inline_query)
-            except Exception as e:
-                bot.send_message(config.LOGCHANNEL, f'❗️{e}\n\n↩️ inline_query')
-        except Exception as e:
-            bot.send_message(config.LOGCHANNEL, f'❗️{e}\n\n↩️ inline_query')
-    elif wsCache == 'maintenance':
-        send_about_maintenance_inline(inline_query)
-    else:
-        send_about_problem_valve_api_inline(inline_query)
-
-# Detailed West Europe
-@bot.inline_handler(lambda query: query.query.lower() in strings.west_european_tags)
-def inline_dc_eu_west(inline_query):
-    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
-    wsCache = cacheFile['valve_webapi']
-    if wsCache == 'normal':
-        try:
-            eu_west_text_en, eu_west_text_ru = get_dc_eu_west()
-            try:
-                if inline_query.from_user.language_code in strings.CIS_lang_code:
-                    title = 'Западноевропейские ДЦ'
-                    r = eu_west_text_ru
-                    description = 'Проверить состояние'
-                else:
-                    title = 'West European DC'
-                    r = eu_west_text_en
-                    description = 'Check the status'
-                r = types.InlineQueryResultArticle('1', title, input_message_content = types.InputTextMessageContent(r), thumb_url='https://telegra.ph/file/4d269cb98aadaae391024.jpg', description=description)
-                
-                bot.answer_inline_query(inline_query.id, [r], cache_time=5)
-                log_inline(inline_query)
-            except Exception as e:
-                bot.send_message(config.LOGCHANNEL, f'❗️{e}\n\n↩️ inline_query')
-        except Exception as e:
-            bot.send_message(config.LOGCHANNEL, f'❗️{e}\n\n↩️ inline_query')
-    elif wsCache == 'maintenance':
-        send_about_maintenance_inline(inline_query)
-    else:
-        send_about_problem_valve_api_inline(inline_query)
-
-# General USA
-@bot.inline_handler(lambda query: query.query.lower() in strings.american_tags)
-def inline_dc_usa(inline_query):
-    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
-    wsCache = cacheFile['valve_webapi']
-    if wsCache == 'normal':
-        try:
-            usa_north_text_en, usa_north_text_ru = get_dc_usa_north()
-            usa_south_text_en, usa_south_text_ru = get_dc_usa_south()
-            try:
-                if inline_query.from_user.language_code in strings.CIS_lang_code:
-                    title_north = 'ДЦ северной части США'
-                    title_south = 'ДЦ южной части США'
-                    r_north = usa_north_text_ru
-                    r_south = usa_south_text_ru
-                    description = 'Проверить состояние'
-                else:
-                    title_north = 'Northern USA DC'
-                    title_south = 'Southern USA DC'
-                    r_north = usa_north_text_en
-                    r_south = usa_south_text_en
-                    description = 'Check the status'
-                r = types.InlineQueryResultArticle('1', title_north, input_message_content = types.InputTextMessageContent(r_north), thumb_url='https://telegra.ph/file/06119c30872031d1047d0.jpg', description=description)
-                r2 = types.InlineQueryResultArticle('2', title_south, input_message_content = types.InputTextMessageContent(r_south), thumb_url='https://telegra.ph/file/06119c30872031d1047d0.jpg', description=description)                
-                bot.answer_inline_query(inline_query.id, [r, r2], cache_time=5)
-                log_inline(inline_query)
-            except Exception as e:
-                bot.send_message(config.LOGCHANNEL, f'❗️{e}\n\n↩️ inline_query')
-        except Exception as e:
-            bot.send_message(config.LOGCHANNEL, f'❗️{e}\n\n↩️ inline_query')
-    elif wsCache == 'maintenance':
-        send_about_maintenance_inline(inline_query)
-    else:
-        send_about_problem_valve_api_inline(inline_query)
-
-# Detailed Northern USA
-@bot.inline_handler(lambda query: query.query.lower() in strings.northern_usa_tags)
-def inline_dc_northern_usa(inline_query):
-    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
-    wsCache = cacheFile['valve_webapi']
-    if wsCache == 'normal':
-        try:
-            usa_north_text_en, usa_north_text_ru = get_dc_usa_north()
-            try:
-                if inline_query.from_user.language_code in strings.CIS_lang_code:
-                    title = 'ДЦ северной части США'
-                    r = usa_north_text_ru
-                    description = 'Проверить состояние'
-                else:
-                    title_north = 'Northern USA DC'
-                    r_north = usa_north_text_en
-                    description = 'Check the status'
-                r = types.InlineQueryResultArticle('1', title, input_message_content = types.InputTextMessageContent(r), thumb_url='https://telegra.ph/file/06119c30872031d1047d0.jpg', description=description)
-                bot.answer_inline_query(inline_query.id, [r], cache_time=5)
-                log_inline(inline_query)
-            except Exception as e:
-                bot.send_message(config.LOGCHANNEL, f'❗️{e}\n\n↩️ inline_query')
-        except Exception as e:
-            bot.send_message(config.LOGCHANNEL, f'❗️{e}\n\n↩️ inline_query')
-    elif wsCache == 'maintenance':
-        send_about_maintenance_inline(inline_query)
-    else:
-        send_about_problem_valve_api_inline(inline_query)
-
-# Detailed Southern USA
-@bot.inline_handler(lambda query: query.query.lower() in strings.southern_usa_tags)
-def inline_dc_southern_usa(inline_query):
-    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
-    wsCache = cacheFile['valve_webapi']
-    if wsCache == 'normal':
-        try:
-            usa_south_text_en, usa_south_text_ru = get_dc_usa_south()
-            try:
-                if inline_query.from_user.language_code in strings.CIS_lang_code:
-                    title = 'ДЦ южной части США'
-                    r = usa_south_text_ru
-                    description = 'Проверить состояние'
-                else:
-                    title = 'Southern USA DC'
-                    r = usa_south_text_en
-                    description = 'Check the status'
-                r = types.InlineQueryResultArticle('1', title, input_message_content = types.InputTextMessageContent(r), thumb_url='https://telegra.ph/file/06119c30872031d1047d0.jpg', description=description)
-                bot.answer_inline_query(inline_query.id, [r], cache_time=5)
-                log_inline(inline_query)
-            except Exception as e:
-                bot.send_message(config.LOGCHANNEL, f'❗️{e}\n\n↩️ inline_query')
-        except Exception as e:
-            bot.send_message(config.LOGCHANNEL, f'❗️{e}\n\n↩️ inline_query')
-    elif wsCache == 'maintenance':
-        send_about_maintenance_inline(inline_query)
-    else:
-        send_about_problem_valve_api_inline(inline_query)
-
-# General Asia
-@bot.inline_handler(lambda query: query.query.lower() in strings.asian_tags)
-def inline_dc_asia(inline_query):
-    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
-    wsCache = cacheFile['valve_webapi']
-    if wsCache == 'normal':
-        try:
-            china_text_en, china_text_ru = get_dc_china()
-            emirates_text_en, emirates_text_ru = get_dc_emirates()
-            hong_kong_text_en, hong_kong_text_ru = get_dc_hong_kong()
-            india_text_en, india_text_ru = get_dc_india()
-            japan_text_en, japan_text_ru = get_dc_japan()
-            singapore_text_en, singapore_text_ru = get_dc_singapore()
-            try:
-                if inline_query.from_user.language_code in strings.CIS_lang_code:
-                    title_china = 'Китайские ДЦ'
-                    title_emirates = 'Эмиратский ДЦ'
-                    title_hong_kong = 'Гонконгский ДЦ'
-                    title_india = 'Индийские ДЦ'
-                    title_japan = 'Японский ДЦ'
-                    title_singapore = 'Сингапурский ДЦ'
-                    r_china = china_text_ru
-                    r_emirates = emirates_text_ru
-                    r_hong_kong = hong_kong_text_ru
-                    r_india = india_text_ru
-                    r_japan = japan_text_ru
-                    r_singapore = singapore_text_ru
-                    description = 'Проверить состояние'
-                else:
-                    title_china = 'Chinese DC'
-                    title_emirates = 'Emirati DC'
-                    title_hong_kong = 'Hong Kongese DC'
-                    title_india = 'Indian DC'
-                    title_japan= 'Japanese DC'
-                    title_singapore = 'Singaporean DC'
-                    r_china = china_text_en
-                    r_emirates = emirates_text_en
-                    r_hong_kong = hong_kong_text_en
-                    r_india = india_text_en
-                    r_japan = japan_text_en
-                    r_singapore = singapore_text_en
-                    description = 'Check the status'
-                r = types.InlineQueryResultArticle('1', title_china, input_message_content = types.InputTextMessageContent(r_china), thumb_url='https://telegra.ph/file/ff0dad30ae32144d7cd0c.jpg', description=description)
-                r2 = types.InlineQueryResultArticle('2', title_emirates, input_message_content = types.InputTextMessageContent(r_emirates), thumb_url='https://telegra.ph/file/1de1e51e62b79cae5181a.jpg', description=description)
-                r3 = types.InlineQueryResultArticle('3', title_hong_kong, input_message_content = types.InputTextMessageContent(r_hong_kong), thumb_url='https://telegra.ph/file/0b209e65c421910419f34.jpg', description=description)
-                r4 = types.InlineQueryResultArticle('4', title_india, input_message_content = types.InputTextMessageContent(r_india), thumb_url='https://telegra.ph/file/b2213992b750940113b69.jpg', description=description)
-                r5 = types.InlineQueryResultArticle('5', title_japan, input_message_content = types.InputTextMessageContent(r_japan), thumb_url='https://telegra.ph/file/11b6601a3e60940d59c88.jpg', description=description)
-                r6 = types.InlineQueryResultArticle('6', title_singapore, input_message_content = types.InputTextMessageContent(r_singapore), thumb_url='https://telegra.ph/file/1c2121ceec5d1482173d5.jpg', description=description)
-                
-                bot.answer_inline_query(inline_query.id, [r, r2, r3, r4, r5, r6], cache_time=5)
-                log_inline(inline_query)
-            except Exception as e:
-                bot.send_message(config.LOGCHANNEL, f'❗️{e}\n\n↩️ inline_query')
-        except Exception as e:
-            bot.send_message(config.LOGCHANNEL, f'❗️{e}\n\n↩️ inline_query')
-    elif wsCache == 'maintenance':
-        send_about_maintenance_inline(inline_query)
-    else:
-        send_about_problem_valve_api_inline(inline_query)
-
-# Detailed China
-@bot.inline_handler(lambda query: query.query.lower() in strings.chinese_tags)
-def inline_dc_china(inline_query):
-    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
-    wsCache = cacheFile['valve_webapi']
-    if wsCache == 'normal':
-        try:
-            china_text_en, china_text_ru = get_dc_china()
-            try:
-                if inline_query.from_user.language_code in strings.CIS_lang_code:
-                    title = 'Китайские ДЦ'
-                    r = china_text_ru
-                    description = 'Проверить состояние'
-                else:
-                    title = 'Chinese DC'
-                    r = china_text_en
-                    description = 'Check the status'
-                r = types.InlineQueryResultArticle('1', title, input_message_content = types.InputTextMessageContent(r), thumb_url='https://telegra.ph/file/ff0dad30ae32144d7cd0c.jpg', description=description)                
-                bot.answer_inline_query(inline_query.id, [r], cache_time=5)
-                log_inline(inline_query)
-            except Exception as e:
-                bot.send_message(config.LOGCHANNEL, f'❗️{e}\n\n↩️ inline_query')
-        except Exception as e:
-            bot.send_message(config.LOGCHANNEL, f'❗️{e}\n\n↩️ inline_query')
-    elif wsCache == 'maintenance':
-        send_about_maintenance_inline(inline_query)
-    else:
-        send_about_problem_valve_api_inline(inline_query)
-
-# Detailed Emirates
-@bot.inline_handler(lambda query: query.query.lower() in strings.emirati_tags)
-def inline_dc_emirates(inline_query):
-    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
-    wsCache = cacheFile['valve_webapi']
-    if wsCache == 'normal':
-        try:
-            emirates_text_en, emirates_text_ru = get_dc_emirates()
-            try:
-                if inline_query.from_user.language_code in strings.CIS_lang_code:
-                    title = 'Эмиратский ДЦ'
-                    r = emirates_text_ru
-                    description = 'Проверить состояние'
-                else:
-                    title = 'Emirati DC'
-                    r = emirates_text_en
-                    description = 'Check the status'
-                r = types.InlineQueryResultArticle('1', title, input_message_content = types.InputTextMessageContent(r), thumb_url='https://telegra.ph/file/1de1e51e62b79cae5181a.jpg', description=description)
-
-                bot.answer_inline_query(inline_query.id, [r], cache_time=5)
-                log_inline(inline_query)
-            except Exception as e:
-                bot.send_message(config.LOGCHANNEL, f'❗️{e}\n\n↩️ inline_query')
-        except Exception as e:
-            bot.send_message(config.LOGCHANNEL, f'❗️{e}\n\n↩️ inline_query')
-    elif wsCache == 'maintenance':
-        send_about_maintenance_inline(inline_query)
-    else:
-        send_about_problem_valve_api_inline(inline_query)
-
-# Detailed Hong Kong
-@bot.inline_handler(lambda query: query.query.lower() in strings.hong_kongese_tags)
-def inline_dc_hong_kong(inline_query):
-    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
-    wsCache = cacheFile['valve_webapi']
-    if wsCache == 'normal':
-        try:
-            hong_kong_text_en, hong_kong_text_ru = get_dc_hong_kong()
-            try:
-                if inline_query.from_user.language_code in strings.CIS_lang_code:
-                    title = 'Гонконгский ДЦ'
-                    r = hong_kong_text_ru
-                    description = 'Проверить состояние'
-                else:
-                    title = 'Hong Kongese DC'
-                    r = hong_kong_text_en
-                    description = 'Check the status'
-                r = types.InlineQueryResultArticle('1', title, input_message_content = types.InputTextMessageContent(r), thumb_url='https://telegra.ph/file/0b209e65c421910419f34.jpg', description=description)               
-                bot.answer_inline_query(inline_query.id, [r], cache_time=5)
-                log_inline(inline_query)
-            except Exception as e:
-                bot.send_message(config.LOGCHANNEL, f'❗️{e}\n\n↩️ inline_query')
-        except Exception as e:
-            bot.send_message(config.LOGCHANNEL, f'❗️{e}\n\n↩️ inline_query')
-    elif wsCache == 'maintenance':
-        send_about_maintenance_inline(inline_query)
-    else:
-        send_about_problem_valve_api_inline(inline_query)
-
-# Detailed India
-@bot.inline_handler(lambda query: query.query.lower() in strings.indian_tags)
-def inline_dc_india(inline_query):
-    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
-    wsCache = cacheFile['valve_webapi']
-    if wsCache == 'normal':
-        try:
-            india_text_en, india_text_ru = get_dc_india()
-            try:
-                if inline_query.from_user.language_code in strings.CIS_lang_code:
-                    title = 'Индийские ДЦ'
-                    r = india_text_ru
-                    description = 'Проверить состояние'
-                else:
-                    title = 'Indian DC'
-                    r = india_text_en
-                    description = 'Check the status'
-                r = types.InlineQueryResultArticle('1', title, input_message_content = types.InputTextMessageContent(r), thumb_url='https://telegra.ph/file/b2213992b750940113b69.jpg', description=description)                
-                bot.answer_inline_query(inline_query.id, [r], cache_time=5)
-                log_inline(inline_query)
-            except Exception as e:
-                bot.send_message(config.LOGCHANNEL, f'❗️{e}\n\n↩️ inline_query')
-        except Exception as e:
-            bot.send_message(config.LOGCHANNEL, f'❗️{e}\n\n↩️ inline_query')
-    elif wsCache == 'maintenance':
-        send_about_maintenance_inline(inline_query)
-    else:
-        send_about_problem_valve_api_inline(inline_query)
-
-# Detailed Japan
-@bot.inline_handler(lambda query: query.query.lower() in strings.japanese_tags)
-def inline_dc_japan(inline_query):
-    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
-    wsCache = cacheFile['valve_webapi']
-    if wsCache == 'normal':
-        try:
-            japan_text_en, japan_text_ru = get_dc_japan()
-            try:
-                if inline_query.from_user.language_code in strings.CIS_lang_code:
-                    title = 'Японский ДЦ'
-                    r = japan_text_ru
-                    description = 'Проверить состояние'
-                else:
-                    title= 'Japanese DC'
-                    r = japan_text_en
-                    description = 'Check the status'
-                r = types.InlineQueryResultArticle('1', title, input_message_content = types.InputTextMessageContent(r), thumb_url='https://telegra.ph/file/11b6601a3e60940d59c88.jpg', description=description)              
-                bot.answer_inline_query(inline_query.id, [r], cache_time=5)
-                log_inline(inline_query)
-            except Exception as e:
-                bot.send_message(config.LOGCHANNEL, f'❗️{e}\n\n↩️ inline_query')
-        except Exception as e:
-            bot.send_message(config.LOGCHANNEL, f'❗️{e}\n\n↩️ inline_query')
-    elif wsCache == 'maintenance':
-        send_about_maintenance_inline(inline_query)
-    else:
-        send_about_problem_valve_api_inline(inline_query)
-
-# Detailed Singapore
-@bot.inline_handler(lambda query: query.query.lower() in strings.singaporean_tags)
-def inline_dc_singapore(inline_query):
-    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
-    wsCache = cacheFile['valve_webapi']
-    if wsCache == 'normal':
-        try:
-            singapore_text_en, singapore_text_ru = get_dc_singapore()
-            try:
-                if inline_query.from_user.language_code in strings.CIS_lang_code:
-                    title = 'Сингапурский ДЦ'
-                    r = singapore_text_ru
-                    description = 'Проверить состояние'
-                else:
-
-                    title = 'Singaporean DC'
-                    r = singapore_text_en
-                    description = 'Check the status'
-                r = types.InlineQueryResultArticle('1', title, input_message_content = types.InputTextMessageContent(r), thumb_url='https://telegra.ph/file/1c2121ceec5d1482173d5.jpg', description=description)
-                bot.answer_inline_query(inline_query.id, [r], cache_time=5)
-                log_inline(inline_query)
-            except Exception as e:
-                bot.send_message(config.LOGCHANNEL, f'❗️{e}\n\n↩️ inline_query')
-        except Exception as e:
-            bot.send_message(config.LOGCHANNEL, f'❗️{e}\n\n↩️ inline_query')
-    elif wsCache == 'maintenance':
-        send_about_maintenance_inline(inline_query)
-    else:
-        send_about_problem_valve_api_inline(inline_query)
+    log_inline(inline_query)
+    try:
+        status_text_en, status_text_ru = get_server_status()
+        mm_stats_text_en, mm_stats_text_ru = get_mm_stats()
+        devcount_text_en, devcount_text_ru = get_devcount()
+        timer_text_en, timer_text_ru = get_timer()
+        gameversion_text_en, gameversion_text_ru = get_gameversion()
+        eu_north_text_en, eu_north_text_ru = get_dc_eu_north()
+        eu_east_text_en, eu_east_text_ru = get_dc_eu_east()
+        eu_west_text_en, eu_west_text_ru = get_dc_eu_west()
+        usa_north_text_en, usa_north_text_ru = get_dc_usa_north()
+        usa_south_text_en, usa_south_text_ru = get_dc_usa_south()
+        china_text_en, china_text_ru = get_dc_china()
+        emirates_text_en, emirates_text_ru = get_dc_emirates()
+        hong_kong_text_en, hong_kong_text_ru = get_dc_hong_kong()
+        india_text_en, india_text_ru = get_dc_india()
+        japan_text_en, japan_text_ru = get_dc_japan()
+        singapore_text_en, singapore_text_ru = get_dc_singapore()
+        australia_text_en, australia_text_ru = get_dc_australia()
+        africa_text_en, africa_text_ru = get_dc_africa()            
+        south_america_text_en, south_america_text_ru = get_dc_south_america()
+        cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
+        wsCache = cacheFile['valve_webapi']
+        if wsCache == 'normal':
+            thumbs = ['https://telegra.ph/file/8b640b85f6d62f8ed2900.jpg', 'https://telegra.ph/file/57ba2b279c53d69d72481.jpg',
+                        'https://telegra.ph/file/24b05cea99de936fd12bf.jpg', 'https://telegra.ph/file/6948255408689d2f6a472.jpg',
+                        'https://telegra.ph/file/82d8df1e9f5140da70232.jpg', 'https://telegra.ph/file/ff0dad30ae32144d7cd0c.jpg',
+                        'https://telegra.ph/file/1de1e51e62b79cae5181a.jpg', 'https://telegra.ph/file/0b209e65c421910419f34.jpg',
+                        'https://telegra.ph/file/b2213992b750940113b69.jpg', 'https://telegra.ph/file/11b6601a3e60940d59c88.jpg',
+                        'https://telegra.ph/file/1c2121ceec5d1482173d5.jpg', 'https://telegra.ph/file/4d269cb98aadaae391024.jpg',
+                        'https://telegra.ph/file/4d269cb98aadaae391024.jpg', 'https://telegra.ph/file/4d269cb98aadaae391024.jpg',
+                        'https://telegra.ph/file/06119c30872031d1047d0.jpg', 'https://telegra.ph/file/06119c30872031d1047d0.jpg',
+                        'https://telegra.ph/file/5dc6beef1556ea852284c.jpg', 'https://telegra.ph/file/12628c8193b48302722e8.jpg',
+                        'https://telegra.ph/file/60f8226ea5d72815bef57.jpg']
+            tags = [strings.status_tags, strings.mm_tags, strings.dev_count_tags, strings.cap_reset_tags, strings.gameversion_tags,
+                    strings.chinese_tags, strings.emirati_tags, strings.hong_kongese_tags, strings.indian_tags, strings.japanese_tags,
+                    strings.singaporean_tags, strings.north_european_tags, strings.east_european_tags, strings.west_european_tags,
+                    strings.northern_usa_tags, strings.southern_usa_tags, strings.australian_tags, strings.african_tags, strings.african_tags]
+            if inline_query.from_user.language_code in CIS_lang_codes:
+                data = [status_text_ru, mm_stats_text_ru, devcount_text_ru, timer_text_ru, gameversion_text_ru, china_text_ru, emirates_text_ru,
+                        hong_kong_text_ru, india_text_ru, japan_text_ru, singapore_text_ru, eu_north_text_ru, eu_east_text_ru, eu_west_text_ru,
+                        usa_north_text_ru, usa_south_text_ru, australia_text_ru, africa_text_ru, south_america_text_ru]
+                titles = ['Состояние серверов', 'Статистика ММ', 'Бета-версия', 'Сброс ограничений', 'Версия игры', 'Китайские ДЦ', 'Эмиратский ДЦ',
+                        'Гонконгский ДЦ', 'Индийские ДЦ', 'Японский ДЦ', 'Сингапурский ДЦ', 'Североевропейский ДЦ', 'Восточноевропейские ДЦ',
+                        'Западноевропейские ДЦ', 'ДЦ северной части США', 'ДЦ южной части США', 'Австралийский ДЦ', 'Африканский ДЦ', 'Южноамериканские ДЦ']
+                descriptions = ['Проверить доступность серверов', 'Посмотреть количество онлайн игроков', 'Узнать количество онлайн разработчиков',
+                                'Время до сброса ограничений опыта и дропа', 'Проверить последнюю версию игры']
+                for _ in range(len(data)-len(descriptions)): descriptions.append('Проверить состояние')
+            else:
+                data = [status_text_en, mm_stats_text_ru, devcount_text_en, timer_text_en, gameversion_text_en, china_text_en, emirates_text_en,
+                        hong_kong_text_en, india_text_en, japan_text_en, singapore_text_en, eu_north_text_en, eu_east_text_en, eu_west_text_en,
+                        usa_north_text_en, usa_south_text_en, australia_text_en, africa_text_en, south_america_text_en]
+                titles = ['Server status', 'MM stats', 'Beta version', 'Drop cap reset', 'Game version', 'Chinese DC', 'Emirati DC', 'Hong Kongese DC',
+                        'Indian DC', 'Japanese DC', 'Singaporean DC', 'North European DC', 'East European DC', 'West European DC', 'Northern USA DC',
+                        'Southern USA DC', 'Australian DC', 'African DC', 'South American DC']
+                descriptions = ['Check the availability of the servers', 'Check the count of online players', 'Show the count of in-game developers',
+                                'Time left until experience and drop cap reset', 'Check the latest game version']
+                for _ in range(len(data)-len(descriptions)): descriptions.append('Check the status')
+            results = []
+            for data, tt, desc, thumb, tagList in zip(data, titles, descriptions, thumbs, tags):
+                for tag in tagList:
+                    if inline_query.query == tag:
+                        results.append(types.InlineQueryResultArticle(random.randint(0,9999), tt, input_message_content=types.InputTextMessageContent(data, parse_mode='html'), thumb_url=thumb, description=desc))
+            bot.answer_inline_query(inline_query.id, results, cache_time=5)
+        elif wsCache == 'maintenance':
+            send_about_maintenance_inline(inline_query)
+        else:
+            send_about_problem_valve_api_inline(inline_query)
+    except Exception as e:
+        bot.send_message(config.LOGCHANNEL, f'❗️{e}\n\n↩️ inline_query')
 
 
 ### Commands setup ###
@@ -1675,7 +1179,7 @@ def welcome(message):
         pd.concat([data, new_data]).to_csv(config.USER_DB_FILE_PATH, index=False)
     log(message)
     if message.chat.type == 'private':
-        if message.from_user.language_code in strings.CIS_lang_code:
+        if message.from_user.language_code in CIS_lang_codes:
             text = strings.cmdStart_ru.format(message.from_user.first_name)
             markup = buttons.markup_ru
         else:
@@ -1693,7 +1197,7 @@ def leave_feedback(message):
     '''Send feedback'''
     log(message)
     if message.chat.type == 'private':
-        if message.from_user.language_code in strings.CIS_lang_code:
+        if message.from_user.language_code in CIS_lang_codes:
             text = strings.cmdFeedback_ru 
         else:
             text = strings.cmdFeedback_en
@@ -1709,7 +1213,7 @@ def get_feedback(message):
     '''Get feedback from users'''
     if message.text == '/cancel':
         log(message)
-        if message.from_user.language_code in strings.CIS_lang_code:
+        if message.from_user.language_code in CIS_lang_codes:
             markup = buttons.markup_ru
         else:
             markup = buttons.markup_en
@@ -1723,7 +1227,7 @@ def get_feedback(message):
             bot.send_message(config.AQ, f'🆔 <a href="tg://user?id={message.from_user.id}">{message.from_user.id}</a>:', parse_mode='html', disable_notification=True)
             bot.forward_message(config.AQ, message.chat.id, message.message_id)
 
-        if message.from_user.language_code in strings.CIS_lang_code:
+        if message.from_user.language_code in CIS_lang_codes:
             text = 'Отлично! Ваше сообщение отправлено.'
             markup = buttons.markup_ru
         else:
@@ -1737,7 +1241,7 @@ def help(message):
     '''/help message'''
     log(message)
     if message.chat.type == 'private':
-        if message.from_user.language_code in strings.CIS_lang_code:
+        if message.from_user.language_code in CIS_lang_codes:
             text = strings.cmdHelp_ru
             markup = buttons.markup_ru
         else:
@@ -1756,10 +1260,6 @@ def delete_keyboard(message):
     bot.send_message(message.chat.id, '👍', reply_markup=buttons.markup_del)
     time.sleep(10)
     bot.delete_message(message.chat.id, message.message_id+1)
-
-def chuj(message):
-    for gName, gId in zip(strings.gun_name_list, strings.gun_id_list):
-        send_gun_info(gName, gId)
         
 @bot.message_handler(content_types=['text'])
 def answer(message):
@@ -1879,7 +1379,7 @@ def answer(message):
                 other(message)
 
             else:
-                if message.from_user.language_code in strings.CIS_lang_code:
+                if message.from_user.language_code in CIS_lang_codes:
                     text = strings.unknownRequest_ru
                     markup = buttons.markup_ru
                 else: 

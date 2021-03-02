@@ -11,7 +11,7 @@ from datetime import datetime
 import time
 
 import config
-import strings
+from plugins import strings
 
 workshop_url = f'https://api.steampowered.com/IPublishedFileService/GetUserFiles/v1/?key={config.STEAM_API_KEY}&steamid={config.CSGO_STEAM_PROFILE_ID}&appid={config.CSGO_APP_ID}&page=1&numperpage=18'
 

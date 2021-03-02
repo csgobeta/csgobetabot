@@ -13,7 +13,7 @@ from datetime import datetime
 import time
 
 import config
-import strings
+from plugins import strings
 from apps import file_manager
 
 

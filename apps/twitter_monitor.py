@@ -11,7 +11,7 @@ import json
 import re
 
 import config
-import strings
+from plugins import strings
 
 auth = OAuthHandler(config.TWITTER_API_KEY, config.TWITTER_API_KEY_S)
 auth.set_access_token(config.TWITTER_TOKEN, config.TWITTER_TOKEN_S)
