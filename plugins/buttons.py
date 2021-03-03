@@ -7,28 +7,32 @@ markup_del = types.ReplyKeyboardRemove(False)
 ### English ###
 
 
-# Back buttons
+# Back button
 back_button_en = types.KeyboardButton('⏪ Back')
-back_button_alt_en = types.KeyboardButton('⏪ Bаck')
-back_button_alt_en_2 = types.KeyboardButton('⏪ Вack')
-back_button_alt_en_3 = types.KeyboardButton('⏪ Bасk')
 
 # Default
-markup_en = types.ReplyKeyboardMarkup(row_width=2, resize_keyboard=True)
-server_status_en = types.KeyboardButton('Server status')
-matchmaking_en = types.KeyboardButton('MM stats')
-devcount_en = types.KeyboardButton('Online devs')
-dc_en = types.KeyboardButton('Data centers')
-other_en = types.KeyboardButton('Other')
-markup_en.add(server_status_en, matchmaking_en, devcount_en, dc_en, other_en)
+markup_en = types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
+server_stats_en = types.KeyboardButton('Server Statistics')
+profile_info_en = types.KeyboardButton('Profile Information')
+extra_features_en = types.KeyboardButton('Extra Features')
+markup_en.add(server_stats_en, profile_info_en, extra_features_en)
+
+# Server Statistics
+markup_ss_en = types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
+server_status_en = types.KeyboardButton('Server Status')
+matchmaking_en = types.KeyboardButton('Matchmaking Statistics')
+dc_en = types.KeyboardButton('Dataсenters Status')
+markup_ss_en.add(server_status_en, matchmaking_en, dc_en)
+markup_ss_en.add(back_button_en)
 
 # Other
-markup_other_en = types.ReplyKeyboardMarkup(row_width=2, resize_keyboard=True)
-timer_en = types.KeyboardButton('Cap reset')
-gv_en = types.KeyboardButton('Game version')
-guns_en = types.KeyboardButton('Gun database')
-markup_other_en.add(gv_en, timer_en, guns_en)
-markup_other_en.add(back_button_en)
+markup_extra_en = types.ReplyKeyboardMarkup(row_width=2, resize_keyboard=True)
+devcount_en = types.KeyboardButton('Developers In-game')
+timer_en = types.KeyboardButton('Cap Reset')
+gv_en = types.KeyboardButton('Game Version')
+guns_en = types.KeyboardButton('Gun Database')
+markup_extra_en.add(devcount_en, gv_en, timer_en, guns_en)
+markup_extra_en.add(back_button_en)
 
 # DC
 markup_DC_en = types.ReplyKeyboardMarkup(row_width=3, resize_keyboard=True)
@@ -48,20 +52,20 @@ china_en = types.KeyboardButton('China')
 singapore_en = types.KeyboardButton('Singapore')
 hong_kong_en = types.KeyboardButton('Hong Kong')
 japan_en = types.KeyboardButton('Japan')
-markup_DC_Asia_en.add(china_en, emirates_en, hong_kong_en, india_en, japan_en, singapore_en, back_button_alt_en)
+markup_DC_Asia_en.add(china_en, emirates_en, hong_kong_en, india_en, japan_en, singapore_en, back_button_en)
 
 # DC Europe
 markup_DC_EU_en = types.ReplyKeyboardMarkup(row_width=3, resize_keyboard=True)
 eu_West_en = types.KeyboardButton('West')
 eu_East_en = types.KeyboardButton('East')
 eu_North_en = types.KeyboardButton('North')
-markup_DC_EU_en.add(eu_East_en, eu_North_en, eu_West_en, back_button_alt_en)
+markup_DC_EU_en.add(eu_East_en, eu_North_en, eu_West_en, back_button_en)
 
 # DC USA
 markup_DC_USA_en = types.ReplyKeyboardMarkup(row_width=2, resize_keyboard=True)
 usa_Northwest_en = types.KeyboardButton('Nоrth')
 usa_Southwest_en = types.KeyboardButton('South')
-markup_DC_USA_en.add(usa_Northwest_en, usa_Southwest_en, back_button_alt_en)
+markup_DC_USA_en.add(usa_Northwest_en, usa_Southwest_en, back_button_en)
 
 # Guns
 markup_guns_en = types.ReplyKeyboardMarkup(row_width=2, resize_keyboard=True)
@@ -69,7 +73,7 @@ pistols_en = types.KeyboardButton('Pistols')
 smgs_en = types.KeyboardButton('SMGs')
 rifles_en = types.KeyboardButton('Rifles')
 heavy_en = types.KeyboardButton('Heavy')
-markup_guns_en.add(pistols_en, smgs_en, rifles_en, heavy_en, back_button_alt_en_2)
+markup_guns_en.add(pistols_en, smgs_en, rifles_en, heavy_en, back_button_en)
 
 # Pistols
 markup_pistols_en = types.ReplyKeyboardMarkup(row_width=4, resize_keyboard=True)
@@ -83,8 +87,10 @@ five_seven = types.KeyboardButton('Five-SeveN')
 tec = types.KeyboardButton('Tec-9')
 deagle = types.KeyboardButton('Desert Eagle')
 r8 = types.KeyboardButton('R8 Revolver')
-markup_pistols_en.add(usps, p2000, glock, dualies, p250, cz75, five_seven, tec, deagle, r8)
-markup_pistols_en.add(back_button_alt_en_3)
+markup_pistols_en.add(usps, p2000, glock, p250)
+markup_pistols_en.add(dualies, cz75, five_seven)
+markup_pistols_en.add(tec, deagle, r8)
+markup_pistols_en.add(back_button_en)
 
 # SMGs
 markup_smgs_en = types.ReplyKeyboardMarkup(row_width=4, resize_keyboard=True)
@@ -96,7 +102,7 @@ ump = types.KeyboardButton('UMP-45')
 p90 = types.KeyboardButton('P90')
 pp = types.KeyboardButton('PP-Bizon')
 markup_smgs_en.add(mp9, mac10, mp7, mp5, ump, p90, pp)
-markup_smgs_en.add(back_button_alt_en_3)
+markup_smgs_en.add(back_button_en)
 
 # Rifles
 markup_rifles_en = types.ReplyKeyboardMarkup(row_width=4, resize_keyboard=True)
@@ -112,7 +118,7 @@ awp = types.KeyboardButton('AWP')
 scar = types.KeyboardButton('SCAR-20')
 g3sg1 = types.KeyboardButton('G3SG1')
 markup_rifles_en.add(famas, galil, m4a4, m4a1, ak, aug, sg, ssg, awp, scar, g3sg1)
-markup_rifles_en.add(back_button_alt_en_3)
+markup_rifles_en.add(back_button_en)
 
 # Heavy
 markup_heavy_en = types.ReplyKeyboardMarkup(row_width=3, resize_keyboard=True)
@@ -123,34 +129,38 @@ sawedoff = types.KeyboardButton('Sawed-Off')
 m249 = types.KeyboardButton('M249')
 negev = types.KeyboardButton('Negev')
 markup_heavy_en.add(nova, xm1014, mag7, sawedoff, m249, negev)
-markup_heavy_en.add(back_button_alt_en_3)
+markup_heavy_en.add(back_button_en)
 
 
 ### Russian ###
 
 
-# Back Buttons
+# Back Button
 back_button_ru = types.KeyboardButton('⏪ Назад')
-back_button_alt_ru = types.KeyboardButton('⏪ Нaзад')
-back_button_alt_2_ru = types.KeyboardButton('⏪ Haзaд')
-back_button_alt_3_ru = types.KeyboardButton('⏪ Haзад')
 
 # Default
-markup_ru = types.ReplyKeyboardMarkup(row_width=2, resize_keyboard=True)
-server_status_ru = types.KeyboardButton('Статус серверов')
-mathcmaking_ru = types.KeyboardButton('Статистика ММ')
-devcount_ru = types.KeyboardButton('Разработчиков в игре')
-dc_ru = types.KeyboardButton('Дата-центры')
-other_ru = types.KeyboardButton('Другое')
-markup_ru.add(server_status_ru, mathcmaking_ru, devcount_ru, dc_ru, other_ru)
+markup_ru = types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
+server_stats_ru = types.KeyboardButton('Статистика Серверов')
+profile_info_ru = types.KeyboardButton('Информация о Профиле')
+extra_features_ru = types.KeyboardButton('Дополнительные Функции')
+markup_ru.add(server_stats_ru, profile_info_ru, extra_features_ru)
 
-# Other
-markup_other_ru = types.ReplyKeyboardMarkup(row_width=2, resize_keyboard=True)
-gv_ru = types.KeyboardButton('Версия игры')
-guns_ru = types.KeyboardButton('База данных оружий')
-timer_ru = types.KeyboardButton('Сброс ограничений')
-markup_other_ru.add(gv_ru, timer_ru, guns_ru)
-markup_other_ru.add(back_button_ru)
+# Server Statistics RU
+markup_ss_ru = types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
+server_status_ru = types.KeyboardButton('Состояние Серверов')
+mathcmaking_ru = types.KeyboardButton('Статистика Матчмейкинга')
+dc_ru = types.KeyboardButton('Состояние Дата-центров')
+markup_ss_ru.add(server_status_ru, mathcmaking_ru, dc_ru)
+markup_ss_ru.add(back_button_ru)
+
+# Extra Features RU
+markup_extra_ru = types.ReplyKeyboardMarkup(row_width=2, resize_keyboard=True)
+devcount_ru = types.KeyboardButton('Разработчиков в Игре')
+gv_ru = types.KeyboardButton('Версия Игры')
+guns_ru = types.KeyboardButton('База Данных Оружий')
+timer_ru = types.KeyboardButton('Сброс Ограничений')
+markup_extra_ru.add(devcount_ru, gv_ru, timer_ru, guns_ru)
+markup_extra_ru.add(back_button_ru)
 
 # DC
 markup_DC_ru = types.ReplyKeyboardMarkup(row_width=3, resize_keyboard=True)
@@ -167,7 +177,7 @@ markup_DC_EU_ru = types.ReplyKeyboardMarkup(row_width=3, resize_keyboard=True)
 eu_West_ru = types.KeyboardButton('Запад')
 eu_East_ru = types.KeyboardButton('Восток')
 eu_North_ru = types.KeyboardButton('Север')
-markup_DC_EU_ru.add(eu_East_ru, eu_West_ru, eu_North_ru, back_button_alt_ru)
+markup_DC_EU_ru.add(eu_East_ru, eu_West_ru, eu_North_ru, back_button_ru)
 
 # DC Asia
 markup_DC_Asia_ru = types.ReplyKeyboardMarkup(row_width=3, resize_keyboard=True)
@@ -177,13 +187,13 @@ china_ru = types.KeyboardButton('Китай')
 singapore_ru = types.KeyboardButton('Сингапур')
 hong_kong_ru = types.KeyboardButton('Гонконг')
 japan_ru = types.KeyboardButton('Япония')
-markup_DC_Asia_ru.add(hong_kong_ru, india_ru, china_ru, singapore_ru, emirates_ru, japan_ru, back_button_alt_ru)
+markup_DC_Asia_ru.add(hong_kong_ru, india_ru, china_ru, singapore_ru, emirates_ru, japan_ru, back_button_ru)
 
 # DC USA
 markup_DC_USA_ru = types.ReplyKeyboardMarkup(row_width=2, resize_keyboard=True)
 usa_Northwest_ru = types.KeyboardButton('Сeвер')
 usa_Southwest_ru = types.KeyboardButton('Юг')
-markup_DC_USA_ru.add(usa_Northwest_ru, usa_Southwest_ru, back_button_alt_ru)
+markup_DC_USA_ru.add(usa_Northwest_ru, usa_Southwest_ru, back_button_ru)
 
 # Guns
 markup_guns_ru = types.ReplyKeyboardMarkup(row_width=2, resize_keyboard=True)
@@ -191,24 +201,26 @@ pistols = types.KeyboardButton('Пистолеты')
 smgs = types.KeyboardButton('Пистолеты-пулемёты')
 rifles = types.KeyboardButton('Винтовки')
 heavy = types.KeyboardButton('Тяжёлое оружие')
-markup_guns_ru.add(pistols, smgs, rifles, heavy, back_button_alt_2_ru)
+markup_guns_ru.add(pistols, smgs, rifles, heavy, back_button_ru)
 
 # Pistols
 markup_pistols_ru = types.ReplyKeyboardMarkup(row_width=4, resize_keyboard=True)
-markup_pistols_ru.add(usps, p2000, glock, dualies, p250, cz75, five_seven, tec, deagle, r8)
-markup_pistols_ru.add(back_button_alt_3_ru)
+markup_pistols_ru.add(usps, p2000, glock, p250)
+markup_pistols_ru.add(dualies, cz75, five_seven)
+markup_pistols_ru.add(tec, deagle, r8)
+markup_pistols_ru.add(back_button_ru)
 
 # SMGs
 markup_smgs_ru = types.ReplyKeyboardMarkup(row_width=4, resize_keyboard=True)
 markup_smgs_ru.add(mp9, mac10, mp7, mp5, ump, p90, pp)
-markup_smgs_ru.add(back_button_alt_3_ru)
+markup_smgs_ru.add(back_button_ru)
 
 # Rifles
 markup_rifles_ru = types.ReplyKeyboardMarkup(row_width=4, resize_keyboard=True)
 markup_rifles_ru.add(famas, galil, m4a4, m4a1, ak, aug, sg, ssg, awp, scar, g3sg1)
-markup_rifles_ru.add(back_button_alt_3_ru)
+markup_rifles_ru.add(back_button_ru)
 
 # Heavy Russian
 markup_heavy_ru = types.ReplyKeyboardMarkup(row_width=3, resize_keyboard=True)
 markup_heavy_ru.add(nova, xm1014, mag7, sawedoff, m249, negev)
-markup_heavy_ru.add(back_button_alt_3_ru)
+markup_heavy_ru.add(back_button_ru)

@@ -19,9 +19,9 @@ status_ru = '{} Состояние серверов:\n\n• Игровой ко�
 '''Text for Matchmaking'''
 mm_tags = ['mm stats', 'статистика мм', '/mm']
 # English
-mm_en = '<a href="{}">‎</a>📊 Matchmaking statistics:\n\n• Online servers: {:,}\n• Online players: {:,}\n• Active players: {:,}\n• Searching players: {:,}\n• Average search time: {}s\n\n'
+mm_en = '<a href="{}">‎‎‎‎</a>📊 Matchmaking statistics:\n\n• Online servers: {:,}\n• Online players: {:,}\n• Active players: {:,}\n• Searching players: {:,}\n• Average search time: {}s\n\n'
 # Russian
-mm_ru = '<a href="{}">‎</a>⁠📊 Статистика матчмейкинга:\n\n• Онлайн серверов: {:,}\n• Онлайн игроков: {:,}\n• Активных игроков: {:,}\n• Игроков в поиске: {:,}\n• Среднее время поиска: {} с.\n\n'
+mm_ru = '<a href="{}">‎‎‎‎</a>⁠📊 Статистика матчмейкинга:\n\n• Онлайн серверов: {:,}\n• Онлайн игроков: {:,}\n• Активных игроков: {:,}\n• Игроков в поиске: {:,}\n• Среднее время поиска: {} с.\n\n'
 
 '''Text for Additional info'''
 # English
@@ -32,9 +32,9 @@ additionalInfo_ru = '📁 Дополнительная информация:\n\n
 '''Text for Dev count'''
 dev_count_tags = ['online devs', 'разработчиков в игре', '/devcount']
 # English
-devCount_en = '<a href="{}">‎⁠</a>🧑‍💻 Beta-version of CS:GO (ID710):\n\n• Online devs: {}\n• All-time peak: {}\n\nUpdated on: {} UTC\n\n🏢 Current time at Valve headquarters: {}'
+devCount_en = '<a href="{}">⁠‎‎‎</a>🧑‍💻 Beta-version of CS:GO (ID710):\n\n• Online devs: {}\n• All-time peak: {}\n\nUpdated on: {} UTC\n\n🏢 Current time at Valve headquarters: {}'
 # Russian
-devCount_ru = '<a href="{}">‎⁠</a>🧑‍💻 Бета-версия CS:GO (ID710):\n\n• Онлайн разработчиков: {}\n• Рекордный пик: {}\n\nОбновлено: {} UTC\n\n🏢 Текущее время в штаб-квартире Valve: {}'
+devCount_ru = '<a href="{}">⁠‎‎‎</a>🧑‍💻 Бета-версия CS:GO (ID710):\n\n• Онлайн разработчиков: {}\n• Рекордный пик: {}\n\nОбновлено: {} UTC\n\n🏢 Текущее время в штаб-квартире Valve: {}'
 
 
 '''Text for Timer'''
@@ -54,9 +54,9 @@ gameversion_ru = '⚙️ Текущая версия игры: <code>{}</code>\n
 
 '''Text for Wrong Request'''
 # English
-unknownRequest_en = '🤷‍♀️ Nothing found, please use one of the following commands:'
+unknownRequest_en = '⚠️ Nothing found, please select one of the following categories:'
 # Russian
-unknownRequest_ru = '🤷‍♀️ Ничего не найдено, пожалуйста, воспользуйтесь одной из приведённых команд:'
+unknownRequest_ru = '⚠️ Ничего не найдено, пожалуйста, выберите одну из приведённых категорий:'
 
 
 '''Text for Wrong API'''

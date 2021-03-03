@@ -1,32 +1,23 @@
 # -*- coding: utf-8 -*-
 
 import time
-from datetime import date, datetime, timedelta
-
-import pytz
-from babel.dates import format_datetime
-
 import pandas as pd
-
-import logging
-import config
 
 import telebot
 from telebot import types
+
+import logging
 import random
 
-from apps import file_manager
-from apps.timer import Reset
-
-from plugins import buttons
+import config
 from plugins import strings
+from plugins import buttons
+from plugins import get_data
+from plugins.addons import translate
+from apps import file_manager
 
 bot = telebot.TeleBot(config.BOT_TOKEN)
 telebot.logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
-
-tz = pytz.timezone('UTC')
-tz_valve = pytz.timezone('America/Los_Angeles')
-timer_drop = Reset()
 CIS_lang_codes = ['ru', 'uk', 'be', 'uz', 'kk']
 
 
@@ -44,158 +35,69 @@ def log_inline(inline_query):
         bot.send_message(config.LOGCHANNEL, inline_query)
 
 
-### Pull information ###
-
-
-def get_server_status():
-    '''Get the status of CS:GO servers'''
-    tsCache, tsRCache = time_converter()[0], time_converter()[1]
-    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
-    gcCache, slCache, sCache, piCache = cacheFile['game_coordinator'], cacheFile['sessionsLogon'], cacheFile['scheduler'], cacheFile['steam_community']
-
-    array = [gcCache, slCache, sCache, piCache]
-    array_ru = []
-    for data in array:
-        data_ru = translate(data)
-        array_ru.append(data_ru)
-    gcRCache, slRCache, sRCache, piRCache = array_ru[0], array_ru[1], array_ru[2], array_ru[3]
-
-    if gcCache != 'normal' or slCache != 'normal':
-        tick = '❌'
-    else:
-        tick = '✅'
-
-    status_text_en = strings.status_en.format(tick, gcCache, slCache, sCache, piCache, tsCache)
-    status_text_ru = strings.status_ru.format(tick, gcRCache, slRCache, sRCache, piRCache, tsRCache)
-
-    return status_text_en, status_text_ru
-
-def get_mm_stats():
-    tsCache, tsRCache = time_converter()[0], time_converter()[1]
-    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
-    url = cacheFile['graph_url']
-    pcCache, scCache = cacheFile['online_player_count'], cacheFile['online_server_count']
-    apCache, ssCache, spCache = cacheFile['active_player_count'], cacheFile['search_seconds_avg'], cacheFile['searching_players']
-    p24Cache, paCache, uqCache = cacheFile['peak_24_hours'], cacheFile['peak_all_time'], cacheFile['unique_monthly']
-
-    mm_text_en = strings.mm_en.format(url, scCache, pcCache, apCache, spCache, ssCache)
-    mm_text_ru = strings.mm_ru.format(url, scCache, pcCache, apCache, spCache, ssCache)
-
-    addInf_text_en = strings.additionalInfo_en.format(p24Cache, paCache, uqCache, tsCache)
-    addInf_text_ru = strings.additionalInfo_ru.format(p24Cache, paCache, uqCache, tsRCache)
-
-    mm_stats_text_en = mm_text_en + addInf_text_en
-    mm_stats_text_ru = mm_text_ru + addInf_text_ru
-
-    return mm_stats_text_en, mm_stats_text_ru
-
-def get_devcount():
-    '''Get the count of online devs'''
-    tsCache, tsRCache, tsVCache = time_converter()[0], time_converter()[1], time_converter()[4]
-    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
-    url = cacheFile['graph_url2']
-    dcCache, dpCache = cacheFile['dev_player_count'], cacheFile['dev_all_time_peak']
-    devcount_text_en = strings.devCount_en.format(url, dcCache, dpCache, tsCache, tsVCache)
-    devcount_text_ru = strings.devCount_ru.format(url, dcCache, dpCache, tsRCache, tsVCache)
-    return devcount_text_en, devcount_text_ru
-
-def get_timer():
-    '''Get drop cap reset time'''
-    delta_days, delta_hours, delta_mins, delta_secs = timer_drop.get_time()
-    timer_text_en = strings.timer_en.format(delta_days, delta_hours, delta_mins, delta_secs)
-    timer_text_ru = strings.timer_ru.format(delta_days, delta_hours, delta_mins, delta_secs)
-    return timer_text_en, timer_text_ru
-
-def get_gameversion():
-    '''Get the version of the game'''
-    vdCache, vdRCache = time_converter()[2], time_converter()[3]
-    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
-    cvCache, svCache, pvCache = cacheFile['client_version'], cacheFile['server_version'], cacheFile['patch_version']
-    gameversion_text_en = strings.gameversion_en.format(pvCache, cvCache, svCache, vdCache)
-    gameversion_text_ru = strings.gameversion_ru.format(pvCache, cvCache, svCache, vdRCache)
-    return gameversion_text_en, gameversion_text_ru
-
-
 ### Send information ###   
 
 
 def send_server_status(message):
     '''Send the status of CS:GO servers'''
-    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
-    wsCache = cacheFile['valve_webapi']
-    if wsCache == 'normal':
-        try:
-            status_text_en, status_text_ru = get_server_status()
-            if message.from_user.language_code in CIS_lang_codes:
-                text = status_text_ru
-                markup = buttons.markup_ru
-            else:
-                text = status_text_en
-                markup = buttons.markup_en
-            bot.send_message(message.chat.id, text, reply_markup=markup, parse_mode='html')
-        except Exception as e:
-            bot.send_message(config.LOGCHANNEL, f'❗️{e}')
-            send_about_problem_bot(message)
-    elif wsCache == 'maintenance':
-        send_about_maintenance(message)
-    else:
-        send_about_problem_valve_api(message)   
+    try:
+        status_text_en, status_text_ru = get_data.server_status()
+        if message.from_user.language_code in CIS_lang_codes:
+            text = status_text_ru
+            markup = buttons.markup_ss_ru
+        else:
+            text = status_text_en
+            markup = buttons.markup_ss_en
+        msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+        bot.register_next_step_handler(msg, server_stats_process)
+    except Exception as e:
+        bot.send_message(config.LOGCHANNEL, f'❗️{e}')
+        send_about_problem_bot(message)
 
 def send_mm_stats(message):
-    '''Send the CS:GO matchmaking stats'''
-    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
-    wsCache = cacheFile['valve_webapi']
-    if wsCache == 'normal':
-        try:
-            mm_stats_text_en, mm_stats_text_ru = get_mm_stats()
-            if message.from_user.language_code in CIS_lang_codes:
-                text = mm_stats_text_ru
-                markup = buttons.markup_ru
-            else:
-                text = mm_stats_text_en
-                markup = buttons.markup_en
-            bot.send_message(message.chat.id, text, reply_markup=markup, parse_mode='html')
-        except Exception as e:
-            bot.send_message(config.LOGCHANNEL, f'❗️{e}')
-            send_about_problem_bot(message)
-    elif wsCache == 'maintenance':
-        send_about_maintenance(message)
-    else:
-        send_about_problem_valve_api(message)     
+    '''Send CS:GO matchamaking statistics'''
+    try:
+        mm_stats_text_en, mm_stats_text_ru = get_data.mm_stats()
+        if message.from_user.language_code in CIS_lang_codes:
+            text = mm_stats_text_ru
+            markup = buttons.markup_ss_ru
+        else:
+            text = mm_stats_text_en
+            markup = buttons.markup_ss_en
+        msg = bot.send_message(message.chat.id, text, reply_markup=markup, parse_mode='html')
+        bot.register_next_step_handler(msg, server_stats_process)
+    except Exception as e:
+        bot.send_message(config.LOGCHANNEL, f'❗️{e}')
+        send_about_problem_bot(message)
 
 def send_devcount(message):
     '''Send the count of online devs'''
-    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
-    wsCache = cacheFile['valve_webapi']
-    if wsCache == 'normal':
-        try:
-            devcount_text_en, devcount_text_ru = get_devcount()
-            if message.from_user.language_code in CIS_lang_codes:
-                    text = devcount_text_ru
-                    markup = buttons.markup_ru
-            else:    
-                    text = devcount_text_en
-                    markup = buttons.markup_en
-            bot.send_message(message.chat.id, text, reply_markup=markup, parse_mode='html') 
-        except Exception as e:
-            bot.send_message(config.LOGCHANNEL, f'❗️{e}')
-            send_about_problem_bot(message)
-    elif wsCache == 'maintenance':
-        send_about_maintenance(message)
-    else:
-        send_about_problem_valve_api(message)
+    try:
+        devcount_text_en, devcount_text_ru = get_data.devcount()
+        if message.from_user.language_code in CIS_lang_codes:
+            text = devcount_text_ru
+            markup = buttons.markup_extra_ru
+        else:    
+            text = devcount_text_en
+            markup = buttons.markup_extra_en
+        msg = bot.send_message(message.chat.id, text, reply_markup=markup, parse_mode='html')
+        bot.register_next_step_handler(msg, extra_features_process)
+    except Exception as e:
+        bot.send_message(config.LOGCHANNEL, f'❗️{e}')
+        send_about_problem_bot(message)
 
 def send_timer(message):
     '''Send drop cap reset time'''
     try:
-        timer_text_en, timer_text_ru = get_timer()
+        timer_text_en, timer_text_ru = get_data.timer()
         if message.from_user.language_code in CIS_lang_codes:
-                text = timer_text_ru
-                markup = buttons.markup_other_ru
+            text = timer_text_ru
+            markup = buttons.markup_extra_ru
         else:
-                text = timer_text_en
-                markup = buttons.markup_other_en
-        bot.send_message(message.chat.id, text, reply_markup=markup) 
+            text = timer_text_en
+            markup = buttons.markup_extra_en
+        msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+        bot.register_next_step_handler(msg, extra_features_process) 
     except Exception as e:
         bot.send_message(config.LOGCHANNEL, f'❗️{e}')
         send_about_problem_bot(message)
@@ -203,14 +105,15 @@ def send_timer(message):
 def send_gameversion(message):
     '''Send the version of the game'''
     try:
-        gameversion_text_en, gameversion_text_ru = get_gameversion()
+        gameversion_text_en, gameversion_text_ru = get_data.gameversion()
         if message.from_user.language_code in CIS_lang_codes:
-                text = gameversion_text_ru
-                markup = buttons.markup_other_ru
+            text = gameversion_text_ru
+            markup = buttons.markup_extra_ru
         else:
-                text = gameversion_text_en
-                markup = buttons.markup_other_en
-        bot.send_message(message.chat.id, text, reply_markup=markup, parse_mode='html') 
+            text = gameversion_text_en
+            markup = buttons.markup_extra_en
+        msg = bot.send_message(message.chat.id, text, reply_markup=markup, parse_mode='html') 
+        bot.register_next_step_handler(msg, extra_features_process)
     except Exception as e:
         bot.send_message(config.LOGCHANNEL, f'❗️{e}')
         send_about_problem_bot(message)
@@ -236,36 +139,30 @@ def send_about_maintenance(message):
     bot.send_message(message.chat.id, text, reply_markup=markup)
 
 def send_about_problem_valve_api_inline(inline_query):
-    try:
-        if inline_query.from_user.language_code in CIS_lang_codes:
-            wrong_r = strings.wrongAPI_ru
-            title_un = 'Нет данных'
-            description_un = 'Не получилось связаться с API Valve'
-        else:
-            wrong_r = strings.wrongAPI_en
-            title_un = 'No data'
-            description_un = 'Unable to call Valve API'
-        r = types.InlineQueryResultArticle('1', title_un, input_message_content = types.InputTextMessageContent(wrong_r), thumb_url='https://telegra.ph/file/b9d408e334795b014ee5c.jpg', description=description_un)
-        bot.answer_inline_query(inline_query.id, [r], cache_time=5)
-        log_inline(inline_query)
-    except Exception as e:
-        bot.send_message(config.LOGCHANNEL, f'❗️{e}\n\n↩️ inline_query')
+    if inline_query.from_user.language_code in CIS_lang_codes:
+        wrong_r = strings.wrongAPI_ru
+        title_un = 'Нет данных'
+        description_un = 'Не получилось связаться с API Valve'
+    else:
+        wrong_r = strings.wrongAPI_en
+        title_un = 'No data'
+        description_un = 'Unable to call Valve API'
+    r = types.InlineQueryResultArticle('1', title_un, input_message_content = types.InputTextMessageContent(wrong_r), thumb_url='https://telegra.ph/file/b9d408e334795b014ee5c.jpg', description=description_un)
+    bot.answer_inline_query(inline_query.id, [r], cache_time=5)
+    log_inline(inline_query)
 
 def send_about_maintenance_inline(inline_query):
-    try:
-        if inline_query.from_user.language_code in CIS_lang_codes:
-            maintenance_r = strings.maintenance_ru
-            title_maintenance = 'Нет данных'
-            maintenance = 'Еженедельное тех. обслуживание.'
-        else:
-            maintenance_r = strings.maintenance_en
-            title_maintenance = 'No data'
-            maintenance = 'Weekly maintenance'
-        r = types.InlineQueryResultArticle('1', title_maintenance, input_message_content = types.InputTextMessageContent(maintenance_r), thumb_url='https://telegra.ph/file/6120ece0aab30d8c59d07.jpg', description=maintenance)
-        bot.answer_inline_query(inline_query.id, [r], cache_time=5)
-        log_inline(inline_query)
-    except Exception as e:
-        bot.send_message(config.LOGCHANNEL, f'❗️{e}\n\n↩️ inline_query')
+    if inline_query.from_user.language_code in CIS_lang_codes:
+        maintenance_r = strings.maintenance_ru
+        title_maintenance = 'Нет данных'
+        maintenance = 'Еженедельное тех. обслуживание.'
+    else:
+        maintenance_r = strings.maintenance_en
+        title_maintenance = 'No data'
+        maintenance = 'Weekly maintenance'
+    r = types.InlineQueryResultArticle('1', title_maintenance, input_message_content = types.InputTextMessageContent(maintenance_r), thumb_url='https://telegra.ph/file/6120ece0aab30d8c59d07.jpg', description=maintenance)
+    bot.answer_inline_query(inline_query.id, [r], cache_time=5)
+    log_inline(inline_query)
 
 def send_about_problem_bot(message):
     '''If anything goes wrong'''
@@ -277,777 +174,459 @@ def send_about_problem_bot(message):
         markup = buttons.markup_en  
     bot.send_message(message.chat.id, text, reply_markup=markup)
 
-def other(message):
-    if message.from_user.language_code in CIS_lang_codes:
-        text = '📂 Выберите одну из дополнительных функций:'
-        markup = buttons.markup_other_ru
-    else:
-        text = '📂 Select one of the additional features:'
-        markup = buttons.markup_other_en
-    bot.send_message(message.chat.id, text, reply_markup=markup)
-
-
-### Apps ###
-
-
-def time_converter():
-    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
-    time_server = cacheFile['server_timestamp']
-    tsCache = datetime.fromtimestamp(time_server, tz=tz).strftime('%a, %d %B %Y, %H:%M:%S')
-    tsRCache = str(format_datetime(datetime.strptime(tsCache, '%a, %d %B %Y, %H:%M:%S'), 'EEE, dd MMMM yyyy, HH:mm:ss', locale='ru')).title()
-
-    version_date = cacheFile['version_timestamp']
-    vdCache = (datetime.fromtimestamp(version_date, tz=tz) + timedelta(hours=8)).strftime('%a, %d %B %Y, %H:%M:%S') 
-    vdRCache = str(format_datetime(datetime.strptime(vdCache, '%a, %d %B %Y, %H:%M:%S'), 'EEE, dd MMMM yyyy, HH:mm:ss', locale='ru')).title()
-
-    tsVCache = datetime.now(tz = tz_valve).strftime('%H:%M:%S, %d/%m/%y %Z')
-
-    return tsCache, tsRCache, vdCache, vdRCache, tsVCache
-
-def translate(data):
-    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
-    en_list = ['low', 'medium', 'high', 'full', 'normal', 'surge', 'delayed', 'idle', 'offline', 'N/A', 'critical', 'internal server error']
-    ru_list = ['низкая', 'средняя', 'высокая', 'полная', 'в норме', 'помехи', 'задержка', 'бездействие', 'офлайн', 'N/A', 'критическое', 'внутренняя ошибка сервера']
-    for en, ru in zip(en_list, ru_list):
-        if data in en:
-            data_ru = ru
-            return data_ru
-
 
 ### Guns archive ###
 
 
-def get_gun_info(gun_id): 
-    '''Get archived data about guns'''
-    cacheFile = file_manager.readJson(config.GUNS_CACHE_FILE_PATH)
-    raw_data = list(filter(lambda x:x['id'] == gun_id, cacheFile['data']))
-    data = raw_data[0]
-    key_list = []
-    value_list = []
-    for key, value in data.items():
-        key_list.append(key)
-        value_list.append(value)
-    name, price = value_list[1], value_list[2]
-    origin, origin_ru = value_list[3], ''
-    clip_size, reserve_ammo = value_list[4], value_list[5]
-    fire_rate, kill_reward, movement_speed = value_list[6], value_list[10], value_list[8]
-    armor_penetration, accurate_range_stand, accurate_range_crouch = value_list[9], value_list[11], value_list[12]
-    draw_time, reload_clip_ready, reload_fire_ready = value_list[13], value_list[14], value_list[15]
-    origin_list_ru = ['Германия', 'Австрия', 'Италия', 'Швейцария', 'Чехия', 'Бельгия', 'Швеция', 'Израль',
-                'Соединённые Штаты', 'Россия', 'Франция', 'Соединённое Королевство', 'Южная Африка']
-    origin_list_en = ['Germany', 'Austria', 'Italy', 'Switzerland', 'Czech Republic', 'Belgium', 'Sweden', 'Israel',
-                'United States', 'Russia', 'France', 'United Kingdom', 'South Africa']
-    unarmored_damage_head, unarmored_damage_chest_and_arm, unarmored_damage_stomach, unarmored_damage_leg = value_list[16], value_list[17], value_list[18], value_list[19]
-    armored_damage_head, armored_damage_chest_and_arm, armored_damage_stomach, armored_damage_leg = value_list[20], value_list[21], value_list[22], value_list[23]
-    for en, ru in zip(origin_list_en, origin_list_ru):
-        if origin in en:
-            origin_ru = ru
-    gun_data_text_en = strings.gun_data_en.format(name, origin, price, clip_size, reserve_ammo, fire_rate, kill_reward, movement_speed,
-                                    armor_penetration, accurate_range_stand, accurate_range_crouch, draw_time, reload_clip_ready, reload_fire_ready,
-                                    armored_damage_head, unarmored_damage_head, armored_damage_chest_and_arm, unarmored_damage_chest_and_arm,
-                                    armored_damage_stomach, unarmored_damage_stomach, armored_damage_leg, unarmored_damage_leg)
-    gun_data_text_ru = strings.gun_data_ru.format(name, origin_ru, price, clip_size, reserve_ammo, fire_rate, kill_reward, movement_speed,
-                                    armor_penetration, accurate_range_stand, accurate_range_crouch, draw_time, reload_clip_ready, reload_fire_ready,
-                                    armored_damage_head, unarmored_damage_head, armored_damage_chest_and_arm, unarmored_damage_chest_and_arm,
-                                    armored_damage_stomach, unarmored_damage_stomach, armored_damage_leg, unarmored_damage_leg)
-    return gun_data_text_en, gun_data_text_ru
-
 def send_gun_info(message, gun_id):
     '''Send archived data about guns'''
     try:
-        gun_data_text_en, gun_data_text_ru = get_gun_info(gun_id)
+        gun_data_text_en, gun_data_text_ru = get_data.gun_info(gun_id)
         if message.from_user.language_code in CIS_lang_codes:
-                text = gun_data_text_ru
-                markup = buttons.markup_guns_ru
+            text = gun_data_text_ru
+            markup = buttons.markup_guns_ru
         else:
-                text = gun_data_text_en
-                markup = buttons.markup_guns_en
-        bot.send_message(message.chat.id, text, reply_markup=markup, parse_mode='html') 
+            text = gun_data_text_en
+            markup = buttons.markup_guns_en
+        msg = bot.send_message(message.chat.id, text, reply_markup=markup, parse_mode='html')
+        bot.register_next_step_handler(msg, guns_process)
     except Exception as e:
         bot.send_message(config.LOGCHANNEL, f'❗️{e}')
         send_about_problem_bot(message)
 
 def guns(message):
-    try:
+    if message.from_user.language_code in CIS_lang_codes:
+        text = '#️⃣ Выберите категорию, которая Вас интересует:'
+        markup = buttons.markup_guns_ru
+    else:
+        text = '#️⃣ Select the category, that you are interested in:'
+        markup = buttons.markup_guns_en
+    msg = bot.send_message(message.chat.id, text, reply_markup=markup, parse_mode='html') 
+    bot.register_next_step_handler(msg, guns_process)
+
+def guns_process(message):
+    if message.text.lower() == 'pistols' or message.text.lower() == 'пистолеты':
+        pistols(message)
+    elif message.text.lower() == 'smgs' or message.text.lower() == 'пистолеты-пулемёты':
+        smgs(message)
+    elif message.text.lower() == 'rifles' or message.text.lower() == 'винтовки':
+        rifles(message)
+    elif message.text.lower() == 'heavy' or message.text.lower() == 'тяжёлое оружие':
+        heavy(message)
+    elif message.text == '⏪ Back' or message.text == '⏪ Назад':
         if message.from_user.language_code in CIS_lang_codes:
-            text = '#️⃣ Выберите категорию, которая Вас интересует:'
+            markup = buttons.markup_extra_ru
+        else:
+            markup = buttons.markup_extra_en
+        msg = bot.send_message(message.chat.id, '👌', reply_markup=markup)
+        bot.register_next_step_handler(msg, extra_features_process)
+    else:
+        if message.from_user.language_code in CIS_lang_codes:
+            text = '⚠️ Категория не найдена, пожалуйста, выберите одну из данных категорий:'
             markup = buttons.markup_guns_ru
         else:
-            text = '#️⃣ Select the category, that you are interested in:'
+            text = '⚠️ No category found, please select one of the given categories:'
             markup = buttons.markup_guns_en
-        bot.send_message(message.chat.id, text, reply_markup=markup)
-    except Exception as e:
-        bot.send_message(config.LOGCHANNEL, f'❗️{e}')
-        send_about_problem_bot(message)
+        msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+        bot.register_next_step_handler(msg, guns_process)
 
 def pistols(message):
-    try:
+    if message.from_user.language_code in CIS_lang_codes:
+        text = '🔫 Выберите пистолет..'
+        markup = buttons.markup_pistols_ru
+    else:
+        text = '🔫 Select the pistol..'
+        markup = buttons.markup_pistols_en
+    msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+    bot.register_next_step_handler(msg, pistols_process)
+
+def pistols_process(message):
+    if message.text.lower() in strings.gun_name_list:
+        for gName, gId in zip(strings.gun_name_list, strings.gun_id_list):
+            if message.text.lower() == gName:
+                send_gun_info(message, gId)
+    elif message.text == '⏪ Back' or message.text == '⏪ Назад':
         if message.from_user.language_code in CIS_lang_codes:
-            text = '🔫 Выберите пистолет..'
+            markup = buttons.markup_guns_ru
+        else:
+            markup = buttons.markup_guns_en
+        msg = bot.send_message(message.chat.id, '👌', reply_markup=markup)
+        bot.register_next_step_handler(msg, guns_process)
+    else:
+        if message.from_user.language_code in CIS_lang_codes:
+            text = '⚠️ Пистолет не найден, пожалуйста, выберите один из данных пистолетов:'
             markup = buttons.markup_pistols_ru
         else:
-            text = '🔫 Select the pistol..'
+            text = '⚠️ No pistol found, please select one of the given pistols:'
             markup = buttons.markup_pistols_en
-        bot.send_message(message.chat.id, text, reply_markup=markup)
-    except Exception as e:
-        bot.send_message(config.LOGCHANNEL, f'❗️{e}')
-        send_about_problem_bot(message)
+        msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+        bot.register_next_step_handler(msg, pistols_process)
+
 
 def smgs(message):
-    try:
+    if message.from_user.language_code in CIS_lang_codes:
+        text = '🔫 Выберите пистолет-пулемёт..'
+        markup = buttons.markup_smgs_ru
+    else:
+        text = '🔫 Select the SMG..'
+        markup = buttons.markup_smgs_en
+    msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+    bot.register_next_step_handler(msg, smgs_process)
+
+def smgs_process(message):
+    if message.text.lower() in strings.gun_name_list:
+        for gName, gId in zip(strings.gun_name_list, strings.gun_id_list):
+            if message.text.lower() == gName:
+                send_gun_info(message, gId)
+    elif message.text == '⏪ Back' or message.text == '⏪ Назад':
         if message.from_user.language_code in CIS_lang_codes:
-            text = '🔫 Выберите пистолет-пулемёт..'
+            markup = buttons.markup_guns_ru
+        else:
+            markup = buttons.markup_guns_en
+        msg = bot.send_message(message.chat.id, '👌', reply_markup=markup)
+        bot.register_next_step_handler(msg, guns_process)
+    else:
+        if message.from_user.language_code in CIS_lang_codes:
+            text = '⚠️ Пистолет-пулемёт не найден, пожалуйста, выберите один из данных пистолетов-пулемётов:'
             markup = buttons.markup_smgs_ru
         else:
-            text = '🔫 Select the SMG..'
+            text = '⚠️ No SMG found, please select one of the given SMGs:'
             markup = buttons.markup_smgs_en
-        bot.send_message(message.chat.id, text, reply_markup=markup)
-    except Exception as e:
-        bot.send_message(config.LOGCHANNEL, f'❗️{e}')
-        send_about_problem_bot(message)
+        msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+        bot.register_next_step_handler(msg, smgs_process)
 
 def rifles(message):
-    try:
+    if message.from_user.language_code in CIS_lang_codes:
+        text = '🔫 Выберите винтовку..'
+        markup = buttons.markup_rifles_ru
+    else:
+        text = '🔫 Select the rifle..'
+        markup = buttons.markup_rifles_en
+    msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+    bot.register_next_step_handler(msg, rifles_process)
+
+def rifles_process(message):
+    if message.text.lower() in strings.gun_name_list:
+        for gName, gId in zip(strings.gun_name_list, strings.gun_id_list):
+            if message.text.lower() == gName:
+                send_gun_info(message, gId)
+    elif message.text == '⏪ Back' or message.text == '⏪ Назад':
         if message.from_user.language_code in CIS_lang_codes:
-            text = '🔫 Выберите винтовку..'
+            markup = buttons.markup_guns_ru
+        else:
+            markup = buttons.markup_guns_en
+        msg = bot.send_message(message.chat.id, '👌', reply_markup=markup)
+        bot.register_next_step_handler(msg, guns_process)
+    else:
+        if message.from_user.language_code in CIS_lang_codes:
+            text = '⚠️ Винтовка не найдена, пожалуйста, выберите одну из данных винтовок:'
             markup = buttons.markup_rifles_ru
         else:
-            text = '🔫 Select the rifle..'
+            text = '⚠️ No rilfe found, please select one of the given rifles:'
             markup = buttons.markup_rifles_en
-        bot.send_message(message.chat.id, text, reply_markup=markup)
-    except Exception as e:
-        bot.send_message(config.LOGCHANNEL, f'❗️{e}')
-        send_about_problem_bot(message)
+        msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+        bot.register_next_step_handler(msg, rifles_process)
 
 def heavy(message):
-    try:
+    if message.from_user.language_code in CIS_lang_codes:
+        text = '🔫 Выберите тяжёлое оружие..'
+        markup = buttons.markup_heavy_ru
+    else:
+        text = '🔫 Select the heavy gun..'
+        markup = buttons.markup_heavy_en
+    msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+    bot.register_next_step_handler(msg, heavy_process)
+
+def heavy_process(message):
+    if message.text.lower() in strings.gun_name_list:
+        for gName, gId in zip(strings.gun_name_list, strings.gun_id_list):
+            if message.text.lower() == gName:
+                send_gun_info(message, gId)
+    elif message.text == '⏪ Back' or message.text == '⏪ Назад':
         if message.from_user.language_code in CIS_lang_codes:
-            text = '🔫 Выберите тяжёлое оружие..'
+            markup = buttons.markup_guns_ru
+        else:
+            markup = buttons.markup_guns_en
+        msg = bot.send_message(message.chat.id, '👌', reply_markup=markup)
+        bot.register_next_step_handler(msg, guns_process)
+    else:
+        if message.from_user.language_code in CIS_lang_codes:
+            text = '⚠️ Тяжёлое оружие не найдено, пожалуйста, выберите одно из данных тяжёлых оружий:'
             markup = buttons.markup_heavy_ru
         else:
-            text = '🔫 Select the heavy gun..'
+            text = '⚠️ No heavy gun found, please select one of the given heavy guns:'
             markup = buttons.markup_heavy_en
-        bot.send_message(message.chat.id, text, reply_markup=markup)
-    except Exception as e:
-        bot.send_message(config.LOGCHANNEL, f'❗️{e}')
-        send_about_problem_bot(message)
+        msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+        bot.register_next_step_handler(msg, heavy_process)
 
 
 ### Data-centers ###
 
 
-def dc(message):
-    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
-    wsCache = cacheFile['valve_webapi']
-    if wsCache == 'normal':
-        try:
-            if message.from_user.language_code in CIS_lang_codes:
-                text = '📶 Выберите регион, который Вам интересен, чтобы получить информацию о дата-центрах:'
-                markup = buttons.markup_DC_ru
-            else:
-                text = '📶 Select the region, that you are interested in, to get information about the data centers:'
-                markup = buttons.markup_DC_en
-            bot.send_message(message.chat.id, text, reply_markup=markup)
-        except Exception as e:
-            bot.send_message(config.LOGCHANNEL, f'❗️{e}')
-            send_about_problem_bot(message)
-    elif wsCache == 'maintenance':
-        send_about_maintenance(message)
-    else:
-        send_about_problem_valve_api(message)
-
-def back(message):
-    if message.from_user.language_code in CIS_lang_codes:
-        markup = buttons.markup_ru
-    else:
-        markup = buttons.markup_en
-    bot.send_message(message.chat.id, '👌', reply_markup=markup)
-
 def dc_europe(message):
-    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
-    wsCache = cacheFile['valve_webapi']
-    if wsCache == 'normal':
-        if message.from_user.language_code in CIS_lang_codes:
-            text = '📍 Укажите регион...'
-            markup = buttons.markup_DC_EU_ru            
-        else:
-            text = '📍 Specify the region...'
-            markup = buttons.markup_DC_EU_en
-        bot.send_message(message.chat.id, text, reply_markup=markup)
-    elif wsCache == 'maintenance':
-        send_about_maintenance(message)
+    if message.from_user.language_code in CIS_lang_codes:
+        text = '📍 Укажите регион..'
+        markup = buttons.markup_DC_EU_ru            
     else:
-        send_about_problem_valve_api(message)
+        text = '📍 Specify the region..'
+        markup = buttons.markup_DC_EU_en
+    msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+    bot.register_next_step_handler(msg, dc_europe_process)
+
+def dc_europe_process(message):
+    if message.text.lower() in strings.north_european_tags:
+        send_dc_eu_north(message)
+    elif message.text.lower() in strings.east_european_tags:
+        send_dc_eu_east(message)
+    elif message.text.lower() in strings.west_european_tags:
+        send_dc_eu_west(message)
+    elif message.text == '⏪ Back' or message.text == '⏪ Назад':
+        dc_back(message)
+    else:
+        if message.from_user.language_code in CIS_lang_codes:
+            text = '⚠️ Регион не найден, пожалуйста, выберите один из данных регионов:'
+            markup = buttons.markup_DC_EU_ru
+        else:
+            text = '⚠️ No region found, please select one of the given regions:'
+            markup = buttons.markup_DC_EU_en
+        msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+        bot.register_next_step_handler(msg, dc_europe_process)
 
 def dc_usa(message):
-    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
-    wsCache = cacheFile['valve_webapi']
-    if wsCache == 'normal':
+    if message.from_user.language_code in CIS_lang_codes:
+        text = '📍 Укажите регион..'
+        markup = buttons.markup_DC_USA_ru
+    else:
+        text = '📍 Specify the region..'
+        markup = buttons.markup_DC_USA_en
+    msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+    bot.register_next_step_handler(msg, dc_usa_process)
+
+def dc_back(message):
+    if message.from_user.language_code in CIS_lang_codes:
+        markup = buttons.markup_DC_ru
+    else:
+        markup = buttons.markup_DC_en
+    msg = bot.send_message(message.chat.id, '👌', reply_markup=markup)
+    bot.register_next_step_handler(msg, dc_process)
+
+def dc_usa_process(message):
+    if message.text.lower() in strings.northern_usa_tags:
+        send_dc_usa_north(message)
+    elif message.text.lower() in strings.southern_usa_tags:
+        send_dc_usa_south(message)
+    elif message.text == '⏪ Back' or message.text == '⏪ Назад':
+        dc_back(message)
+    else:
         if message.from_user.language_code in CIS_lang_codes:
-            text = '📍 Укажите регион...'
+            text = '⚠️ Регион не найден, пожалуйста, выберите один из данных регионов:'
             markup = buttons.markup_DC_USA_ru
         else:
-            text = '📍 Specify the region...'
+            text = '⚠️ No region found, please select one of the given regions:'
             markup = buttons.markup_DC_USA_en
-        bot.send_message(message.chat.id, text, reply_markup=markup)
-    elif wsCache == 'maintenance':
-        send_about_maintenance(message)
-    else:
-        send_about_problem_valve_api(message)
+        msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+        bot.register_next_step_handler(msg, dc_usa_process)
 
 def dc_asia(message):
-    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
-    wsCache = cacheFile['valve_webapi']
-    if wsCache == 'normal':
+    if message.from_user.language_code in CIS_lang_codes:
+        text = '📍 Укажите страну..'
+        markup = buttons.markup_DC_Asia_ru
+    else:
+        text = '📍 Specify the country..'
+        markup = buttons.markup_DC_Asia_en
+    msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+    bot.register_next_step_handler(msg, dc_asia_process)
+
+def dc_asia_process(message):
+    if message.text.lower() in strings.indian_tags:
+        send_dc_india(message)
+    elif message.text.lower() in strings.japanese_tags:
+        send_dc_japan(message)
+    elif message.text.lower() in strings.chinese_tags:
+        send_dc_china(message)
+    elif message.text.lower() in strings.emirati_tags:
+        send_dc_emirates(message)
+    elif message.text.lower() in strings.singaporean_tags:
+        send_dc_singapore(message)
+    elif message.text.lower() in strings.hong_kongese_tags:
+        send_dc_hong_kong(message)
+    elif message.text == '⏪ Back' or message.text == '⏪ Назад':
+        dc_back(message)
+    else:
         if message.from_user.language_code in CIS_lang_codes:
-            text = '📍 Укажите страну...'
+            text = '⚠️ Страна не найдена, пожалуйста, выберите одну из данных стран:'
             markup = buttons.markup_DC_Asia_ru
         else:
-            text = '📍 Specify the country...'
+            text = '⚠️ No country found, please select one of the given countries:'
             markup = buttons.markup_DC_Asia_en
-        bot.send_message(message.chat.id, text, reply_markup=markup)
-    elif wsCache == 'maintenance':
-        send_about_maintenance(message)
-    else:
-        send_about_problem_valve_api(message)
+        msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+        bot.register_next_step_handler(msg, dc_asia_process)
 
 # Africa
 
-def get_dc_africa():
-    tsCache, tsRCache = time_converter()[0], time_converter()[1]
-    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
-    africa_dc = cacheFile['datacenters']['South Africa']
-    capacity, load = africa_dc['capacity'], africa_dc['load']
-    array = [capacity, load]
-    array_ru = []
-    for data in array:
-        data_ru = translate(data)
-        array_ru.append(data_ru)
-    capacity_ru, load_ru = array_ru[0], array_ru[1]
-    africa_text_ru = strings.dc_africa_ru.format(load_ru, capacity_ru, tsRCache)
-    africa_text_en = strings.dc_africa_en.format(load, capacity, tsCache)           
-    return africa_text_en, africa_text_ru
-
 def send_dc_africa(message):
-    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
-    wsCache = cacheFile['valve_webapi']
-    if wsCache == 'normal':
-        try:
-            africa_text_en, africa_text_ru = get_dc_africa()
-            if message.from_user.language_code in CIS_lang_codes:
-                text = africa_text_ru
-                markup = buttons.markup_DC_ru
-            else:
-                text = africa_text_en
-                markup = buttons.markup_DC_en
-            bot.send_message(message.chat.id, text, reply_markup=markup)
-        except Exception as e:
-            bot.send_message(config.LOGCHANNEL, f'❗️{e}')
-            send_about_problem_bot(message)
-    elif wsCache == 'maintenance':
-        send_about_maintenance(message)
+    africa_text_en, africa_text_ru = get_data.dc_africa()
+    if message.from_user.language_code in CIS_lang_codes:
+        text = africa_text_ru
+        markup = buttons.markup_DC_ru
     else:
-        send_about_problem_valve_api(message)
+        text = africa_text_en
+        markup = buttons.markup_DC_en
+    msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+    bot.register_next_step_handler(msg, dc_process)
 
 # Australia 
 
-def get_dc_australia():
-    tsCache, tsRCache = time_converter()[0], time_converter()[1]
-    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
-    australia_dc = cacheFile['datacenters']['Australia']
-    capacity, load = australia_dc['capacity'], australia_dc['load']
-    array = [capacity, load]
-    array_ru = []
-    for data in array:
-        data_ru = translate(data)
-        array_ru.append(data_ru)
-    capacity_ru, load_ru = array_ru[0], array_ru[1]
-    australia_text_ru = strings.dc_australia_ru.format(load_ru, capacity_ru, tsRCache)
-    australia_text_en = strings.dc_australia_en.format(load, capacity, tsCache)           
-    return australia_text_en, australia_text_ru
-
 def send_dc_australia(message):
-    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
-    wsCache = cacheFile['valve_webapi']
-    if wsCache == 'normal':
-        try:
-            australia_text_en, australia_text_ru = get_dc_australia()
-            if message.from_user.language_code in CIS_lang_codes:
-                text = australia_text_ru
-                markup = buttons.markup_DC_ru
-            else:
-                text = australia_text_en
-                markup = buttons.markup_DC_en
-            bot.send_message(message.chat.id, text, reply_markup=markup)
-        except Exception as e:
-            bot.send_message(config.LOGCHANNEL, f'❗️{e}')
-            send_about_problem_bot(message)
-    elif wsCache == 'maintenance':
-        send_about_maintenance(message)
+    australia_text_en, australia_text_ru = get_data.dc_australia()
+    if message.from_user.language_code in CIS_lang_codes:
+        text = australia_text_ru
+        markup = buttons.markup_DC_ru
     else:
-        send_about_problem_valve_api(message)
+        text = australia_text_en
+        markup = buttons.markup_DC_en
+    msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+    bot.register_next_step_handler(msg, dc_process)
 
 # Europe
 
-def get_dc_eu_north():
-    tsCache, tsRCache = time_converter()[0], time_converter()[1]
-    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
-    sweden_dc = cacheFile['datacenters']['EU North']
-    capacity, load = sweden_dc['capacity'], sweden_dc['load']
-    array = [capacity, load]
-    array_ru = []
-    for data in array:
-        data_ru = translate(data)
-        array_ru.append(data_ru)
-    capacity_ru, load_ru = array_ru[0], array_ru[1]
-    eu_north_text_ru = strings.dc_north_eu_ru.format(load_ru, capacity_ru, tsRCache)
-    eu_north_text_en = strings.dc_north_eu_en.format(load, capacity, tsCache)
-    return eu_north_text_en, eu_north_text_ru
-
 def send_dc_eu_north(message):
-    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
-    wsCache = cacheFile['valve_webapi']
-    if wsCache == 'normal':
-        try:
-            eu_north_text_en, eu_north_text_ru = get_dc_eu_north()
-            if message.from_user.language_code in CIS_lang_codes:
-                text = eu_north_text_ru
-                markup = buttons.markup_DC_ru
-            else:
-                text = eu_north_text_en
-                markup = buttons.markup_DC_en
-            bot.send_message(message.chat.id, text, reply_markup=markup)
-        except Exception as e:
-            bot.send_message(config.LOGCHANNEL, f'❗️{e}')
-            send_about_problem_bot(message)
-    elif wsCache == 'maintenance':
-        send_about_maintenance(message)
+    eu_north_text_en, eu_north_text_ru = get_data.dc_eu_north()
+    if message.from_user.language_code in CIS_lang_codes:
+        text = eu_north_text_ru
+        markup = buttons.markup_DC_EU_ru
     else:
-        send_about_problem_valve_api(message)
-
-def get_dc_eu_west():
-    tsCache, tsRCache = time_converter()[0], time_converter()[1]
-    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
-    germany_dc = cacheFile['datacenters']['EU West']
-    spain_dc = cacheFile['datacenters']['Spain']
-    capacity, load = germany_dc['capacity'], germany_dc['load']
-    capacity_secondary, load_secondary = spain_dc['capacity'], spain_dc['load']
-    array = [capacity, load, capacity_secondary, load_secondary]
-    array_ru = []
-    for data in array:
-        data_ru = translate(data)
-        array_ru.append(data_ru)
-    capacity_ru, load_ru, capacity_secondary_ru, load_secondary_ru = array_ru[0], array_ru[1], array_ru[2], array_ru[3]
-    eu_west_text_ru = strings.dc_west_eu_ru.format(load_ru, capacity_ru, load_secondary_ru, capacity_secondary_ru, tsRCache)
-    eu_west_text_en = strings.dc_west_eu_en.format(load, capacity, load_secondary, capacity_secondary, tsCache)
-    return eu_west_text_en, eu_west_text_ru
+        text = eu_north_text_en
+        markup = buttons.markup_DC_EU_en
+    msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+    bot.register_next_step_handler(msg, dc_europe_process)
 
 def send_dc_eu_west(message):
-    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
-    wsCache = cacheFile['valve_webapi']
-    if wsCache == 'normal':
-        try:
-            eu_west_text_en, eu_west_text_ru = get_dc_eu_west()
-            if message.from_user.language_code in CIS_lang_codes:
-                text = eu_west_text_ru
-                markup = buttons.markup_DC_ru
-            else:
-                text = eu_west_text_en
-                markup = buttons.markup_DC_en
-            bot.send_message(message.chat.id, text, reply_markup=markup)
-        except Exception as e:
-            bot.send_message(config.LOGCHANNEL, f'❗️{e}')
-            send_about_problem_bot(message)
-    elif wsCache == 'maintenance':
-        send_about_maintenance(message)
+    eu_west_text_en, eu_west_text_ru = get_data.dc_eu_west()
+    if message.from_user.language_code in CIS_lang_codes:
+        text = eu_west_text_ru
+        markup = buttons.markup_DC_EU_ru
     else:
-        send_about_problem_valve_api(message)
-
-def get_dc_eu_east():
-    tsCache, tsRCache = time_converter()[0], time_converter()[1]
-    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
-    austria_dc = cacheFile['datacenters']['EU East']
-    poland_dc = cacheFile['datacenters']['Poland']
-    capacity, load = austria_dc['capacity'], austria_dc['load']
-    capacity_secondary, load_secondary = poland_dc['capacity'], poland_dc['load']
-    array = [capacity, load, capacity_secondary, load_secondary]
-    array_ru = []
-    for data in array:
-        data_ru = translate(data)
-        array_ru.append(data_ru)
-    capacity_ru, load_ru, capacity_secondary_ru, load_secondary_ru = array_ru[0], array_ru[1], array_ru[2], array_ru[3]
-    eu_east_text_ru = strings.dc_east_eu_ru.format(load_ru, capacity_ru, load_secondary_ru, capacity_secondary_ru, tsRCache)
-    eu_east_text_en = strings.dc_east_eu_en.format(load, capacity, load_secondary, capacity_secondary, tsCache)
-    return eu_east_text_en, eu_east_text_ru
+        text = eu_west_text_en
+        markup = buttons.markup_DC_EU_en
+    msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+    bot.register_next_step_handler(msg, dc_europe_process)
 
 def send_dc_eu_east(message):
-    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
-    wsCache = cacheFile['valve_webapi']
-    if wsCache == 'normal':
-        try:
-            eu_east_text_en, eu_east_text_ru = get_dc_eu_east()
-            if message.from_user.language_code in CIS_lang_codes:
-                text = eu_east_text_ru
-                markup = buttons.markup_DC_ru
-            else:
-                text = eu_east_text_en
-                markup = buttons.markup_DC_en
-            bot.send_message(message.chat.id, text, reply_markup=markup)
-        except Exception as e:
-            bot.send_message(config.LOGCHANNEL, f'❗️{e}')
-            send_about_problem_bot(message)
-    elif wsCache == 'maintenance':
-        send_about_maintenance(message)
+    eu_east_text_en, eu_east_text_ru = get_data.dc_eu_east()
+    if message.from_user.language_code in CIS_lang_codes:
+        text = eu_east_text_ru
+        markup = buttons.markup_DC_EU_ru
     else:
-        send_about_problem_valve_api(message)   
+        text = eu_east_text_en
+        markup = buttons.markup_DC_EU_en
+    msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+    bot.register_next_step_handler(msg, dc_europe_process) 
 
 # USA
 
-def get_dc_usa_north():
-    tsCache, tsRCache = time_converter()[0], time_converter()[1]
-    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
-    chicago_dc = cacheFile['datacenters']['US Northcentral']
-    sterling_dc = cacheFile['datacenters']['US Northeast']
-    moseslake_dc = cacheFile['datacenters']['US Northwest']
-    capacity, load = chicago_dc['capacity'], chicago_dc['load']
-    capacity_secondary, load_secondary = sterling_dc['capacity'], sterling_dc['load']
-    capacity_tertiary, load_tertiary = moseslake_dc['capacity'], moseslake_dc['load']
-    array = [capacity, load, capacity_secondary, load_secondary, capacity_tertiary, load_tertiary]
-    array_ru = []
-    for data in array:
-        data_ru = translate(data)
-        array_ru.append(data_ru)
-    capacity_ru, load_ru, capacity_secondary_ru, load_secondary_ru, capacity_tertiary_ru, load_tertiary_ru = array_ru[0], array_ru[1], array_ru[2], array_ru[3], array_ru[4], array_ru[5] 
-    usa_north_text_ru = strings.dc_north_us_ru.format(load_ru, capacity_ru, load_secondary_ru, capacity_secondary_ru, load_tertiary_ru, capacity_tertiary_ru, tsRCache)
-    usa_north_text_en = strings.dc_north_us_en.format(load, capacity, load_secondary, capacity_secondary, load_tertiary, capacity_tertiary, tsCache)
-    return usa_north_text_en, usa_north_text_ru
-
 def send_dc_usa_north(message):
-    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
-    wsCache = cacheFile['valve_webapi']
-    if wsCache == 'normal':
-        try:
-            usa_north_text_en, usa_north_text_ru = get_dc_usa_north()
-            if message.from_user.language_code in CIS_lang_codes:        
-                text = usa_north_text_ru
-                markup = buttons.markup_DC_ru
-            else:
-                text = usa_north_text_en
-                markup = buttons.markup_DC_en
-            bot.send_message(message.chat.id, text, reply_markup=markup)        
-        except Exception as e:
-            bot.send_message(config.LOGCHANNEL, f'❗️{e}')
-            send_about_problem_bot(message)
-    elif wsCache == 'maintenance':
-        send_about_maintenance(message)
+    usa_north_text_en, usa_north_text_ru = get_data.dc_usa_north()
+    if message.from_user.language_code in CIS_lang_codes:
+        text = usa_north_text_ru
+        markup = buttons.markup_DC_USA_ru
     else:
-        send_about_problem_valve_api(message)
-
-def get_dc_usa_south():
-    tsCache, tsRCache = time_converter()[0], time_converter()[1]
-    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
-    losangeles_dc = cacheFile['datacenters']['US Southwest']
-    atlanta_dc = cacheFile['datacenters']['US Southeast']
-    capacity, load = losangeles_dc['capacity'], losangeles_dc['load']
-    capacity_secondary, load_secondary = atlanta_dc['capacity'], atlanta_dc['load']
-    array = [capacity, load, capacity_secondary, load_secondary]
-    array_ru = []
-    for data in array:
-        data_ru = translate(data)
-        array_ru.append(data_ru)
-    capacity_ru, load_ru, capacity_secondary_ru, load_secondary_ru = array_ru[0], array_ru[1], array_ru[2], array_ru[3]    
-    usa_south_text_ru = strings.dc_south_us_ru.format(load_ru, capacity_ru, load_secondary_ru, capacity_secondary_ru, tsRCache)
-    usa_south_text_en = strings.dc_south_us_en.format(load, capacity, load_secondary, capacity_secondary, tsCache)
-    return usa_south_text_en, usa_south_text_ru
+        text = usa_north_text_en
+        markup = buttons.markup_DC_USA_en
+    msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+    bot.register_next_step_handler(msg, dc_usa_process)
 
 def send_dc_usa_south(message):
-    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
-    wsCache = cacheFile['valve_webapi']
-    if wsCache == 'normal':
-        try:
-            usa_south_text_en, usa_south_text_ru = get_dc_usa_south()
-            if message.from_user.language_code in CIS_lang_codes:        
-                text = usa_south_text_ru
-                markup = buttons.markup_DC_ru
-            else:
-                text = usa_south_text_en
-                markup = buttons.markup_DC_en
-            bot.send_message(message.chat.id, text, reply_markup=markup)
-        except Exception as e:
-            bot.send_message(config.LOGCHANNEL, f'❗️{e}')
-            send_about_problem_bot(message)
-    elif wsCache == 'maintenance':
-        send_about_maintenance(message)
+    usa_south_text_en, usa_south_text_ru = get_data.dc_usa_south()
+    if message.from_user.language_code in CIS_lang_codes:
+        text = usa_south_text_ru
+        markup = buttons.markup_DC_USA_ru
     else:
-        send_about_problem_valve_api(message)
+        text = usa_south_text_en
+        markup = buttons.markup_DC_USA_en
+    msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+    bot.register_next_step_handler(msg, dc_usa_process)
 
 # South America
 
-def get_dc_south_america():
-    tsCache, tsRCache = time_converter()[0], time_converter()[1]
-    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
-    brazil_dc = cacheFile['datacenters']['Brazil']
-    chile_dc = cacheFile['datacenters']['Chile']
-    peru_dc = cacheFile['datacenters']['Peru']
-    argentina_dc = cacheFile['datacenters']['Argentina']
-    capacity, load = brazil_dc['capacity'], brazil_dc['load']
-    capacity_secondary, load_secondary = chile_dc['capacity'], chile_dc['load']
-    capacity_tertiary, load_tertiary = peru_dc['capacity'], peru_dc['load']
-    capacity_quaternary, load_quaternary = argentina_dc['capacity'], argentina_dc['load']
-    array = [capacity, load, capacity_secondary, load_secondary, capacity_tertiary, load_tertiary, capacity_quaternary, load_quaternary]
-    array_ru = []
-    for data in array:
-        data_ru = translate(data)
-        array_ru.append(data_ru)
-    capacity_ru, load_ru, capacity_secondary_ru, load_secondary_ru, capacity_tertiary_ru, load_tertiary_ru, capacity_quaternary_ru, load_quaternary_ru = array_ru[0], array_ru[1], array_ru[2], array_ru[3], array_ru[4], array_ru[5], array_ru[6], array_ru[7] 
-    south_america_text_ru = strings.dc_south_america_ru.format(load_ru, capacity_ru, load_secondary_ru, capacity_secondary_ru, load_tertiary_ru, capacity_tertiary_ru, load_quaternary_ru, capacity_quaternary_ru, tsRCache)
-    south_america_text_en = strings.dc_south_america_en.format(load, capacity, load_secondary, capacity_secondary, load_tertiary, capacity_tertiary, load_quaternary, capacity_quaternary, tsCache)
-    return south_america_text_en, south_america_text_ru
-
 def send_dc_south_america(message):
-    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
-    wsCache = cacheFile['valve_webapi']
-    if wsCache == 'normal':
-        try:
-            south_america_text_en, south_america_text_ru = get_dc_south_america()
-            if message.from_user.language_code in CIS_lang_codes:
-                text = south_america_text_ru
-                markup = buttons.markup_DC_ru
-            else:
-                text = south_america_text_en
-                markup = buttons.markup_DC_en
-            bot.send_message(message.chat.id, text)
-        except Exception as e:
-            bot.send_message(config.LOGCHANNEL, f'❗️{e}')
-            send_about_problem_bot(message)
-    elif wsCache == 'maintenance':
-        send_about_maintenance(message)
+    south_america_text_en, south_america_text_ru = get_data.dc_south_america()
+    if message.from_user.language_code in CIS_lang_codes:
+        text = south_america_text_ru
+        markup = buttons.markup_DC_ru
     else:
-        send_about_problem_valve_api(message)
+        text = south_america_text_en
+        markup = buttons.markup_DC_en
+    msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+    bot.register_next_step_handler(msg, dc_process)
 
 # Asia
 
-def get_dc_india():
-    tsCache, tsRCache = time_converter()[0], time_converter()[1]
-    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
-    mumbai_dc = cacheFile['datacenters']['India']
-    chennai_dc = cacheFile['datacenters']['India East']
-    capacity, load = mumbai_dc['capacity'], mumbai_dc['load']
-    capacity_secondary, load_secondary = chennai_dc['capacity'], chennai_dc['load']
-    array = [capacity, load, capacity_secondary, load_secondary]
-    array_ru = []
-    for data in array:
-        data_ru = translate(data)
-        array_ru.append(data_ru)
-    capacity_ru, load_ru, capacity_secondary_ru, load_secondary_ru = array_ru[0], array_ru[1], array_ru[2], array_ru[3]
-    india_text_ru = strings.dc_india_ru.format(load_ru, capacity_ru, load_secondary_ru, capacity_secondary_ru, tsRCache)
-    india_text_en = strings.dc_india_en.format(load, capacity, load_secondary, capacity_secondary, tsCache)
-    return india_text_en, india_text_ru
-
 def send_dc_india(message):
-    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
-    wsCache = cacheFile['valve_webapi']
-    if wsCache == 'normal':
-        try:
-            india_text_en, india_text_ru = get_dc_india()
-            if message.from_user.language_code in CIS_lang_codes:  
-                text = india_text_ru
-                markup = buttons.markup_DC_ru
-            else:
-                text = india_text_en
-                markup = buttons.markup_DC_en
-            bot.send_message(message.chat.id, text, reply_markup=markup)
-        except Exception as e:
-            bot.send_message(config.LOGCHANNEL, f'❗️{e}')
-            send_about_problem_bot(message)
-    elif wsCache == 'maintenance':
-        send_about_maintenance(message)
+    india_text_en, india_text_ru = get_data.dc_india()
+    if message.from_user.language_code in CIS_lang_codes:
+        text = india_text_ru
+        markup = buttons.markup_DC_Asia_ru
     else:
-        send_about_problem_valve_api(message)
-
-def get_dc_japan():
-    tsCache, tsRCache = time_converter()[0], time_converter()[1]
-    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
-    japan_dc = cacheFile['datacenters']['Japan']
-    capacity, load = japan_dc['capacity'], japan_dc['load']
-    array = [capacity, load]
-    array_ru = []
-    for data in array:
-        data_ru = translate(data)
-        array_ru.append(data_ru)
-    capacity_ru, load_ru = array_ru[0], array_ru[1]
-    japan_text_ru = strings.dc_japan_ru.format(load_ru, capacity_ru, tsRCache)
-    japan_text_en = strings.dc_japan_en.format(load, capacity, tsCache)
-    return japan_text_en, japan_text_ru
+        text = india_text_en
+        markup = buttons.markup_DC_Asia_en
+    msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+    bot.register_next_step_handler(msg, dc_asia_process)
 
 def send_dc_japan(message):
-    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
-    wsCache = cacheFile['valve_webapi']
-    if wsCache == 'normal':
-        try:
-            japan_text_en, japan_text_ru = get_dc_japan()
-            if message.from_user.language_code in CIS_lang_codes:
-                text = japan_text_ru
-                markup = buttons.markup_DC_ru
-            else:
-                text = japan_text_en
-                markup = buttons.markup_DC_en
-            bot.send_message(message.chat.id, text, reply_markup=markup)        
-        except Exception as e:
-            bot.send_message(config.LOGCHANNEL, f'❗️{e}')
-            send_about_problem_bot(message)
-    elif wsCache == 'maintenance':
-        send_about_maintenance(message)
+    japan_text_en, japan_text_ru = get_data.dc_japan()
+    if message.from_user.language_code in CIS_lang_codes:
+        text = japan_text_ru
+        markup = buttons.markup_DC_Asia_ru
     else:
-        send_about_problem_valve_api(message)
-
-def get_dc_china():
-    tsCache, tsRCache = time_converter()[0], time_converter()[1]
-    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
-    shanghai_dc = cacheFile['datacenters']['China Shanghai']
-    tianjin_dc = cacheFile['datacenters']['China Tianjin']
-    guangzhou_dc = cacheFile['datacenters']['China Guangzhou']
-    capacity, load = shanghai_dc['capacity'], shanghai_dc['load']
-    capacity_secondary, load_secondary = tianjin_dc['capacity'], tianjin_dc['load']
-    capacity_tertiary, load_tertiary = guangzhou_dc['capacity'], guangzhou_dc['load']
-    array = [capacity, load, capacity_secondary, load_secondary, capacity_tertiary, load_tertiary]
-    array_ru = []
-    for data in array:
-        data_ru = translate(data)
-        array_ru.append(data_ru)
-    capacity_ru, load_ru, capacity_secondary_ru, load_secondary_ru, capacity_tertiary_ru, load_tertiary_ru = array_ru[0], array_ru[1], array_ru[2], array_ru[3], array_ru[4], array_ru[5] 
-    china_text_ru = strings.dc_china_ru.format(load_ru, capacity_ru, load_secondary_ru, capacity_secondary_ru, load_tertiary_ru, capacity_tertiary_ru, tsRCache)
-    china_text_en = strings.dc_china_en.format(load, capacity, load_secondary, capacity_secondary, load_tertiary, capacity_tertiary, tsCache)
-    return china_text_en, china_text_ru
+        text = japan_text_en
+        markup = buttons.markup_DC_Asia_en
+    msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+    bot.register_next_step_handler(msg, dc_asia_process)
 
 def send_dc_china(message):
-    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
-    wsCache = cacheFile['valve_webapi']
-    if wsCache == 'normal':
-        try:
-            china_text_en, china_text_ru = get_dc_china()
-            if message.from_user.language_code in CIS_lang_codes:
-                text = china_text_ru
-                markup = buttons.markup_DC_ru
-            else:
-                text = china_text_en
-                markup = buttons.markup_DC_en
-            bot.send_message(message.chat.id, text, reply_markup=markup)
-        except Exception as e:
-            bot.send_message(config.LOGCHANNEL, f'❗️{e}')
-            send_about_problem_bot(message) 
-    elif wsCache == 'maintenance':
-        send_about_maintenance(message)
+    china_text_en, china_text_ru = get_data.dc_china()
+    if message.from_user.language_code in CIS_lang_codes:
+        text = china_text_ru
+        markup = buttons.markup_DC_Asia_ru
     else:
-        send_about_problem_valve_api(message)
-
-def get_dc_emirates():
-    tsCache, tsRCache = time_converter()[0], time_converter()[1]
-    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
-    emirates_dc = cacheFile['datacenters']['Emirates']
-    capacity, load = emirates_dc['capacity'], emirates_dc['load']
-    array = [capacity, load]
-    array_ru = []
-    for data in array:
-        data_ru = translate(data)
-        array_ru.append(data_ru)
-    capacity_ru, load_ru = array_ru[0], array_ru[1] 
-    emirates_text_ru = strings.dc_emirates_ru.format(load_ru, capacity_ru, tsRCache)
-    emirates_text_en = strings.dc_emirates_en.format(load, capacity, tsCache)           
-    return emirates_text_en, emirates_text_ru
+        text = china_text_en
+        markup = buttons.markup_DC_Asia_en
+    msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+    bot.register_next_step_handler(msg, dc_asia_process)
 
 def send_dc_emirates(message):
-    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
-    wsCache = cacheFile['valve_webapi']
-    if wsCache == 'normal':
-        try:
-            emirates_text_en, emirates_text_ru = get_dc_emirates()
-            if message.from_user.language_code in CIS_lang_codes:
-                text = emirates_text_ru
-                markup = buttons.markup_DC_ru
-            else:
-                text = emirates_text_en
-                markup = buttons.markup_DC_en
-            bot.send_message(message.chat.id, text, reply_markup=markup)
-        except Exception as e:
-            bot.send_message(config.LOGCHANNEL, f'❗️{e}')
-            send_about_problem_bot(message)
-    elif wsCache == 'maintenance':
-        send_about_maintenance(message)
+    emirates_text_en, emirates_text_ru = get_data.dc_emirates()
+    if message.from_user.language_code in CIS_lang_codes:
+        text = emirates_text_ru
+        markup = buttons.markup_DC_Asia_ru
     else:
-        send_about_problem_valve_api(message)
-
-def get_dc_singapore():
-    tsCache, tsRCache = time_converter()[0], time_converter()[1]
-    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
-    singapore_dc = cacheFile['datacenters']['Singapore']
-    capacity, load = singapore_dc['capacity'], singapore_dc['load']
-    array = [capacity, load]
-    array_ru = []
-    for data in array:
-        data_ru = translate(data)
-        array_ru.append(data_ru)
-    capacity_ru, load_ru = array_ru[0], array_ru[1] 
-    singapore_text_ru = strings.dc_singapore_ru.format(load_ru, capacity_ru, tsRCache)
-    singapore_text_en = strings.dc_singapore_en.format(load, capacity, tsCache)           
-    return singapore_text_en, singapore_text_ru
+        text = emirates_text_en
+        markup = buttons.markup_DC_Asia_en
+    msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+    bot.register_next_step_handler(msg, dc_asia_process)
 
 def send_dc_singapore(message):
-    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
-    wsCache = cacheFile['valve_webapi']
-    if wsCache == 'normal':
-        try:
-            singapore_text_en, singapore_text_ru = get_dc_singapore()
-            if message.from_user.language_code in CIS_lang_codes:
-                text = singapore_text_ru
-                markup = buttons.markup_DC_ru
-            else:
-                text = singapore_text_en
-                markup = buttons.markup_DC_en
-            bot.send_message(message.chat.id, text, reply_markup=markup)
-        except Exception as e:
-            bot.send_message(config.LOGCHANNEL, f'❗️{e}')
-            send_about_problem_bot(message)
-    elif wsCache == 'maintenance':
-        send_about_maintenance(message)
+    singapore_text_en, singapore_text_ru = get_data.dc_singapore()
+    if message.from_user.language_code in CIS_lang_codes:
+        text = singapore_text_ru
+        markup = buttons.markup_DC_Asia_ru
     else:
-        send_about_problem_valve_api(message)
-
-def get_dc_hong_kong():
-    tsCache, tsRCache = time_converter()[0], time_converter()[1]
-    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
-    hongkong_dc = cacheFile['datacenters']['Hong Kong']
-    capacity, load = hongkong_dc['capacity'], hongkong_dc['load']
-    array = [capacity, load]
-    array_ru = []
-    for data in array:
-        data_ru = translate(data)
-        array_ru.append(data_ru)
-    capacity_ru, load_ru = array_ru[0], array_ru[1] 
-    hong_kong_text_ru = strings.dc_hong_kong_ru.format(load_ru, capacity_ru, tsRCache)
-    hong_kong_text_en = strings.dc_hong_kong_en.format(load, capacity, tsCache)           
-    return hong_kong_text_en, hong_kong_text_ru
+        text = singapore_text_en
+        markup = buttons.markup_DC_Asia_en
+    msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+    bot.register_next_step_handler(msg, dc_asia_process)
 
 def send_dc_hong_kong(message):
-    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
-    wsCache = cacheFile['valve_webapi']
-    if wsCache == 'normal':
-        try:
-            hong_kong_text_en, hong_kong_text_ru = get_dc_hong_kong()
-            if message.from_user.language_code in CIS_lang_codes:
-                text = hong_kong_text_ru
-                markup = buttons.markup_DC_ru
-            else:
-                text = hong_kong_text_en
-                markup = buttons.markup_DC_en
-            bot.send_message(message.chat.id, text, reply_markup=markup)
-        except Exception as e:
-            bot.send_message(config.LOGCHANNEL, f'❗️{e}')
-            send_about_problem_bot(message)
-    elif wsCache == 'maintenance':
-        send_about_maintenance(message)
+    hong_kong_text_en, hong_kong_text_ru = get_data.dc_hong_kong()
+    if message.from_user.language_code in CIS_lang_codes:
+        text = hong_kong_text_ru
+        markup = buttons.markup_DC_Asia_ru
     else:
-        send_about_problem_valve_api(message)
+        text = hong_kong_text_en
+        markup = buttons.markup_DC_Asia_en
+    msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+    bot.register_next_step_handler(msg, dc_asia_process)
 
 
 
@@ -1060,11 +639,11 @@ def default_inline(inline_query):
     '''Inline mode'''
     log_inline(inline_query)
     try:
-        status_text_en, status_text_ru = get_server_status()
-        mm_stats_text_en, mm_stats_text_ru = get_mm_stats()
-        devcount_text_en, devcount_text_ru = get_devcount()
-        timer_text_en, timer_text_ru = get_timer()
-        gameversion_text_en, gameversion_text_ru = get_gameversion()
+        status_text_en, status_text_ru = get_data.server_status()
+        mm_stats_text_en, mm_stats_text_ru = get_data.mm_stats()
+        devcount_text_en, devcount_text_ru = get_data.devcount()
+        timer_text_en, timer_text_ru = get_data.timer()
+        gameversion_text_en, gameversion_text_ru = get_data.gameversion()
         cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
         wsCache = cacheFile['valve_webapi']
         if wsCache == 'normal':
@@ -1097,25 +676,25 @@ def default_inline(inline_query):
 def inline_dc(inline_query):
     log_inline(inline_query)
     try:
-        status_text_en, status_text_ru = get_server_status()
-        mm_stats_text_en, mm_stats_text_ru = get_mm_stats()
-        devcount_text_en, devcount_text_ru = get_devcount()
-        timer_text_en, timer_text_ru = get_timer()
-        gameversion_text_en, gameversion_text_ru = get_gameversion()
-        eu_north_text_en, eu_north_text_ru = get_dc_eu_north()
-        eu_east_text_en, eu_east_text_ru = get_dc_eu_east()
-        eu_west_text_en, eu_west_text_ru = get_dc_eu_west()
-        usa_north_text_en, usa_north_text_ru = get_dc_usa_north()
-        usa_south_text_en, usa_south_text_ru = get_dc_usa_south()
-        china_text_en, china_text_ru = get_dc_china()
-        emirates_text_en, emirates_text_ru = get_dc_emirates()
-        hong_kong_text_en, hong_kong_text_ru = get_dc_hong_kong()
-        india_text_en, india_text_ru = get_dc_india()
-        japan_text_en, japan_text_ru = get_dc_japan()
-        singapore_text_en, singapore_text_ru = get_dc_singapore()
-        australia_text_en, australia_text_ru = get_dc_australia()
-        africa_text_en, africa_text_ru = get_dc_africa()            
-        south_america_text_en, south_america_text_ru = get_dc_south_america()
+        status_text_en, status_text_ru = get_data.server_status()
+        mm_stats_text_en, mm_stats_text_ru = get_data.mm_stats()
+        devcount_text_en, devcount_text_ru = get_data.devcount()
+        timer_text_en, timer_text_ru = get_data.timer()
+        gameversion_text_en, gameversion_text_ru = get_data.gameversion()
+        eu_north_text_en, eu_north_text_ru = get_data.dc_eu_north()
+        eu_east_text_en, eu_east_text_ru = get_data.dc_eu_east()
+        eu_west_text_en, eu_west_text_ru = get_data.dc_eu_west()
+        usa_north_text_en, usa_north_text_ru = get_data.dc_usa_north()
+        usa_south_text_en, usa_south_text_ru = get_data.dc_usa_south()
+        china_text_en, china_text_ru = get_data.dc_china()
+        emirates_text_en, emirates_text_ru = get_data.dc_emirates()
+        hong_kong_text_en, hong_kong_text_ru = get_data.dc_hong_kong()
+        india_text_en, india_text_ru = get_data.dc_india()
+        japan_text_en, japan_text_ru = get_data.dc_japan()
+        singapore_text_en, singapore_text_ru = get_data.dc_singapore()
+        australia_text_en, australia_text_ru = get_data.dc_australia()
+        africa_text_en, africa_text_ru = get_data.dc_africa()            
+        south_america_text_en, south_america_text_ru = get_data.dc_south_america()
         cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
         wsCache = cacheFile['valve_webapi']
         if wsCache == 'normal':
@@ -1144,7 +723,7 @@ def inline_dc(inline_query):
                                 'Время до сброса ограничений опыта и дропа', 'Проверить последнюю версию игры']
                 for _ in range(len(data)-len(descriptions)): descriptions.append('Проверить состояние')
             else:
-                data = [status_text_en, mm_stats_text_ru, devcount_text_en, timer_text_en, gameversion_text_en, china_text_en, emirates_text_en,
+                data = [status_text_en, mm_stats_text_en, devcount_text_en, timer_text_en, gameversion_text_en, china_text_en, emirates_text_en,
                         hong_kong_text_en, india_text_en, japan_text_en, singapore_text_en, eu_north_text_en, eu_east_text_en, eu_west_text_en,
                         usa_north_text_en, usa_south_text_en, australia_text_en, africa_text_en, south_america_text_en]
                 titles = ['Server status', 'MM stats', 'Beta version', 'Drop cap reset', 'Game version', 'Chinese DC', 'Emirati DC', 'Hong Kongese DC',
@@ -1261,6 +840,135 @@ def delete_keyboard(message):
     time.sleep(10)
     bot.delete_message(message.chat.id, message.message_id+1)
         
+
+@bot.message_handler(func=lambda message: message.chat.type == 'private' and (message.text.lower() == 'dataсenters status' or message.text.lower() == 'состояние дата-центров'), content_types=['text'])
+def dc(message):
+            if message.from_user.language_code in CIS_lang_codes:
+                text = '📶 Выберите регион, который Вам интересен, чтобы получить информацию о дата-центрах:'
+                markup = buttons.markup_DC_ru
+            else:
+                text = '📶 Select the region, that you are interested in, to get information about the datacenters:'
+                markup = buttons.markup_DC_en
+            msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+            bot.register_next_step_handler(msg, dc_process)
+
+def dc_process(message):
+    if message.text.lower() in strings.asian_tags:
+        dc_asia(message)
+    elif message.text.lower() in strings.african_tags:
+        send_dc_africa(message)
+    elif message.text.lower() in strings.australian_tags:
+        send_dc_australia(message)
+    elif message.text.lower() in strings.european_tags:
+        dc_europe(message)
+    elif message.text.lower() in strings.american_tags:
+        dc_usa(message)
+    elif message.text.lower() in strings.south_american_tags:
+        send_dc_south_america(message)
+    elif message.text == '⏪ Back' or message.text == '⏪ Назад':
+        if message.from_user.language_code in CIS_lang_codes:
+            markup = buttons.markup_ss_ru
+        else:
+            markup = buttons.markup_ss_en
+        msg = bot.send_message(message.chat.id, '👌', reply_markup=markup)
+        bot.register_next_step_handler(msg, server_stats_process)
+    else:
+        if message.from_user.language_code in CIS_lang_codes:
+            text = '⚠️ Регион не найден, пожалуйста, выберите один из данных регионов:'
+            markup = buttons.markup_DC_ru
+        else:
+            text = '⚠️ No region found, please select one of the given regions:'
+            markup = buttons.markup_DC_en
+        msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+        bot.register_next_step_handler(msg, dc_process)
+
+@bot.message_handler(func=lambda message: message.chat.type == 'private' and (message.text.lower() == 'server statistics' or message.text.lower() == 'статистика серверов'), content_types=['text'])
+def server_stats(message):
+    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
+    wsCache = cacheFile['valve_webapi']
+    if wsCache == 'normal':
+        if message.from_user.language_code in CIS_lang_codes:
+            text = '📊 Воспользуйтесь одной из приведённых команд:'
+            markup = buttons.markup_ss_ru
+        else:
+            text = '📊 Use one of the following commands:'
+            markup = buttons.markup_ss_en
+        msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+        bot.register_next_step_handler(msg, server_stats_process)
+    elif wsCache == 'maintenance':
+        send_about_maintenance(message)
+    else:
+        send_about_problem_valve_api(message)
+
+def server_stats_process(message):
+    if message.text.lower() == 'server status' or message.text.lower() == 'состояние серверов':
+        send_server_status(message)
+    elif message.text.lower() == 'matchmaking statistics' or message.text.lower() == 'статистика матчмейкинга':
+        send_mm_stats(message)
+    elif message.text.lower() == 'dataсenters status' or message.text.lower() == 'состояние дата-центров':
+        dc(message)
+    elif message.text == '⏪ Back' or message.text == '⏪ Назад':
+        if message.from_user.language_code in CIS_lang_codes:
+            markup = buttons.markup_ru
+        else:
+            markup = buttons.markup_en
+        bot.send_message(message.chat.id, '👌', reply_markup=markup)
+    else:
+        if message.from_user.language_code in CIS_lang_codes:
+            text = '⚠️ Ничего не найден, пожалуйста, воспользуйтесь одной из приведённых команд:'
+            markup = buttons.markup_ss_ru
+        else:
+            text = '⚠️ Nothing found, please use one of the following commands:'
+            markup = buttons.markup_ss_en
+        msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+        bot.register_next_step_handler(msg, server_stats_process)
+
+@bot.message_handler(func=lambda message: message.chat.type == 'private' and (message.text.lower() == 'profile information' or message.text.lower() == 'информация о профиле'), content_types=['text'])
+def profile_info(message):
+    if message.from_user.language_code in CIS_lang_codes:
+        text = '💤 Скоро..'
+        markup = buttons.markup_ru
+    else:
+        text = '💤 Coming soon..'
+        markup = buttons.markup_en
+    bot.send_message(message.chat.id, text, reply_markup=markup)
+
+@bot.message_handler(func=lambda message: message.chat.type == 'private' and (message.text.lower() == 'extra features' or message.text.lower() == 'дополнительные функции'), content_types=['text'])
+def extra_features(message):
+    if message.from_user.language_code in CIS_lang_codes:
+        text = '🗃 Воспользуйтесь одной из приведённых команд:'
+        markup = buttons.markup_extra_ru
+    else:
+        text = '🗃 Use one of the following commands:'
+        markup = buttons.markup_extra_en
+    msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+    bot.register_next_step_handler(msg, extra_features_process)
+
+def extra_features_process(message):
+    if message.text.lower() == 'developers in-game' or message.text.lower() == 'разработчиков в игре':
+        send_devcount(message)
+    elif message.text.lower() == 'game version' or message.text.lower() == 'версия игры':
+        send_gameversion(message)
+    elif message.text.lower() == 'cap reset' or message.text.lower() == 'сброс ограничений':
+        send_timer(message)
+    elif message.text.lower() == 'gun database' or message.text.lower() == 'база данных оружий':
+        guns(message)
+    elif message.text == '⏪ Back' or message.text == '⏪ Назад':
+        if message.from_user.language_code in CIS_lang_codes:
+            markup = buttons.markup_ru
+        else:
+            markup = buttons.markup_en
+        bot.send_message(message.chat.id, '👌', reply_markup=markup)
+    else:
+        if message.from_user.language_code in CIS_lang_codes:
+            text = '⚠️ Ничего не найден, пожалуйста, воспользуйтесь одной из приведённых команд:'
+            markup = buttons.markup_extra_ru
+        else:
+            text = '⚠️ Nothing found, please use one of the following commands:'
+            markup = buttons.markup_extra_en
+        msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+        bot.register_next_step_handler(msg, extra_features_process)
+
 @bot.message_handler(content_types=['text'])
 def answer(message):
     '''Answer of the bot'''
@@ -1274,109 +982,10 @@ def answer(message):
                 new_data = pd.DataFrame([[message.from_user.first_name, message.from_user.id, message.from_user.language_code]], columns=['Name', 'UserID', 'Language'])
                 pd.concat([data, new_data]).to_csv(config.USER_DB_FILE_PATH, index=False)
 
-            if message.text.lower() in strings.status_tags:
-                send_server_status(message)
-
-            elif message.text.lower() in strings.mm_tags:
-                send_mm_stats(message)
-
-            elif message.text.lower() in strings.dev_count_tags:
-                send_devcount(message)
-    
-            elif message.text.lower() == 'other' or message.text.lower() == 'другое':
-                other(message)
-
-            elif message.text.lower() in strings.cap_reset_tags:
-                send_timer(message)
-
-            elif message.text.lower() in strings.gameversion_tags:
-                send_gameversion(message)
-
-            elif message.text.lower() in strings.gun_tags:
-                guns(message)
-
             elif message.text.lower() in strings.gun_name_list:
                 for gName, gId in zip(strings.gun_name_list, strings.gun_id_list):
                     if message.text.lower() == gName:
                         send_gun_info(message, gId)
-
-            elif message.text.lower() == 'pistols' or message.text.lower() == 'пистолеты':
-                pistols(message)
-
-            elif message.text.lower() == 'smgs' or message.text.lower() == 'пистолеты-пулемёты':
-                smgs(message)
-
-            elif message.text.lower() == 'rifles' or message.text.lower() == 'винтовки':
-                rifles(message)
-
-            elif message.text.lower() == 'heavy' or message.text.lower() == 'тяжёлое оружие':
-                heavy(message)
-
-            elif message.text.lower() in strings.dc_tags:
-                dc(message)
-
-            elif message.text.lower() in strings.african_tags:
-                send_dc_africa(message)
-
-            elif message.text.lower() in strings.australian_tags:
-                send_dc_australia(message)
-
-            elif message.text.lower() in strings.european_tags:
-                dc_europe(message)
-
-            elif message.text.lower() in strings.asian_tags:
-                dc_asia(message)
-
-            elif message.text.lower() in strings.american_tags:
-                dc_usa(message)
-
-            elif message.text.lower() in strings.south_american_tags:
-                send_dc_south_america(message)
-
-            elif message.text.lower() in strings.northern_usa_tags:
-                send_dc_usa_north(message)
-
-            elif message.text.lower() in strings.southern_usa_tags:
-                send_dc_usa_south(message)
-
-            elif message.text.lower() in strings.north_european_tags:
-                send_dc_eu_north(message)
-
-            elif message.text.lower() in strings.west_european_tags:
-                send_dc_eu_west(message)
-
-            elif message.text.lower() in strings.east_european_tags:
-                send_dc_eu_east(message)
-
-            elif message.text.lower() in strings.indian_tags:
-                send_dc_india(message)
-
-            elif message.text.lower() in strings.japanese_tags:
-                send_dc_japan(message)
-
-            elif message.text.lower() in strings.chinese_tags:
-                send_dc_china(message)
-
-            elif message.text.lower() in strings.emirati_tags:
-                send_dc_emirates(message)
-
-            elif message.text.lower() in strings.singaporean_tags:
-                send_dc_singapore(message)
-
-            elif message.text.lower() in strings.hong_kongese_tags:
-                send_dc_hong_kong(message)
-
-            elif message.text == '⏪ Back' or message.text == '⏪ Назад':
-                back(message)
-
-            elif message.text == '⏪ Bаck' or message.text == '⏪ Нaзад':
-                dc(message)
-                
-            elif message.text == '⏪ Bасk' or message.text == '⏪ Haзад':
-                guns(message)
-                
-            elif message.text == '⏪ Вack' or message.text == '⏪ Haзaд':
-                other(message)
 
             else:
                 if message.from_user.language_code in CIS_lang_codes:
