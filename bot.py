@@ -45,29 +45,24 @@ def server_stats(message):
 
 def server_stats_process(message):
     bot.send_chat_action(message.chat.id, 'typing')
-    if message.text.lower() == 'service status' or message.text.lower() == 'состояние служб':
+    if message.text.lower() == 'service status' or 'состояние служб':
         send_server_status(message)
-    elif message.text.lower() == 'matchmaking status' or message.text.lower() == 'состояние матчмейкинга':
+    elif message.text.lower() == 'matchmaking status' or 'состояние матчмейкинга':
         send_mm_stats(message)
-    elif message.text.lower() == 'dataсenters status' or message.text.lower() == 'состояние дата-центров':
+    elif message.text.lower() == 'dataсenters status' or 'состояние дата-центров':
         dc(message)
     elif message.text == '⏪ Back' or message.text == '⏪ Назад':
-        log(message)
         if message.from_user.language_code in CIS_lang_codes:
             markup = buttons.markup_ru
         else:
             markup = buttons.markup_en
-        bot.send_message(message.chat.id, '👌', reply_markup=markup)
+        back(message, markup)
     else:
-        log(message)
         if message.from_user.language_code in CIS_lang_codes:
-            text = '⚠️ Ничего не найден, пожалуйста, воспользуйтесь одной из приведённых команд:'
             markup = buttons.markup_ss_ru
         else:
-            text = '⚠️ Nothing found, please use one of the following commands:'
             markup = buttons.markup_ss_en
-        msg = bot.send_message(message.chat.id, text, reply_markup=markup)
-        bot.register_next_step_handler(msg, server_stats_process)
+        unknown_request(message, markup, server_stats_process)
 
 def send_server_status(message):
     '''Send the status of CS:GO servers'''
@@ -122,31 +117,26 @@ def extra_features(message):
 
 def extra_features_process(message):
     bot.send_chat_action(message.chat.id, 'typing')
-    if message.text.lower() == 'developers in-game' or message.text.lower() == 'разработчиков в игре':
+    if message.text.lower() == 'developers in-game' or 'разработчиков в игре':
         send_devcount(message)
-    elif message.text.lower() == 'game version' or message.text.lower() == 'версия игры':
+    elif message.text.lower() == 'game version' or 'версия игры':
         send_gameversion(message)
-    elif message.text.lower() == 'cap reset' or message.text.lower() == 'сброс ограничений':
+    elif message.text.lower() == 'cap reset' or 'сброс ограничений':
         send_timer(message)
-    elif message.text.lower() == 'gun database' or message.text.lower() == 'база данных оружий':
+    elif message.text.lower() == 'gun database' or 'база данных оружий':
         guns(message)
     elif message.text == '⏪ Back' or message.text == '⏪ Назад':
-        log(message)
         if message.from_user.language_code in CIS_lang_codes:
             markup = buttons.markup_ru
         else:
             markup = buttons.markup_en
-        bot.send_message(message.chat.id, '👌', reply_markup=markup)
+        back(message, markup)
     else:
-        log(message)
         if message.from_user.language_code in CIS_lang_codes:
-            text = '⚠️ Ничего не найден, пожалуйста, воспользуйтесь одной из приведённых команд:'
             markup = buttons.markup_extra_ru
         else:
-            text = '⚠️ Nothing found, please use one of the following commands:'
             markup = buttons.markup_extra_en
-        msg = bot.send_message(message.chat.id, text, reply_markup=markup)
-        bot.register_next_step_handler(msg, extra_features_process)
+        unknown_request(message, markup, extra_features_process)
 
 def send_devcount(message):
     '''Send the count of online devs'''
@@ -216,32 +206,26 @@ def guns(message):
 
 def guns_process(message):
     bot.send_chat_action(message.chat.id, 'typing')
-    if message.text.lower() == 'pistols' or message.text.lower() == 'пистолеты':
+    if message.text.lower() == 'pistols' or 'пистолеты':
         pistols(message)
-    elif message.text.lower() == 'smgs' or message.text.lower() == 'пистолеты-пулемёты':
+    elif message.text.lower() == 'smgs' or 'пистолеты-пулемёты':
         smgs(message)
-    elif message.text.lower() == 'rifles' or message.text.lower() == 'винтовки':
+    elif message.text.lower() == 'rifles' or 'винтовки':
         rifles(message)
-    elif message.text.lower() == 'heavy' or message.text.lower() == 'тяжёлое оружие':
+    elif message.text.lower() == 'heavy' or 'тяжёлое оружие':
         heavy(message)
     elif message.text == '⏪ Back' or message.text == '⏪ Назад':
-        log(message)
         if message.from_user.language_code in CIS_lang_codes:
             markup = buttons.markup_extra_ru
         else:
             markup = buttons.markup_extra_en
-        msg = bot.send_message(message.chat.id, '👌', reply_markup=markup)
-        bot.register_next_step_handler(msg, extra_features_process)
+        back(message, markup, extra_features_process)
     else:
-        log(message)
         if message.from_user.language_code in CIS_lang_codes:
-            text = '⚠️ Категория не найдена, пожалуйста, выберите одну из данных категорий:'
-            markup = buttons.markup_guns_ru
+            markup = buttons.markup_ss_ru
         else:
-            text = '⚠️ No category found, please select one of the given categories:'
-            markup = buttons.markup_guns_en
-        msg = bot.send_message(message.chat.id, text, reply_markup=markup)
-        bot.register_next_step_handler(msg, guns_process)
+            markup = buttons.markup_ss_en
+        unknown_request(message, markup, guns_process)
 
 def pistols(message):
     log(message)
@@ -262,23 +246,17 @@ def pistols_process(message):
             if message.text.lower() == gName:
                 send_gun_info(message, gId)
     elif message.text == '⏪ Back' or message.text == '⏪ Назад':
-        log(message)
         if message.from_user.language_code in CIS_lang_codes:
             markup = buttons.markup_guns_ru
         else:
             markup = buttons.markup_guns_en
-        msg = bot.send_message(message.chat.id, '👌', reply_markup=markup)
-        bot.register_next_step_handler(msg, guns_process)
+        back(message, markup, guns_process)
     else:
-        log(message)
         if message.from_user.language_code in CIS_lang_codes:
-            text = '⚠️ Пистолет не найден, пожалуйста, выберите один из данных пистолетов:'
             markup = buttons.markup_pistols_ru
         else:
-            text = '⚠️ No pistol found, please select one of the given pistols:'
             markup = buttons.markup_pistols_en
-        msg = bot.send_message(message.chat.id, text, reply_markup=markup)
-        bot.register_next_step_handler(msg, pistols_process)
+        unknown_request(message, markup, pistols_process)
 
 def smgs(message):
     log(message)
@@ -299,23 +277,17 @@ def smgs_process(message):
             if message.text.lower() == gName:
                 send_gun_info(message, gId)
     elif message.text == '⏪ Back' or message.text == '⏪ Назад':
-        log(message)
         if message.from_user.language_code in CIS_lang_codes:
             markup = buttons.markup_guns_ru
         else:
             markup = buttons.markup_guns_en
-        msg = bot.send_message(message.chat.id, '👌', reply_markup=markup)
-        bot.register_next_step_handler(msg, guns_process)
+        back(message, markup, guns_process)
     else:
-        log(message)
         if message.from_user.language_code in CIS_lang_codes:
-            text = '⚠️ Пистолет-пулемёт не найден, пожалуйста, выберите один из данных пистолетов-пулемётов:'
             markup = buttons.markup_smgs_ru
         else:
-            text = '⚠️ No SMG found, please select one of the given SMGs:'
             markup = buttons.markup_smgs_en
-        msg = bot.send_message(message.chat.id, text, reply_markup=markup)
-        bot.register_next_step_handler(msg, smgs_process)
+        unknown_request(message, markup, smgs_process)
 
 def rifles(message):
     log(message)
@@ -336,23 +308,17 @@ def rifles_process(message):
             if message.text.lower() == gName:
                 send_gun_info(message, gId)
     elif message.text == '⏪ Back' or message.text == '⏪ Назад':
-        log(message)
         if message.from_user.language_code in CIS_lang_codes:
             markup = buttons.markup_guns_ru
         else:
             markup = buttons.markup_guns_en
-        msg = bot.send_message(message.chat.id, '👌', reply_markup=markup)
-        bot.register_next_step_handler(msg, guns_process)
+        back(message, markup, guns_process)
     else:
-        log(message)
         if message.from_user.language_code in CIS_lang_codes:
-            text = '⚠️ Винтовка не найдена, пожалуйста, выберите одну из данных винтовок:'
             markup = buttons.markup_rifles_ru
         else:
-            text = '⚠️ No rilfe found, please select one of the given rifles:'
             markup = buttons.markup_rifles_en
-        msg = bot.send_message(message.chat.id, text, reply_markup=markup)
-        bot.register_next_step_handler(msg, rifles_process)
+        unknown_request(message, markup, rifles_process)
 
 def heavy(message):
     log(message)
@@ -373,23 +339,17 @@ def heavy_process(message):
             if message.text.lower() == gName:
                 send_gun_info(message, gId)
     elif message.text == '⏪ Back' or message.text == '⏪ Назад':
-        log(message)
         if message.from_user.language_code in CIS_lang_codes:
             markup = buttons.markup_guns_ru
         else:
             markup = buttons.markup_guns_en
-        msg = bot.send_message(message.chat.id, '👌', reply_markup=markup)
-        bot.register_next_step_handler(msg, guns_process)
+        back(message, markup, guns_process)
     else:
-        log(message)
         if message.from_user.language_code in CIS_lang_codes:
-            text = '⚠️ Тяжёлое оружие не найдено, пожалуйста, выберите одно из данных тяжёлых оружий:'
             markup = buttons.markup_heavy_ru
         else:
-            text = '⚠️ No heavy gun found, please select one of the given heavy guns:'
             markup = buttons.markup_heavy_en
-        msg = bot.send_message(message.chat.id, text, reply_markup=markup)
-        bot.register_next_step_handler(msg, heavy_process)
+        unknown_request(message, markup, heavy_process)
 
 def send_gun_info(message, gun_id):
     '''Send archived data about guns'''
@@ -440,36 +400,30 @@ def dc(message):
 
 def dc_process(message):
     bot.send_chat_action(message.chat.id, 'typing')
-    if message.text.lower() == 'asia' or message.text.lower() == 'азия':
+    if message.text.lower() == 'asia' or 'азия':
         dc_asia(message)
-    elif message.text.lower() == 'south africa' or message.text.lower() == 'южная африка':
+    elif message.text.lower() == 'south africa' or 'южная африка':
         send_dc_africa(message)
-    elif message.text.lower() == 'australia' or  message.text.lower() == 'австралия':
+    elif message.text.lower() == 'australia' or 'австралия':
         send_dc_australia(message)
-    elif message.text.lower() == 'europe' or message.text.lower() == 'европа':
+    elif message.text.lower() == 'europe' or 'европа':
         dc_europe(message)
-    elif message.text.lower() == 'usa' or message.text.lower() == 'сша':
+    elif message.text.lower() == 'usa' or 'сша':
         dc_usa(message)
-    elif message.text.lower() == 'south america' or message.text.lower() == 'южная америка':
+    elif message.text.lower() == 'south america' or 'южная америка':
         send_dc_south_america(message)
     elif message.text == '⏪ Back' or message.text == '⏪ Назад':
-        log(message)
         if message.from_user.language_code in CIS_lang_codes:
             markup = buttons.markup_ss_ru
         else:
             markup = buttons.markup_ss_en
-        msg = bot.send_message(message.chat.id, '👌', reply_markup=markup)
-        bot.register_next_step_handler(msg, server_stats_process)
+        back(message, markup, server_stats_process)
     else:
-        log(message)
         if message.from_user.language_code in CIS_lang_codes:
-            text = '⚠️ Регион не найден, пожалуйста, выберите один из данных регионов:'
             markup = buttons.markup_DC_ru
         else:
-            text = '⚠️ No region found, please select one of the given regions:'
             markup = buttons.markup_DC_en
-        msg = bot.send_message(message.chat.id, text, reply_markup=markup)
-        bot.register_next_step_handler(msg, dc_process)
+        unknown_request(message, markup, dc_process)
 
 def dc_europe(message):
     log(message)
@@ -486,24 +440,24 @@ def dc_europe(message):
 def dc_europe_process(message):
     log(message)
     bot.send_chat_action(message.chat.id, 'typing')
-    if message.text.lower() == 'north' or message.text.lower() == 'север':
+    if message.text.lower() == 'north' or 'север':
         send_dc_eu_north(message)
-    elif message.text.lower() == 'east' or message.text.lower() == 'восток':
+    elif message.text.lower() == 'east' or 'восток':
         send_dc_eu_east(message)
-    elif message.text.lower() == 'west' or message.text.lower() == 'запад':
+    elif message.text.lower() == 'west' or 'запад':
         send_dc_eu_west(message)
     elif message.text == '⏪ Back' or message.text == '⏪ Назад':
-        dc_back(message)
-    else:
-        log(message)
         if message.from_user.language_code in CIS_lang_codes:
-            text = '⚠️ Регион не найден, пожалуйста, выберите один из данных регионов:'
+            markup = buttons.markup_DC_ru
+        else:
+            markup = buttons.markup_DC_en
+        back(message, markup, dc_process)
+    else:
+        if message.from_user.language_code in CIS_lang_codes:
             markup = buttons.markup_DC_EU_ru
         else:
-            text = '⚠️ No region found, please select one of the given regions:'
             markup = buttons.markup_DC_EU_en
-        msg = bot.send_message(message.chat.id, text, reply_markup=markup)
-        bot.register_next_step_handler(msg, dc_europe_process)
+        unknown_request(message, markup, dc_europe_process)
 
 def dc_usa(message):
     log(message)
@@ -519,22 +473,22 @@ def dc_usa(message):
 
 def dc_usa_process(message):
     bot.send_chat_action(message.chat.id, 'typing')
-    if message.text.lower() in strings.northern_usa:
+    if message.text.lower() == 'north' or 'север':
         send_dc_usa_north(message)
-    elif message.text.lower() in strings.southern_usa:
+    elif message.text.lower() == 'south' or 'юг':
         send_dc_usa_south(message)
     elif message.text == '⏪ Back' or message.text == '⏪ Назад':
-        dc_back(message)
-    else:
-        log(message)
         if message.from_user.language_code in CIS_lang_codes:
-            text = '⚠️ Регион не найден, пожалуйста, выберите один из данных регионов:'
+            markup = buttons.markup_DC_ru
+        else:
+            markup = buttons.markup_DC_en
+        back(message, markup, dc_process)
+    else:
+        if message.from_user.language_code in CIS_lang_codes:
             markup = buttons.markup_DC_USA_ru
         else:
-            text = '⚠️ No region found, please select one of the given regions:'
             markup = buttons.markup_DC_USA_en
-        msg = bot.send_message(message.chat.id, text, reply_markup=markup)
-        bot.register_next_step_handler(msg, dc_usa_process)
+        unknown_request(message, markup, dc_usa_process)
 
 def dc_asia(message):
     log(message)
@@ -550,30 +504,30 @@ def dc_asia(message):
 
 def dc_asia_process(message):
     bot.send_chat_action(message.chat.id, 'typing')
-    if message.text.lower() in strings.indian:
+    if message.text.lower() == 'india' or 'индия':
         send_dc_india(message)
-    elif message.text.lower() in strings.japanese:
+    elif message.text.lower() == 'japan' or 'япония':
         send_dc_japan(message)
-    elif message.text.lower() in strings.chinese:
+    elif message.text.lower() == 'china' or 'китай':
         send_dc_china(message)
-    elif message.text.lower() in strings.emirati:
+    elif message.text.lower() == 'emirates' or 'эмираты':
         send_dc_emirates(message)
-    elif message.text.lower() in strings.singaporean:
+    elif message.text.lower() == 'singapore' or 'сингапур':
         send_dc_singapore(message)
-    elif message.text.lower() in strings.hong_kongese:
+    elif message.text.lower() == 'hong kong' or 'гонконг':
         send_dc_hong_kong(message)
     elif message.text == '⏪ Back' or message.text == '⏪ Назад':
-        dc_back(message)
-    else:
-        log(message)
         if message.from_user.language_code in CIS_lang_codes:
-            text = '⚠️ Страна не найдена, пожалуйста, выберите одну из данных стран:'
+            markup = buttons.markup_DC_ru
+        else:
+            markup = buttons.markup_DC_en
+        back(message, markup, dc_process)
+    else:
+        if message.from_user.language_code in CIS_lang_codes:
             markup = buttons.markup_DC_Asia_ru
         else:
-            text = '⚠️ No country found, please select one of the given countries:'
             markup = buttons.markup_DC_Asia_en
-        msg = bot.send_message(message.chat.id, text, reply_markup=markup)
-        bot.register_next_step_handler(msg, dc_asia_process)
+        unknown_request(message, markup, dc_asia_process)
 
 def send_dc_africa(message):
     log(message)
@@ -756,18 +710,8 @@ def send_dc_hong_kong(message):
     msg = bot.send_message(message.chat.id, text, reply_markup=markup)
     bot.register_next_step_handler(msg, dc_asia_process)
 
-def dc_back(message):
-    log(message)
-    bot.send_chat_action(message.chat.id, 'typing')
-    if message.from_user.language_code in CIS_lang_codes:
-        markup = buttons.markup_DC_ru
-    else:
-        markup = buttons.markup_DC_en
-    msg = bot.send_message(message.chat.id, '👌', reply_markup=markup)
-    bot.register_next_step_handler(msg, dc_process)
 
-
-### Error messages ###
+### Addons ###
 
 
 def send_about_problem_valve_api(message):
@@ -828,8 +772,32 @@ def send_about_problem_bot(message):
         markup = buttons.markup_ru
     else:
         text = strings.wrongBOT_en
-        markup = buttons.markup_en  
+        markup = buttons.markup_en
     bot.send_message(message.chat.id, text, reply_markup=markup)
+
+def unknown_request(message, *args):
+    log(message)
+    bot.send_chat_action(message.chat.id, 'typing')
+    if message.from_user.language_code in CIS_lang_codes:
+        text = strings.unknownRequest_ru
+        markup = buttons.markup_ru
+    else: 
+        text = strings.unknownRequest_en
+        markup = buttons.markup_en
+    if len(args) < 1:
+        bot.send_message(message.chat.id, text, reply_markup=markup)
+    else:
+        msg = bot.send_message(message.chat.id, text, reply_markup=args[0])
+        bot.register_next_step_handler(msg, args[1])
+
+def back(message, *args):
+    log(message)
+    bot.send_chat_action(message.chat.id, 'typing')
+    if len(args) < 2:
+        bot.send_message(message.chat.id, '👌', reply_markup=args[0])
+    else:
+        msg = bot.send_message(message.chat.id, '👌', reply_markup=args[0])
+        bot.register_next_step_handler(msg, args[1])
 
 
 ### Commands ###
@@ -1043,26 +1011,17 @@ def answer(message):
                 new_data = pd.DataFrame([[message.from_user.first_name, message.from_user.id, message.from_user.language_code]], columns=['Name', 'UserID', 'Language'])
                 pd.concat([data, new_data]).to_csv(config.USER_DB_FILE_PATH, index=False)
 
-            if message.text.lower() == 'dataсenters status' or message.text.lower() == 'состояние дата-центров':
-                dc(message)
-
-            elif message.text.lower() == 'server statistics' or message.text.lower() == 'статистика серверов':
+            if message.text.lower() == 'server statistics' or 'статистика серверов':
                 server_stats(message)
 
-            elif message.text.lower() == 'extra features' or message.text.lower() == 'дополнительные функции':
+            elif message.text.lower() == 'extra features' or 'дополнительные функции':
                 extra_features(message)
 
-            elif message.text.lower() == 'profile information' or message.text.lower() == 'информация о профиле':
+            elif message.text.lower() == 'profile information' or 'информация о профиле':
                 profile_info(message)
 
             else:
-                if message.from_user.language_code in CIS_lang_codes:
-                    text = strings.unknownRequest_ru
-                    markup = buttons.markup_ru
-                else: 
-                    text = strings.unknownRequest_en
-                    markup = buttons.markup_en
-                bot.send_message(message.chat.id, text, reply_markup=markup)
+                unknown_request(message)
 
         else:
             if message.from_user.id == 777000:
