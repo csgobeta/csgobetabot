@@ -15,22 +15,26 @@ def server_status():
     '''Get the status of CS:GO servers'''
     tsCache, tsRCache = time_converter()[0], time_converter()[1]
     cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
-    gcCache, slCache, sCache, piCache = cacheFile['game_coordinator'], cacheFile['sessionsLogon'], cacheFile['scheduler'], cacheFile['steam_community']
+    gcCache = cacheFile['game_coordinator']
+    slCache = cacheFile['sessionsLogon']
+    sCache = cacheFile['scheduler']
+    piCache = cacheFile['steam_community']
+    wsCache = cacheFile['valve_webapi']
 
-    array = [gcCache, slCache, sCache, piCache]
+    array = [gcCache, slCache, sCache, piCache, wsCache]
     array_ru = []
     for data in array:
         data_ru = translate(data)
         array_ru.append(data_ru)
-    gcRCache, slRCache, sRCache, piRCache = array_ru[0], array_ru[1], array_ru[2], array_ru[3]
+    gcRCache, slRCache, sRCache, piRCache, wsRCache = array_ru[0], array_ru[1], array_ru[2], array_ru[3], array_ru[4]
 
     if gcCache != 'normal' or slCache != 'normal':
         tick = '❌'
     else:
         tick = '✅'
 
-    status_text_en = strings.status_en.format(tick, gcCache, slCache, sCache, piCache, tsCache)
-    status_text_ru = strings.status_ru.format(tick, gcRCache, slRCache, sRCache, piRCache, tsRCache)
+    status_text_en = strings.status_en.format(tick, gcCache, slCache, sCache, piCache, wsCache, tsCache)
+    status_text_ru = strings.status_ru.format(tick, gcRCache, slRCache, sRCache, piRCache, wsRCache, tsRCache)
 
     return status_text_en, status_text_ru
 
@@ -48,8 +52,8 @@ def mm_stats():
     addInf_text_en = strings.additionalInfo_en.format(p24Cache, paCache, uqCache, tsCache)
     addInf_text_ru = strings.additionalInfo_ru.format(p24Cache, paCache, uqCache, tsRCache)
 
-    mm_stats_text_en = mm_text_en + addInf_text_en
-    mm_stats_text_ru = mm_text_ru + addInf_text_ru
+    mm_stats_text_en = mm_text_en + '\n\n' + addInf_text_en
+    mm_stats_text_ru = mm_text_ru + '\n\n' + addInf_text_ru
 
     return mm_stats_text_en, mm_stats_text_ru
 

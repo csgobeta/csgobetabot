@@ -74,7 +74,9 @@ def send_alert(newVal):
     else:
         chat_list = [config.OWNER]
     for chatID in chat_list:
-        bot.send_message(chatID, text, parse_mode='Markdown')
+        msg = bot.send_message(chatID, text, parse_mode='Markdown')
+        bot.pin_chat_message(msg.chat.id, msg.id, disable_notification=True)
+
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(message)s', datefmt='%Y-%m-%d %H:%M:%S')

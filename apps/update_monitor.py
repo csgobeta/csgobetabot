@@ -43,11 +43,11 @@ def check_for_updates(client):
 
             if currentPublicBuild != cacheFile['public_build_ID']:
                 file_manager.updateJson(config.CACHE_FILE_PATH, currentPublicBuild, cache_key_list[0])
-                send_alert(currentPublicBuild)
+                send_alert(currentPublicBuild, cache_key_list[0])
 
             if currentDPRBuild != cacheFile['dpr_build_ID']:
                 file_manager.updateJson(config.CACHE_FILE_PATH, currentDPRBuild, cache_key_list[1])
-                send_alert_dpr(currentDPRBuild)
+                send_alert(currentDPRBuild, cache_key_list[1])
 
             time.sleep(10)
 
@@ -55,25 +55,19 @@ def check_for_updates(client):
             print(f' - Error:\n{e}\n\n\n')
 
 
-def send_alert(currentPublicBuild):
+def send_alert(newVal, key):
     bot = telebot.TeleBot(config.BOT_TOKEN)
-    text = strings.notiNewBuild_ru.format(currentPublicBuild)
+    if key == 'public_build_ID':
+        text = strings.notiNewBuild_ru.format(newVal)
+    else:
+        text = strings.notiNewDPRBuild_ru.format(newVal)
     if not config.TEST_MODE:
         chat_list = [config.CSGOBETACHAT, config.AQ]
     else:
         chat_list = [config.OWNER]
     for chatID in chat_list:
-        bot.send_message(chatID, text, parse_mode='Markdown')
-
-def send_alert_dpr(currentDPRBuild):
-    bot = telebot.TeleBot(config.BOT_TOKEN)
-    text = strings.notiNewDPRBuild_ru.format(currentDPRBuild)
-    if not config.TEST_MODE:
-        chat_list = [config.CSGOBETACHAT, config.AQ]
-    else:
-        chat_list = [config.OWNER]
-    for chatID in chat_list:
-        bot.send_message(chatID, text, parse_mode='html')
+        msg = bot.send_message(chatID, text, parse_mode='html')
+        bot.pin_chat_message(msg.chat.id, msg.id, disable_notification=True)
 
 
 if __name__ == '__main__':

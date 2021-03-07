@@ -1,244 +1,638 @@
-'''Text for initial Commands'''
+### Text for initial Commands ###
 # English
-cmdStart_en = '👋🏼 Hey, {}!\nThis bot is designed to check the number of online players and the availability of CS:GO servers.\n\nFor more information type /help.'
-cmdHelp_en = 'ℹ️ This bot is designed by @csgobeta. Source code on <a href="https://github.com/csgobeta/csgobetabot">GitHub</a>.\n\n<b>Here are the available commands:</b>\n/status – сheck the status of the servers\n/devcount - show the amount of devs in beta\n/timer - show the time left until cap reset\n/dc – see the status of a specific data center\n/feedback – leave feedback about the bot\n/help – get this message\n\nNote that this bot also works automatically, no need to add it anywhere. Simply open any of your chats and type ‘<code>@csgobetabot </code>‘ in the message field. Then tap on a result to send.'
-cmdFeedback_en = "💬 Please, tell us about your <b>suggestions</b> or <b>problems</b> that you have encountered using our bot.\n\nUse /cancel to cancel this command."
+cmdStart_en = '''👋🏼 Hey, {}!
+This bot is designed to check the number of online players and the availability of CS:GO servers.
+
+For more information type /help.'''
+cmdHelp_en = '''ℹ️ This bot is designed by @csgobeta. Source code on <a href="https://github.com/csgobeta/csgobetabot">GitHub</a>.
+
+<b>List of all the available features:</b>
+<b>— Server statistics:</b>
+• Service status: check CS:GO's game coordinator status, server connection and more.
+• Matchmaking status: get the count of in-game players with a graph for the last 7 days, average search time and more.
+• Datacenters status: check the status for the most close CS:GO server to your location.
+<b>— Profile information:</b>
+• Not implemented yet.
+<b>— Extra features:</b>
+• Developers in-game: get the count of developers currently playing CS:GO Beta Dev.
+• Cap reset: check the remaining time until drop and experience cap reset.
+• Game version: show the current CS:GO version.
+• Gun database: get detailed information about every CS:GO gun.
+
+Note that this bot also works automatically, no need to add it anywhere. Simply open any of your chats and type ‘<code>@csgobetabot </code>‘ in the message field. Then tap on a result to send.
+
+To send datacenter information inline, try typing one of the following:
+• Region code (ex: EU, AS).
+• Region name (ex: Europe, Asia).
+• Country name (ex: Poland, Japan).
+• City name (ex: Warsaw, Tokyo).
+Alternatively you can type ‘<code>@csgobetabot DC</code>‘ to get all the existing datacenters.'''
+cmdFeedback_en = '''💬 Please, tell us about your <b>suggestions</b> or <b>problems</b> that you have encountered using our bot.
+
+Use /cancel to cancel this command.'''
 # Russian
-cmdStart_ru = '👋🏼 Привет, {}!\nЭтот бот предназначен для проверки количества онлайн игроков и доступности CS:GO серверов.\n\nДля большей информации воспользуйтесь /help.'
-cmdHelp_ru = 'ℹ️ Этот бот разработан каналом @csgobeta. Исходный код на <a href="https://github.com/csgobeta/csgobetabot">GitHub</a>.\n\n<b>Доступные команды:</b>\n/status – проверить доступность серверов\n/devcount - показать количество разработчиков в бета-версии\n/timer - показать время до сброса ограничений\n/dc – посмотреть состояние определённого дата-центра (на английском языке)\n/feedback – оставить фидбэк про бота\n/help – получить это сообщение\n\nОбратите внимание, что этот бот также работает автоматически, нет необходимости добавлять его куда-либо. Просто откройте любой из Ваших чатов и введите ‘<code>@csgobetabot </code>ʼ в поле сообщения. Затем нажмите на результат для отправки.'
-cmdFeedback_ru = '💬 Пожалуйста, расскажите о Ваших <b>пожеланиях</b> или <b>проблемах</b>, с которыми Вы столкнулись, используя бота.\n\nИспользуйте /cancel, чтобы отменить команду.'
+cmdStart_ru = '''👋🏼 Привет, {}!
+Этот бот предназначен для проверки количества онлайн игроков и доступности CS:GO серверов.
+
+Для большей информации воспользуйтесь /help.'''
+cmdHelp_ru = '''ℹ️ Этот бот разработан каналом @csgobeta. Исходный код на <a href="https://github.com/csgobeta/csgobetabot">GitHub</a>.
+
+<b>Список всех доступных команд:</b>
+<b>— Статистика серверов:</b>
+• Состояние служб: проверить состояние игрового координатора CS:GO, подключение к серверам и многое другое.
+• Состояние матчмейкинга: получить количество игроков в игре с графиком за последние 7 дней, средние время поиска и многое другое.
+• Состояние дата-центров: проверить статус самого близкого сервера CS:GO к вашему местоположению.
+<b>— Информация о профиле:</b>
+• Еще не реализовано.
+<b>— Дополнительные функции:</b>
+• Разработчиков в игре: получить количество разработчиков, которые в настоящее время играют в CS:GO Beta Dev.
+• Сброс ограничений: проверить оставшееся время до сброса ограничений опыта и дропа.
+• Версия игры: показать текущую версию CS:GO.
+• База данных оружий: получите подробную информацию о каждом оружии CS:GO.
+
+Обратите внимание, что этот бот также работает автоматически, нет необходимости добавлять его куда-либо. Просто откройте любой из Ваших чатов и введите ‘<code>@csgobetabot </code>ʼ в поле сообщения. Затем нажмите на результат для отправки.
+
+Чтобы отправить информацию о дата-центрах в inline-режиме, попробуйте ввести одно из следующих значений:
+• Код региона (например, EU, AS).
+• Название региона (например, Европа, Азия).
+• Название страны (например, Польша, Япония).
+• Название города (например, Варшава, Токио).
+В качестве альтернативы можете ввести ‘<code>@csgobetabot ДЦ</code>‘, чтобы получить список всех существующих дата-центров.'''
+cmdFeedback_ru = '''💬 Пожалуйста, расскажите о Ваших <b>пожеланиях</b> или <b>проблемах</b>, с которыми Вы столкнулись, используя бота.
+
+Используйте /cancel, чтобы отменить команду.'''
 
 
-'''Text for Status'''
-status_tags = ['server status', 'статус серверов', '/status']
+### Text for Status ###
 # English
-status_en = '⁠{} Server status:\n\n• Game coordinator: {}\n• Server connection: {}\n• Matchmaking scheduler: {}\n• Player inventories: {}\n\nUpdated on: {} UTC'
-# Russian
-status_ru = '{} Состояние серверов:\n\n• Игровой координатор: {}\n• Подключение к серверам: {}\n• Планировщик матчмейкинга: {}\n• Инвентари игроков: {}\n\nОбновлено: {} UTC'
+status_en = '''{} <b>CS:GO service status:</b>
 
-'''Text for Matchmaking'''
-mm_tags = ['mm stats', 'статистика мм', '/mm']
+• Game coordinator: {}
+• Server connection: {}
+• Matchmaking scheduler: {}
+• Player inventories: {}
+• Steam web API: {}
+
+Updated on: {} UTC'''
+# Russian
+status_ru = '''{} <b>Состояние служб CS:GO:</b>
+
+• Игровой координатор: {}
+• Подключение к серверам: {}
+• Планировщик матчмейкинга: {}
+• Инвентари игроков: {}
+• Steam веб-API: {}
+
+Обновлено: {} UTC'''
+
+
+### Text for Matchmaking ###
 # English
-mm_en = '<a href="{}">‎‎‎‎</a>📊 Matchmaking statistics:\n\n• Online servers: {:,}\n• Online players: {:,}\n• Active players: {:,}\n• Searching players: {:,}\n• Average search time: {}s\n\n'
-# Russian
-mm_ru = '<a href="{}">‎‎‎‎</a>⁠📊 Статистика матчмейкинга:\n\n• Онлайн серверов: {:,}\n• Онлайн игроков: {:,}\n• Активных игроков: {:,}\n• Игроков в поиске: {:,}\n• Среднее время поиска: {} с.\n\n'
+mm_en = '''<a href="{}">‎‎‎‎</a>📊 <b>Matchmaking statistics:</b>
 
-'''Text for Additional info'''
+• Online servers: {:,}
+• Online players: {:,}
+• Active players: {:,}
+• Players searching: {:,}
+• Average search time: {}s'''
+# Russian
+mm_ru = '''<a href="{}">‎‎‎‎</a>⁠📊 <b>Статистика матчмейкинга:</b>
+
+• Онлайн серверов: {:,}
+• Онлайн игроков: {:,}
+• Активных игроков: {:,}
+• Игроков в поиске: {:,}
+• Среднее время поиска: {} с.'''
+
+
+### Text for Additional info ###
 # English
-additionalInfo_en = '📁 Additional information:\n\n• 24-hour peak: {:,}\n• All-time peak: {:,}\n• Monthly unique players: {:,}\n\nUpdated on: {} UTC'
-# Russian
-additionalInfo_ru = '📁 Дополнительная информация:\n\n• 24-часовой пик: {:,}\n• Рекордный пик: {:,}\n• Ежемесячные уникальные игроки: {:,}\n\nОбновлено: {} UTC'
+additionalInfo_en = '''📁 <b>Additional information:</b>
 
-'''Text for Dev count'''
-dev_count_tags = ['online devs', 'разработчиков в игре', '/devcount']
+• 24-hour peak: {:,}
+• All-time peak: {:,}
+• Monthly unique players: {:,}
+
+Updated on: {} UTC'''
+# Russian
+additionalInfo_ru = '''📁 <b>Дополнительная информация:</b>
+
+• 24-часовой пик: {:,}
+• Рекордный пик: {:,}
+• Ежемесячные уникальные игроки: {:,}
+
+Обновлено: {} UTC'''
+
+
+### Text for Dev count ###
 # English
-devCount_en = '<a href="{}">⁠‎‎‎</a>🧑‍💻 Beta-version of CS:GO (ID710):\n\n• Online devs: {}\n• All-time peak: {}\n\nUpdated on: {} UTC\n\n🏢 Current time at Valve headquarters: {}'
+devCount_en = '''<a href="{}">⁠‎‎‎</a>🧑‍💻 <b>Beta-version of CS:GO (ID710):</b>
+
+• Online developers: {}
+• All-time peak: {}
+
+Updated on: {} UTC
+
+🏢 Current time at Valve headquarters: {}'''
 # Russian
-devCount_ru = '<a href="{}">⁠‎‎‎</a>🧑‍💻 Бета-версия CS:GO (ID710):\n\n• Онлайн разработчиков: {}\n• Рекордный пик: {}\n\nОбновлено: {} UTC\n\n🏢 Текущее время в штаб-квартире Valve: {}'
+devCount_ru = '''<a href="{}">⁠‎‎‎</a>🧑‍💻 <b>Бета-версия CS:GO (ID710):</b>
+
+• Онлайн разработчиков: {}
+• Рекордный пик: {}
+
+Обновлено: {} UTC
+
+🏢 Текущее время в штаб-квартире Valve: {}'''
 
 
-'''Text for Timer'''
-cap_reset_tags = ['cap reset', 'сброс ограничений', '/timer']
+### Text for Timer ###
 # English
 timer_en = '⏳ Time left until experience and drop cap reset: {}d {}h {}m {}s'
 # Russian
 timer_ru = '⏳ Время до сброса ограничений опыта и дропа: {} д. {} ч. {} м. {} с.'
 
 
-'''Text for Game Version'''
-gameversion_tags = ['game version', 'версия игры', '/gamever']
+### Text for Game Version ###
 # English
-gameversion_en = '⚙️ Current game version: <code>{}</code>\n\n• Client version: {}\n• Server version: {}\n\nLatest update: {} UTC'
-# Russian
-gameversion_ru = '⚙️ Текущая версия игры: <code>{}</code>\n\n• Клиентская версия: {}\n• Серверная версия: {}\n\nПоследнее обновление: {} UTC'
+gameversion_en = '''⚙️ Current game version: <code>{} ({}/{})</code>
 
-'''Text for Wrong Request'''
+Latest CS:GO update: {} UTC'''
+# Russian
+gameversion_ru = '''⚙️ Текущая версия игры: <code>{} ({}/{})</code>
+
+Последнее обновление CS:GO: {} UTC'''
+
+
+### Text for Wrong Request ###
 # English
-unknownRequest_en = '⚠️ Nothing found, please select one of the following categories:'
+unknownRequest_en = '⚠️ Nothing found, please select one of the following buttons:'
 # Russian
 unknownRequest_ru = '⚠️ Ничего не найдено, пожалуйста, выберите одну из приведённых категорий:'
 
 
-'''Text for Wrong API'''
+### Text for Wrong API ###
 # English
-wrongAPI_en = "💀 Issues with Valve's API, please try again later."
+wrongAPI_en = '💀 Issues with Steam API, please try again later.'
 # Russian
-wrongAPI_ru = '💀 Проблемы с API Valve, пожалуйста, попробуйте позже.'
+wrongAPI_ru = '💀 Проблемы с Steam API, пожалуйста, попробуйте позже.'
 
-'''Text for Maintenance'''
+
+### Text for Maintenance ###
 # English
-maintenance_en = "🛠️ Valve servers are down for the weekly maintenance, please try again later."
+maintenance_en = '🛠️ Steam servers are down for the weekly maintenance, please try again later.'
 # Russian
-maintenance_ru = '🛠️ Сервера Valve отключены для еженедельного тех. обслуживания, пожалуйста, попробуйте позже.'
+maintenance_ru = '🛠️ Сервера Steam отключены для еженедельного тех. обслуживания, пожалуйста, попробуйте позже.'
 
 
-'''Text if something is wrong'''
+### Text if something is wrong ###
 # English
 wrongBOT_en = '🧐 Sorry, something’s not right. Please try again later.'
 # Russian
 wrongBOT_ru = '🧐 Извините, что-то не так. Пожалуйста, попробуйте позже.'
 
 
-'''Text for new BuildID'''
+### Text for new BuildID ###
 #Russian
-notiNewBuild_ru = '⚡️ Обнаружено новое обновление Counter-Strike: Global Offensive. Пост со списком изменений выйдет в ближайшее время.\n\nID новой сборки: `{}`'
+notiNewBuild_ru = '''⚡️ Обнаружено новое обновление Counter-Strike: Global Offensive. Пост со списком изменений выйдет в ближайшее время.
 
-'''Text for new DPR BuildID'''
+ID новой сборки: <code>{}</code>'''
+
+
+### Text for new DPR BuildID ###
 #Russian
-notiNewDPRBuild_ru = '🔒 Защищённая паролем DPR* сборка CS:GO была обновлена. Это может означать, что в скором времени выйдет новое обновление.\n\n<i>*DPR — developer pre-release</i>\n\nID новой сборки: <code>{}</code>'
+notiNewDPRBuild_ru = '''🔒 Защищённая паролем DPR* сборка CS:GO была обновлена. Это может означать, что в скором времени выйдет новое обновление.
 
-'''Text for Workshop Changes'''
+<i>*DPR — developer pre-release</i>
+
+ID новой сборки: <code>{}</code>'''
+
+
+### Text for Workshop Changes ###
 #Russian
-notiNewMap_ru = '🆕 Официальный аккаунт CS:GO в Steam загрузил карту *{}* в Мастерскую для совместимости с будущими версиями игры.\n\nВ последующих обновлениях игры стоит ожидать некоторые изменения на данной карте.\n\n🔗 steamcommunity.com/sharedfiles/filedetails/?id={}'
-notiNewMaps_ru = '🆕 Официальный аккаунт CS:GO в Steam загрузил карты *{}* в Мастерскую для совместимости с будущими версиями игры.\n\nВ последующих обновлениях игры стоит ожидать некоторые изменения на данных картах.\n\n🔗 steamcommunity.com/profiles/76561198082857351/myworkshopfiles/'
+notiNewMap_ru = '''🆕 Официальный аккаунт CS:GO в Steam загрузил карту <b>{}</b> в Мастерскую для совместимости с будущими версиями игры.
 
-'''Text for new Player Peak'''
+В последующих обновлениях игры стоит ожидать некоторые изменения на данной карте.
+
+🔗 steamcommunity.com/sharedfiles/filedetails/?id={}'''
+
+notiNewMaps_ru = '''🆕 Официальный аккаунт CS:GO в Steam загрузил карты <b>{}</b> в Мастерскую для совместимости с будущими версиями игры.
+
+В последующих обновлениях игры стоит ожидать некоторые изменения на данных картах.
+
+🔗 steamcommunity.com/profiles/76561198082857351/myworkshopfiles/'''
+
+
+### Text for new Player Peak ###
 #Russian
-notiNewPlayerPeak_ru = '🤩 Зарегистрирован новый рекордный пик онлайн игроков в Counter-Strike: Global Offensive. \n\nКоличество игроков: {}'
+notiNewPlayerPeak_ru = '''🤩 Зарегистрирован новый рекордный пик онлайн игроков в Counter-Strike: Global Offensive.
 
-'''Text for new Dev Peak'''
+Количество игроков: {}'''
+
+
+### Text for new Dev Peak ###
 #Russian
-notiNewDevPeak_ru = '👁 Зарегистрирован новый рекордный пик онлайн разработчиков в бета-версии Counter-Strike: Global Offensive. \n\nКоличество разработчиков: {}'
+notiNewDevPeak_ru = '''🔍 Зарегистрирован новый рекордный пик онлайн разработчиков в бета-версии Counter-Strike: Global Offensive.
 
-'''Text for new Tweet'''
+Количество разработчиков: {}'''
+
+
+### Text for new Tweet ###
 #Russian
-notiNewTweet_ru = '💬 Официальный аккаунт CS:GO в Twitter:\n\n«{}».\n\n🔗 twitter.com/csgo/status/{}'
+notiNewTweet_ru = '''💬 Официальный аккаунт CS:GO в Twitter:
 
-'''Text for DC'''
-dc_tags = ['data centers', 'дата-центры', '/dc']
+«{}»
+
+🔗 twitter.com/csgo/status/{}'''
+
+
+### Text for DC ###
 # English
-dc_africa_en = '🇿🇦 South Africaʼs DC status:\n\n• Location: Johannesburg\n• Load: {}\n• Capacity: {}\n\nUpdated on: {} UTC'
-dc_australia_en = '🇦🇺 Australiaʼs DC status:\n\n• Location: Sydney\n• Load: {}\n• Capacity: {}\n\nUpdated on: {} UTC'
-dc_north_eu_en = '🇸🇪 Swedenʼs DC status:\n\n• Location: Stockholm\n• Load: {}\n• Capacity: {}\n\nUpdated on: {} UTC'
-dc_west_eu_en = '🇩🇪 Germanyʼs DC status:\n\n• Location: Frankfurt\n• Load: {}\n• Capacity: {}\n\n🇪🇸 Spainʼs DC status:\n\n• Location: Mardid\n• Load: {}\n• Capacity: {}\n\nUpdated on: {} UTC'
-dc_east_eu_en = '🇦🇹 Austriaʼs DC status:\n\n• Location: Vienna\n• Load: {}\n• Capacity: {}\n\n🇵🇱 Polandʼs DC status:\n\n• Location: Warsaw\n• Load: {}\n• Capacity: {}\n\nUpdated on: {} UTC'
-dc_north_us_en = '🇺🇸 Northcentral DC status:\n\n• Location: Chicago\n• Load: {}\n• Capacity: {}\n\n🇺🇸 Northeast DC status:\n\n• Location: Sterling\n• Load: {}\n• Capacity: {}\n\n🇺🇸 Northwest DC status:\n\n• Location: Moses Lake\n• Load: {}\n• Capacity: {}\n\nUpdated on: {} UTC'
-dc_south_us_en = '🇺🇸 Southwest DC status:\n\n• Location: Los Angeles\n• Load: {}\n• Capacity: {}\n\n🇺🇸 Southeast DC status:\n\n• Location: Atlanta\n• Load: {}\n• Capacity: {}\n\nUpdated on: {} UTC'
-dc_south_america_en = '🇧🇷 Brazilʼs DC status:\n\n• Location: Sao Paulo\n• Load: {}\n• Capacity: {}\n\n🇨🇱 Chileʼs DC status:\n\n• Location: Santiago\n• Load: {}\n• Capacity: {}\n\n🇵🇪 Peruʼs DC status:\n\n• Location: Lima\n• Load: {}\n• Capacity: {}\n\n🇦🇷 Argentinaʼs DC Status:\n\n• Location: Buenos Aires\n• Load: {}\n• Capacity: {}\n\nUpdated on: {} UTC'
-dc_india_en = '🇮🇳 Indiaʼs DC status:\n\n• Location: Mumbai\n• Load: {}\n• Capacity: {}\n\n• Location: Chennai\n• Load: {}\n• Capacity: {}\n\nUpdated on: {} UTC'
-dc_japan_en = '🇯🇵 Japanʼs DC status:\n\n• Location: Tokyo\n• Load: {}\n• Capacity: {}\n\nUpdated on: {} UTC'
-dc_china_en = '🇨🇳 Chinaʼs DC status: \n\n• Location: Shanghai\n• Load: {}\n• Capacity: {}\n\n• Location: Tianjin\n• Load: {}\n• Capacity: {}\n\n• Location: Guangzhou\n• Load: {}\n• Capacity: {}\n\nUpdated on: {} UTC'
-dc_emirates_en = '🇦🇪 Emiratesʼ DC status:\n\n• Location: Dubai\n• Load: {}\n• Capacity: {}\n\nUpdated on: {} UTC'
-dc_singapore_en = '🇸🇬 Singaporeʼs DC status:\n\n• Load: {}\n• Capacity: {}\n\nUpdated on: {} UTC'
-dc_hong_kong_en = '🇭🇰 Hong Kongʼs DC status:\n\n• Load: {}\n• Capacity: {}\n\nUpdated on: {} UTC'
+dc_africa_en = '''🇿🇦 South Africaʼs DC status:
+
+• Location: Johannesburg
+• Load: {}
+• Capacity: {}
+
+Updated on: {} UTC'''
+
+dc_australia_en = '''🇦🇺 Australiaʼs DC status:
+
+• Location: Sydney
+• Load: {}
+• Capacity: {}
+
+Updated on: {} UTC'''
+
+dc_north_eu_en = '''🇸🇪 Swedenʼs DC status:
+
+• Location: Stockholm
+• Load: {}
+• Capacity: {}
+
+Updated on: {} UTC'''
+
+dc_west_eu_en = '''🇩🇪 Germanyʼs DC status:
+
+• Location: Frankfurt
+• Load: {}
+• Capacity: {}
+
+🇪🇸 Spainʼs DC status:
+
+• Location: Mardid
+• Load: {}
+• Capacity: {}
+
+Updated on: {} UTC'''
+
+dc_east_eu_en = '''🇦🇹 Austriaʼs DC status:
+
+• Location: Vienna
+• Load: {}
+• Capacity: {}
+
+🇵🇱 Polandʼs DC status:
+
+• Location: Warsaw
+• Load: {}
+• Capacity: {}
+
+Updated on: {} UTC'''
+
+dc_north_us_en = '''🇺🇸 Northcentral DC status:
+
+• Location: Chicago
+• Load: {}
+• Capacity: {}
+
+🇺🇸 Northeast DC status:
+
+• Location: Sterling
+• Load: {}
+• Capacity: {}
+
+🇺🇸 Northwest DC status:
+
+• Location: Moses Lake
+• Load: {}
+• Capacity: {}
+
+Updated on: {} UTC'''
+
+dc_south_us_en = '''🇺🇸 Southwest DC status:
+
+• Location: Los Angeles
+• Load: {}
+• Capacity: {}
+
+🇺🇸 Southeast DC status:
+
+• Location: Atlanta
+• Load: {}
+• Capacity: {}
+
+Updated on: {} UTC'''
+
+dc_south_america_en = '''🇧🇷 Brazilʼs DC status:
+
+• Location: Sao Paulo
+• Load: {}
+• Capacity: {}
+
+🇨🇱 Chileʼs DC status:
+
+• Location: Santiago
+• Load: {}
+• Capacity: {}
+
+🇵🇪 Peruʼs DC status:
+
+• Location: Lima
+• Load: {}
+• Capacity: {}
+
+🇦🇷 Argentinaʼs DC Status:
+
+• Location: Buenos Aires
+• Load: {}
+• Capacity: {}
+
+Updated on: {} UTC'''
+
+dc_india_en = '''🇮🇳 Indiaʼs DC status:
+
+• Location: Mumbai
+• Load: {}
+• Capacity: {}
+
+• Location: Chennai
+• Load: {}
+• Capacity: {}
+
+Updated on: {} UTC'''
+
+dc_japan_en = '''🇯🇵 Japanʼs DC status:
+
+• Location: Tokyo
+• Load: {}
+• Capacity: {}
+
+Updated on: {} UTC'''
+
+dc_china_en = '''🇨🇳 Chinaʼs DC status:
+
+• Location: Shanghai
+• Load: {}
+• Capacity: {}
+
+• Location: Tianjin
+• Load: {}
+• Capacity: {}
+
+• Location: Guangzhou
+• Load: {}
+• Capacity: {}
+
+Updated on: {} UTC'''
+
+dc_emirates_en = '''🇦🇪 Emiratesʼ DC status:
+
+• Location: Dubai
+• Load: {}
+• Capacity: {}
+
+Updated on: {} UTC'''
+
+dc_singapore_en = '''🇸🇬 Singaporeʼs DC status:
+
+• Load: {}
+• Capacity: {}
+
+Updated on: {} UTC'''
+
+dc_hong_kong_en = '''🇭🇰 Hong Kongʼs DC status:
+
+• Load: {}
+• Capacity: {}
+
+Updated on: {} UTC'''
 # Russian
-dc_africa_ru = '🇿🇦 Состояние дата-центра Южной Африки:\n\n• Расположение: Йоханнесбург\n• Загруженность: {}\n• Доступность: {}\n\nОбновлено: {} UTC'
-dc_australia_ru = '🇦🇺 Состояние дата-центра Австралии:\n\n• Расположение: Сидней\n• Загруженность: {}\n• Доступность: {}\n\nОбновлено: {} UTC'
-dc_north_eu_ru = '🇸🇪 Состояние дата-центра Швеции:\n\n• Расположение: Стокгольм\n• Загруженность: {}\n• Доступность: {}\n\nОбновлено: {} UTC'
-dc_west_eu_ru = '🇩🇪 Состояние дата-центра Германии:\n\n• Расположение: Франкфурт\n• Загруженность: {}\n• Доступность: {}\n\n🇪🇸 Состояние дата-центра Испании:\n\n• Расположение: Мадрид\n• Загруженность: {}\n• Доступность: {}\n\nОбновлено: {} UTC'
-dc_east_eu_ru = '🇦🇹 Состояние дата-центра Австрии:\n\n• Расположение: Вена\n• Загруженность: {}\n• Доступность: {}\n\n🇵🇱 Состояние дата-центра Польши:\n\n• Расположение: Варшава\n• Загруженность: {}\n• Доступность: {}\n\nОбновлено: {} UTC'
-dc_north_us_ru = '🇺🇸 Состояние северо-центрального дата-центра:\n\n• Расположение: Чикаго\n• Загруженность: {}\n• Доступность: {}\n\n🇺🇸 Состояние северо-восточного дата-центра:\n\n• Расположение: Стерлинг\n• Загруженность: {}\n• Доступность: {}\n\n🇺🇸 Состояние северо-западного дата-центра:\n\n• Расположение: Мозес Лейк\n• Загруженность: {}\n• Доступность: {}\n\nОбновлено: {} UTC'
-dc_south_us_ru = '🇺🇸 Состояние юго-западного дата-центра:\n\n• Расположение: Лос-Анджелес\n• Загруженность: {}\n• Доступность: {}\n\n🇺🇸 Состояние юго-восточного дата-центра:\n\n• Расположение: Атланта\n• Загруженность: {}\n• Доступность: {}\n\nОбновлено: {} UTC'
-dc_south_america_ru = '🇧🇷 Состояние дата-центра Бразилии:\n\n• Расположение: Сан-Паулу\n• Загруженность: {}\n• Доступность: {}\n\n🇨🇱 Состояние дата-центра Чили:\n\n• Расположение: Сантьяго\n• Загруженность: {}\n• Доступность: {}\n\n🇵🇪 Состояние дата-центра Перу:\n\n• Расположение: Лима\n• Загруженность: {}\n• Доступность: {}\n\n🇦🇷 Состояние дата-центра Аргентины:\n\n• Расположение: Буэнос-Айрес\n• Загруженность: {}\n• Доступность: {}\n\nОбновлено: {} UTC'
-dc_india_ru = '🇮🇳 Состояние дата-центров Индии:\n\n• Расположение: Мумбаи\n• Загруженность: {}\n• Доступность: {}\n\n• Расположение: Ченнай\n• Загруженность: {}\n• Доступность: {}\n\nОбновлено: {} UTC'
-dc_japan_ru = '🇯🇵 Состояние дата-центра Японии:\n\n• Расположение: Токио\n• Загруженность: {}\n• Доступность: {}\n\nОбновлено: {} UTC'
-dc_china_ru = '🇨🇳 Состояние дата-центров Китая: \n\n• Расположение: Шанхай\n• Загруженность: {}\n• Доступность: {}\n\n• Расположение: Тяньцзинь\n• Загруженность: {}\n• Доступность: {}\n\n• Расположение: Гуанчжоу\n• Загруженность: {}\n• Доступность: {}\n\nОбновлено: {} UTC'
-dc_emirates_ru = '🇦🇪 Состояние дата-центра Эмиратов:\n\n• Расположение: Дубай\n• Загруженность: {}\n• Доступность: {}\n\nОбновлено: {} UTC'
-dc_singapore_ru = '🇸🇬 Состояние дата-центра Сингапура:\n\n• Загруженность: {}\n• Доступность: {}\n\nОбновлено: {} UTC'
-dc_hong_kong_ru = '🇭🇰 Состояние дата-центра Гонконга:\n\n• Загруженность: {}\n• Доступность: {}\n\nОбновлено: {} UTC'
-'''Tags for inline DC'''
-# General
-dc_tags = ['dc', 'data center', 'data centers', 
-                    'дц', 'дата центер', 'дата центры', 'дата-центер', 
-                    'дата-центры','/dc']
-european_tags = ['eu', 'europe', 
-                    'европа', 
-                    '/europe']
-asian_tags = ['as', 'asia', 
-                    'азия', 
-                    '/asia']
-american_tags = ['na', 'north america', 'usa', 'united states', 
-                    'северная америка', 'сша', 'соединённые штаты', 
-                    '/usa']
-'''Tags for inline DC'''
-# General
-australian_tags = ['dc', 'data center', 'data centers',
-                'дц', 'дата центер', 'дата центры', 'дата-центер', 'дата-центры',
-                'au', 'australia', 'sydney',
-                'австралия', 'сидней']
-african_tags = ['dc', 'data center', 'data centers',
-                'дц', 'дата центер', 'дата центры', 'дата-центер', 'дата-центры',
-                'za', 'africa', 'south africa', 'johannesburg',
-                'африка', 'южная африка', 'йоханнесбург']
-south_american_tags = ['dc', 'data center', 'data centers',
-                    'дц', 'дата центер', 'дата центры', 'дата-центер', 'дата-центры',
-                    'sa', 'south america', 'brazil', 'sao paolo', 'chile', 'santiago', 'peru', 'lima', 'argentina', 'buenos aires',
-                    'южная америка', 'бразилия', 'сан-паулу', 'сан паулу', 'чили', 'сантьяго', 'перу', 'лима', 'аргентина', 'буэнос-айрес', 'буэнос айрес']
-north_european_tags = ['dc', 'data center', 'data centers',
-                    'дц', 'дата центер', 'дата центры', 'дата-центер', 'дата-центры',
-                    'eu', 'europe',
-                    'европа', 
-                    'north europe', 'sweden', 'stockholm', 
-                    'северная европа', 'швеция', 'стокгольм', 
-                    'north', 'север']
-east_european_tags = ['dc', 'data center', 'data centers', 
-                    'дц', 'дата центер', 'дата центры', 'дата-центер', 
-                    'дата-центры', 'eu', 'europe', 'европа', '/europe', 
-                    'east europe', 'austria', 'vienna', 'poland', 'warsaw', 
-                    'восточная европа', 'австрия', 'вена', 'польша', 'варшава',
-                    'east', 'восток']
-west_european_tags = ['dc', 'data center', 'data centers', 
-                    'дц', 'дата центер', 'дата центры', 'дата-центер', 
-                    'дата-центры','/dc', 'eu', 'europe', 'европа', '/europe',
-                    'west europe', 'germany', 'frankfurt', 'spain', 'madrid', 
-                    'западная европа', 'германия', 'франкфурт', 'испания', 'мадрид', 
-                    'west', 'запад', '/eu_west']
-northern_usa_tags = ['na', 'north america', 'usa', 'united states', 
-                    'северная америка', 'сша', 'соединённые штаты', 
-                    '/usa', 'dc', 'data center', 'data centers', 
-                    'дц', 'дата центер', 'дата центры', 'дата-центер', 
-                    'дата-центры','/dc', 'northcentral', 'northeast', 'northwest', 'chicago', 'sterling', 'moses lake', 
-                    'северо-центр', 'северо-восток', 'северо-запад', 'чикаго', 'стерлинг', 'мозес лейк', 
-                    'nоrth', 'сeвер', '/usa_north']
-southern_usa_tags = ['na', 'north america', 'usa', 'united states', 
-                    'северная америка', 'сша', 'соединённые штаты', 
-                    '/usa', 'dc', 'data center', 'data centers', 
-                    'дц', 'дата центер', 'дата центры', 'дата-центер', 
-                    'дата-центры','/dc', 'southeast', 'southwest', 'los angeles', 'atalanta', 
-                    'юго-запад', 'юго-восток', 'лос-анджелес', 'лос анджелес', 'атланта', 
-                    'south', 'юг', '/usa_south']
-chinese_tags = ['as', 'asia', 'азия', '/asia', 'dc', 'data center', 'data centers', 
-                    'дц', 'дата центер', 'дата центры', 'дата-центер', 
-                    'дата-центры','/dc', 'china', 'shanghai', 'tianjin', 'guangzhou', 
-                    'китай', 'шанхай', 'тяньцзинь', 'гуанчжоу',
-                    '/china']
-emirati_tags = ['as', 'asia', 'азия', '/asia', 'dc', 'data center', 'data centers', 
-                    'дц', 'дата центер', 'дата центры', 'дата-центер', 
-                    'дата-центры','/dc', 'emirates', 'dubai', 
-                    'эмираты', 'дубай',
-                    '/emirates']
-hong_kongese_tags = ['as', 'asia', 'азия', '/asia', 'dc', 'data center', 'data centers', 
-                    'дц', 'дата центер', 'дата центры', 'дата-центер', 
-                    'дата-центры','/dc', 'hong kong', 
-                    'гонконг',
-                    '/hong_kong']
-indian_tags = ['as', 'asia', 'азия', '/asia', 'dc', 'data center', 'data centers', 
-                    'дц', 'дата центер', 'дата центры', 'дата-центер', 
-                    'дата-центры','/dc', 'india', 'mumbai', 'chennai', 
-                    'индия', 'мумбаи',  'ченнай',
-                    '/india']
-japanese_tags = ['as', 'asia', 'азия', '/asia', 'dc', 'data center', 'data centers', 
-                    'дц', 'дата центер', 'дата центры', 'дата-центер', 
-                    'дата-центры','/dc', 'japan', 'tokyo', 
-                    'япония', 'токио',
-                    '/japan']
-singaporean_tags = ['as', 'asia', 'азия', '/asia', 'dc', 'data center', 'data centers', 
-                    'дц', 'дата центер', 'дата центры', 'дата-центер', 
-                    'дата-центры','/dc', 'singapore', 
-                    'сингапур',
-                    '/singapore']
+dc_africa_ru = '''🇿🇦 Состояние дата-центра Южной Африки:
 
-"""Text for Archive data"""
+• Расположение: Йоханнесбург
+• Загруженность: {}
+• Доступность: {}
+
+Обновлено: {} UTC'''
+dc_australia_ru = '''🇦🇺 Состояние дата-центра Австралии:
+
+• Расположение: Сидней
+• Загруженность: {}
+• Доступность: {}
+
+Обновлено: {} UTC'''
+
+dc_north_eu_ru = '''🇸🇪 Состояние дата-центра Швеции:
+
+• Расположение: Стокгольм
+• Загруженность: {}
+• Доступность: {}
+
+Обновлено: {} UTC'''
+
+dc_west_eu_ru = '''🇩🇪 Состояние дата-центра Германии:
+
+• Расположение: Франкфурт
+• Загруженность: {}
+• Доступность: {}
+
+🇪🇸 Состояние дата-центра Испании:
+
+• Расположение: Мадрид
+• Загруженность: {}
+• Доступность: {}
+
+Обновлено: {} UTC'''
+
+dc_east_eu_ru = '''🇦🇹 Состояние дата-центра Австрии:
+
+• Расположение: Вена
+• Загруженность: {}
+• Доступность: {}
+
+🇵🇱 Состояние дата-центра Польши:
+
+• Расположение: Варшава
+• Загруженность: {}
+• Доступность: {}
+
+Обновлено: {} UTC'''
+
+dc_north_us_ru = '''🇺🇸 Состояние северо-центрального дата-центра:
+
+• Расположение: Чикаго
+• Загруженность: {}
+• Доступность: {}
+
+🇺🇸 Состояние северо-восточного дата-центра:
+
+• Расположение: Стерлинг
+• Загруженность: {}
+• Доступность: {}
+
+🇺🇸 Состояние северо-западного дата-центра:
+
+• Расположение: Мозес Лейк
+• Загруженность: {}
+• Доступность: {}
+
+Обновлено: {} UTC'''
+
+dc_south_us_ru = '''🇺🇸 Состояние юго-западного дата-центра:
+
+• Расположение: Лос-Анджелес
+• Загруженность: {}
+• Доступность: {}
+
+🇺🇸 Состояние юго-восточного дата-центра:
+
+• Расположение: Атланта
+• Загруженность: {}
+• Доступность: {}
+
+Обновлено: {} UTC'''
+
+dc_south_america_ru = '''🇧🇷 Состояние дата-центра Бразилии:
+
+• Расположение: Сан-Паулу
+• Загруженность: {}
+• Доступность: {}
+
+🇨🇱 Состояние дата-центра Чили:
+
+• Расположение: Сантьяго
+• Загруженность: {}
+• Доступность: {}
+
+🇵🇪 Состояние дата-центра Перу:
+
+• Расположение: Лима
+• Загруженность: {}
+• Доступность: {}
+
+🇦🇷 Состояние дата-центра Аргентины:
+
+• Расположение: Буэнос-Айрес
+• Загруженность: {}
+• Доступность: {}
+
+Обновлено: {} UTC'''
+
+dc_india_ru = '''🇮🇳 Состояние дата-центров Индии:
+
+• Расположение: Мумбаи
+• Загруженность: {}
+• Доступность: {}
+
+• Расположение: Ченнай
+• Загруженность: {}
+• Доступность: {}
+
+Обновлено: {} UTC'''
+
+dc_japan_ru = '''🇯🇵 Состояние дата-центра Японии:
+
+• Расположение: Токио
+• Загруженность: {}
+• Доступность: {}
+
+Обновлено: {} UTC'''
+
+dc_china_ru = '''🇨🇳 Состояние дата-центров Китая:
+
+• Расположение: Шанхай
+• Загруженность: {}
+• Доступность: {}
+
+• Расположение: Тяньцзинь
+• Загруженность: {}
+• Доступность: {}
+
+• Расположение: Гуанчжоу
+• Загруженность: {}
+• Доступность: {}
+
+Обновлено: {} UTC'''
+
+dc_emirates_ru = '''🇦🇪 Состояние дата-центра Эмиратов:
+
+• Расположение: Дубай
+• Загруженность: {}
+• Доступность: {}
+
+Обновлено: {} UTC'''
+
+dc_singapore_ru = '''🇸🇬 Состояние дата-центра Сингапура:
+
+• Загруженность: {}
+• Доступность: {}
+
+Обновлено: {} UTC'''
+
+dc_hong_kong_ru = '''🇭🇰 Состояние дата-центра Гонконга:
+
+• Загруженность: {}
+• Доступность: {}
+
+Обновлено: {} UTC'''
+
+
+"""Text for Guns"""
 #Russian
-gun_data_ru = '🗂 Детальная информация про {}:\n\n• Происхождение: {}\n• Стоимость: {}$\n• Обойма: {}/{}\n• Скорострельность: {} в/м.\n• Награда за убийство: {}$\n• Мобильность: {} ед.\n\n• Бронепробиваемость: {}%\n• Дальность поражения (стоя / сидя): {} / {} м.\n\n• Время, за которое достаётся оружие: {} с.\n• Перезарядка: {} / {} с.\n(готовность обоймы / готовность к стрельбе)\n\n💢 Информация об уроне:\n(противник в броне / без брони)\n\n• Голова: {} / {}\n• Грудь и руки: {} / {}\n• Живот: {} / {}\n• Ноги: {} / {}'
-#English
-gun_data_en = '🗂 Detailed information about {}:\n\n• Origin: {}\n• Cost: ${}\n• Clip size: {}/{}\n• Fire rate: {} RPM\n• Kill reward: ${}\n• Movement speed: {} units\n\n• Armor penetration: {}%\n• Range accuracy (stand / crouch): {}m / {}m\n\n• Draw time: {}s\n• Reload time: {}s / {}s\n(clip ready / fire ready)\n\n💢 Damage information:\n(enemy with armor / without armor)\n\n• Head: {} / {}\n• Chest and arms: {} / {}\n• Stomach: {} / {}\n• Legs: {} / {}'
+gun_data_ru = '''🗂 Детальная информация про {}:
 
-###
-gun_name_list = ['usp-s', 'p2000', 'glock-18', 'dual berettas', 'p250', 'cz75-auto', 'five-seven', 'tec-9', 'desert eagle', 'r8 revolver',
-                'mp9', 'mac-10', 'mp7', 'mp5-sd', 'ump-45','p90', 'pp-bizon', 'famas', 'galil ar', 'm4a4', 'm4a1-s', 'ak-47', 'aug',
-                'sg 553', 'ssg 08', 'awp', 'scar-20', 'g3sg1', 'nova', 'xm1014', 'mag-7', 'sawed-off', 'm249', 'negev']
-gun_id_list = ['usps', 'p2000', 'glock18', 'dualberettas', 'p250', 'cz75auto', 'fiveseven', 'tec9', 'deserteagle', 'r8revolver',
-                'mp9', 'mac10', 'mp7', 'mp5sd', 'ump45','p90', 'ppbizon', 'famas', 'galilar', 'm4a4', 'm4a1s', 'ak47', 'aug',
-                'sg553', 'ssg08', 'awp', 'scar20', 'g3sg1', 'nova', 'xm1014', 'mag7', 'sawedoff', 'm249', 'negev']
-gun_tags = ['gun database', 'база данных оружий', '/guns']
+• Происхождение: {}
+• Стоимость: {}$
+• Обойма: {}/{}
+• Скорострельность: {} в/м.
+• Награда за убийство: {}$
+• Мобильность: {} ед.
+
+• Бронепробиваемость: {}%
+• Дальность поражения (стоя / сидя): {} / {} м.
+
+• Время, за которое достаётся оружие: {} с.
+• Перезарядка: {} / {} с.
+(готовность обоймы / готовность к стрельбе)
+
+💢 Информация об уроне:
+(противник в броне / без брони)
+
+• Голова: {} / {}
+• Грудь и руки: {} / {}
+• Живот: {} / {}
+• Ноги: {} / {}'''
+#English
+gun_data_en = '''🗂 Detailed information about {}:
+
+• Origin: {}
+• Cost: ${}
+• Clip size: {}/{}
+• Fire rate: {} RPM
+• Kill reward: ${}
+• Movement speed: {} units
+
+• Armor penetration: {}%
+• Range accuracy (stand / crouch): {}m / {}m
+
+• Draw time: {}s
+• Reload time: {}s / {}s
+(clip ready / fire ready)
+
+💢 Damage information:
+(enemy with armor / without armor)
+
+• Head: {} / {}
+• Chest and arms: {} / {}
+• Stomach: {} / {}
+• Legs: {} / {}'''

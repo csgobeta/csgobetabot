@@ -1,5 +1,6 @@
 from telebot import types
 
+
 # Delete keyboard
 markup_del = types.ReplyKeyboardRemove(False)
 
@@ -12,25 +13,25 @@ back_button_en = types.KeyboardButton('⏪ Back')
 
 # Default
 markup_en = types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
-server_stats_en = types.KeyboardButton('Server Statistics')
-profile_info_en = types.KeyboardButton('Profile Information')
-extra_features_en = types.KeyboardButton('Extra Features')
+server_stats_en = types.KeyboardButton('Server statistics')
+profile_info_en = types.KeyboardButton('Profile information')
+extra_features_en = types.KeyboardButton('Extra features')
 markup_en.add(server_stats_en, profile_info_en, extra_features_en)
 
 # Server Statistics
 markup_ss_en = types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
-server_status_en = types.KeyboardButton('Server Status')
-matchmaking_en = types.KeyboardButton('Matchmaking Statistics')
-dc_en = types.KeyboardButton('Dataсenters Status')
+server_status_en = types.KeyboardButton('Service status')
+matchmaking_en = types.KeyboardButton('Matchmaking status')
+dc_en = types.KeyboardButton('Dataсenters status')
 markup_ss_en.add(server_status_en, matchmaking_en, dc_en)
 markup_ss_en.add(back_button_en)
 
 # Other
 markup_extra_en = types.ReplyKeyboardMarkup(row_width=2, resize_keyboard=True)
-devcount_en = types.KeyboardButton('Developers In-game')
-timer_en = types.KeyboardButton('Cap Reset')
-gv_en = types.KeyboardButton('Game Version')
-guns_en = types.KeyboardButton('Gun Database')
+devcount_en = types.KeyboardButton('Developers in-game')
+timer_en = types.KeyboardButton('Cap reset')
+gv_en = types.KeyboardButton('Game version')
+guns_en = types.KeyboardButton('Gun database')
 markup_extra_en.add(devcount_en, gv_en, timer_en, guns_en)
 markup_extra_en.add(back_button_en)
 
@@ -140,25 +141,25 @@ back_button_ru = types.KeyboardButton('⏪ Назад')
 
 # Default
 markup_ru = types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
-server_stats_ru = types.KeyboardButton('Статистика Серверов')
-profile_info_ru = types.KeyboardButton('Информация о Профиле')
-extra_features_ru = types.KeyboardButton('Дополнительные Функции')
+server_stats_ru = types.KeyboardButton('Статистика серверов')
+profile_info_ru = types.KeyboardButton('Информация о профиле')
+extra_features_ru = types.KeyboardButton('Дополнительные функции')
 markup_ru.add(server_stats_ru, profile_info_ru, extra_features_ru)
 
 # Server Statistics RU
 markup_ss_ru = types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
-server_status_ru = types.KeyboardButton('Состояние Серверов')
-mathcmaking_ru = types.KeyboardButton('Статистика Матчмейкинга')
-dc_ru = types.KeyboardButton('Состояние Дата-центров')
+server_status_ru = types.KeyboardButton('Состояние служб')
+mathcmaking_ru = types.KeyboardButton('Состояние матчмейкинга')
+dc_ru = types.KeyboardButton('Состояние дата-центров')
 markup_ss_ru.add(server_status_ru, mathcmaking_ru, dc_ru)
 markup_ss_ru.add(back_button_ru)
 
 # Extra Features RU
 markup_extra_ru = types.ReplyKeyboardMarkup(row_width=2, resize_keyboard=True)
-devcount_ru = types.KeyboardButton('Разработчиков в Игре')
-gv_ru = types.KeyboardButton('Версия Игры')
-guns_ru = types.KeyboardButton('База Данных Оружий')
-timer_ru = types.KeyboardButton('Сброс Ограничений')
+devcount_ru = types.KeyboardButton('Разработчиков в игре')
+gv_ru = types.KeyboardButton('Версия игры')
+guns_ru = types.KeyboardButton('База данных оружий')
+timer_ru = types.KeyboardButton('Сброс ограничений')
 markup_extra_ru.add(devcount_ru, gv_ru, timer_ru, guns_ru)
 markup_extra_ru.add(back_button_ru)
 
