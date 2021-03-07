@@ -165,9 +165,9 @@ gameversion_ru = '''⚙️ Текущая версия игры: <code>{} ({}/{}
 
 ### Text for Wrong Request ###
 # English
-unknownRequest_en = '⚠️ Nothing found, please select one of the following buttons:'
+unknownRequest_en = '⚠️ Nothing found, please use of the following buttons:'
 # Russian
-unknownRequest_ru = '⚠️ Ничего не найдено, пожалуйста, выберите одну из приведённых категорий:'
+unknownRequest_ru = '⚠️ Ничего не найдено, пожалуйста, воспользуйтесь одной из приведённых кнопок:'
 
 
 ### Text for Wrong API ###
