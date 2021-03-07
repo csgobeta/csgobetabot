@@ -4,29 +4,9 @@ cmdStart_en = '''👋🏼 Hey, {}!
 This bot is designed to check the number of online players and the availability of CS:GO servers.
 
 For more information type /help.'''
-cmdHelp_en = '''ℹ️ This bot is designed by @csgobeta. Source code on <a href="https://github.com/csgobeta/csgobetabot">GitHub</a>.
+cmdHelp_en = '''<a href="https://telegra.ph/Detailed-description-03-07">‎‎‎‎</a>ℹ️ This bot is designed by @csgobeta. Source code on <a href="https://github.com/csgobeta/csgobetabot">GitHub</a>.
 
-<b>List of all the available features:</b>
-<b>— Server statistics:</b>
-• Service status: check CS:GO's game coordinator status, server connection and more.
-• Matchmaking status: get the count of in-game players with a graph for the last 7 days, average search time and more.
-• Datacenters status: check the status for the most close CS:GO server to your location.
-<b>— Profile information:</b>
-• Not implemented yet.
-<b>— Extra features:</b>
-• Developers in-game: get the count of developers currently playing CS:GO Beta Dev.
-• Cap reset: check the remaining time until drop and experience cap reset.
-• Game version: show the current CS:GO version.
-• Gun database: get detailed information about every CS:GO gun.
-
-Note that this bot also works automatically, no need to add it anywhere. Simply open any of your chats and type ‘<code>@csgobetabot </code>‘ in the message field. Then tap on a result to send.
-
-To send datacenter information inline, try typing one of the following:
-• Region code (ex: EU, AS).
-• Region name (ex: Europe, Asia).
-• Country name (ex: Poland, Japan).
-• City name (ex: Warsaw, Tokyo).
-Alternatively you can type ‘<code>@csgobetabot DC</code>‘ to get all the existing datacenters.'''
+telegra.ph/Detailed-description-03-07'''
 cmdFeedback_en = '''💬 Please, tell us about your <b>suggestions</b> or <b>problems</b> that you have encountered using our bot.
 
 Use /cancel to cancel this command.'''
@@ -35,29 +15,9 @@ cmdStart_ru = '''👋🏼 Привет, {}!
 Этот бот предназначен для проверки количества онлайн игроков и доступности CS:GO серверов.
 
 Для большей информации воспользуйтесь /help.'''
-cmdHelp_ru = '''ℹ️ Этот бот разработан каналом @csgobeta. Исходный код на <a href="https://github.com/csgobeta/csgobetabot">GitHub</a>.
+cmdHelp_ru = '''<a href="https://telegra.ph/Podrobnoe-opisanie-03-07">‎‎‎‎‎‎‎</a>ℹ️ Этот бот разработан каналом @csgobeta. Исходный код на <a href="https://github.com/csgobeta/csgobetabot">GitHub</a>.
 
-<b>Список всех доступных команд:</b>
-<b>— Статистика серверов:</b>
-• Состояние служб: проверить состояние игрового координатора CS:GO, подключение к серверам и многое другое.
-• Состояние матчмейкинга: получить количество игроков в игре с графиком за последние 7 дней, средние время поиска и многое другое.
-• Состояние дата-центров: проверить статус самого близкого сервера CS:GO к вашему местоположению.
-<b>— Информация о профиле:</b>
-• Еще не реализовано.
-<b>— Дополнительные функции:</b>
-• Разработчиков в игре: получить количество разработчиков, которые в настоящее время играют в CS:GO Beta Dev.
-• Сброс ограничений: проверить оставшееся время до сброса ограничений опыта и дропа.
-• Версия игры: показать текущую версию CS:GO.
-• База данных оружий: получите подробную информацию о каждом оружии CS:GO.
-
-Обратите внимание, что этот бот также работает автоматически, нет необходимости добавлять его куда-либо. Просто откройте любой из Ваших чатов и введите ‘<code>@csgobetabot </code>ʼ в поле сообщения. Затем нажмите на результат для отправки.
-
-Чтобы отправить информацию о дата-центрах в inline-режиме, попробуйте ввести одно из следующих значений:
-• Код региона (например, EU, AS).
-• Название региона (например, Европа, Азия).
-• Название страны (например, Польша, Япония).
-• Название города (например, Варшава, Токио).
-В качестве альтернативы можете ввести ‘<code>@csgobetabot ДЦ</code>‘, чтобы получить список всех существующих дата-центров.'''
+telegra.ph/Podrobnoe-opisanie-03-07'''
 cmdFeedback_ru = '''💬 Пожалуйста, расскажите о Ваших <b>пожеланиях</b> или <b>проблемах</b>, с которыми Вы столкнулись, используя бота.
 
 Используйте /cancel, чтобы отменить команду.'''

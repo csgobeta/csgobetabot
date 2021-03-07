@@ -884,7 +884,7 @@ def help(message):
         else:
             text = strings.cmdHelp_en
             markup = buttons.markup_en
-        bot.send_message(message.chat.id, text, reply_markup=markup, disable_web_page_preview=True)
+        bot.send_message(message.chat.id, text, reply_markup=markup)
     else:
         try:
             bot.delete_message(message.chat.id, message.message_id)
