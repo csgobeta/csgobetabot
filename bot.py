@@ -375,13 +375,107 @@ def send_gun_info(message, gun_id):
 
 def profile_info(message):
     bot.send_chat_action(message.chat.id, 'typing')
-    if message.from_user.language_code in CIS_lang_codes:
-        text = '💤 В разработке..'
-        markup = buttons.markup_ru
+    cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
+    wsCache = cacheFile['valve_webapi']
+    if wsCache == 'normal':
+        if message.from_user.language_code in CIS_lang_codes:
+            text = '📖 Воспользуйтесь одной из приведённых команд:'
+            markup = buttons.markup_profile_ru
+        else:
+            text = '📖 Use one of the following commands:'
+            markup = buttons.markup_profile_en
+        msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+        bot.register_next_step_handler(msg, profile_info_process)
+    elif wsCache == 'maintenance':
+        send_about_maintenance(message)
     else:
-        text = '💤 Coming soon..'
-        markup = buttons.markup_en
-    bot.send_message(message.chat.id, text, reply_markup=markup)
+        send_about_problem_valve_api(message)
+
+def profile_info_process(message):
+    bot.send_chat_action(message.chat.id, 'typing')
+    if message.text.lower() == 'bans and restrictions' or message.text.lower() == 'запреты и ограничения':
+        temp_id = 'bans'
+        url(message, temp_id)
+    elif message.text.lower() == 'cs:go in-game statistics' or message.text.lower() == 'игровая статистика cs:go':
+        temp_id = 'stats'
+        url(message, temp_id)
+    elif message.text == '⏪ Back' or message.text == '⏪ Назад':
+        if message.from_user.language_code in CIS_lang_codes:
+            markup = buttons.markup_ru
+        else:
+            markup = buttons.markup_en
+        back(message, markup)
+    else:
+        if message.from_user.language_code in CIS_lang_codes:
+            markup = buttons.markup_profile_ru
+        else:
+            markup = buttons.markup_profile_en
+        unknown_request(message, markup, profile_info_process)
+
+def url(message, temp_id):
+    log(message)
+    if message.from_user.language_code in CIS_lang_codes:
+        text = strings.url_ex_ru
+        markup = buttons.markup_del
+    else:
+        text = strings.url_ex_en
+        markup = buttons.markup_del
+    msg = bot.send_message(message.chat.id, text, reply_markup=markup, disable_web_page_preview=True)
+    bot.register_next_step_handler(msg, url_process, temp_id)
+
+def url_process(message, temp_id):
+    if temp_id == 'bans':
+        send_bans(message)
+    else:
+        send_stats(message)
+
+def send_bans(message):
+    log(message)
+    bot.send_chat_action(message.chat.id, 'typing')
+    if message.text == '/cancel':
+        if message.from_user.language_code in CIS_lang_codes:
+            markup = buttons.markup_profile_ru
+        else:
+            markup = buttons.markup_profile_en
+        cancel(message, markup, profile_info_process)
+    else:
+        try:
+            bans_text_en, bans_text_ru = get_data.ban_info(message.text)
+            if message.from_user.language_code in CIS_lang_codes:
+                text = bans_text_ru
+                markup = buttons.markup_profile_ru
+            else:
+                text = bans_text_en
+                markup = buttons.markup_profile_en
+            msg = bot.send_message(message.chat.id, text, reply_markup=markup, disable_web_page_preview=True)
+            bot.register_next_step_handler(msg, profile_info_process) 
+        except Exception as e:
+            bot.send_message(config.LOGCHANNEL, f'❗️{e}')
+            send_about_problem_bot(message)
+
+def send_stats(message):
+    log(message)
+    bot.send_chat_action(message.chat.id, 'typing')
+    if message.text == '/cancel':
+        if message.from_user.language_code in CIS_lang_codes:
+            markup = buttons.markup_profile_ru
+        else:
+            markup = buttons.markup_profile_en
+        cancel(message, markup, profile_info_process)
+    else:
+        try:
+            stats_text_en, stats_text_ru = get_data.csgo_stats(message.text)
+            if message.from_user.language_code in CIS_lang_codes:
+                text = stats_text_ru
+                markup = buttons.markup_profile_ru
+            else:
+                text = stats_text_en
+                markup = buttons.markup_profile_en
+            msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+            bot.register_next_step_handler(msg, profile_info_process) 
+        except Exception as e:
+            bot.send_message(config.LOGCHANNEL, f'❗️{e}')
+            send_about_problem_bot(message)
 
 
 ### Datacenters ###
@@ -799,6 +893,14 @@ def back(message, *args):
         msg = bot.send_message(message.chat.id, '👌', reply_markup=args[0])
         bot.register_next_step_handler(msg, args[1])
 
+def cancel(message, *args):
+    log(message)
+    bot.send_chat_action(message.chat.id, 'typing')
+    if len(args) < 2:
+        bot.send_message(message.chat.id, '👍', reply_markup=args[0])
+    else:
+        msg = bot.send_message(message.chat.id, '👍', reply_markup=args[0])
+        bot.register_next_step_handler(msg, args[1])
 
 ### Commands ###
 
@@ -848,12 +950,11 @@ def get_feedback(message):
     log(message)
     bot.send_chat_action(message.chat.id, 'typing')
     if message.text == '/cancel':
-        log(message)
         if message.from_user.language_code in CIS_lang_codes:
             markup = buttons.markup_ru
         else:
             markup = buttons.markup_en
-        bot.send_message(message.chat.id, '👍', reply_markup=markup)
+        cancel(message, markup)
 
     else:
         bot.send_message(config.OWNER, f'🆔 <a href="tg://user?id={message.from_user.id}">{message.from_user.id}</a>:', disable_notification=True)

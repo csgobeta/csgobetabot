@@ -3,7 +3,14 @@ currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentfram
 parentdir = os.path.dirname(currentdir)
 sys.path.insert(0, parentdir)
 
-from apps.timer import get_time
+from steam import steamid
+from steam.steamid import SteamID
+
+import time
+import datetime
+import requests
+import validators
+
 from apps import file_manager
 from plugins import strings
 from plugins.addons import time_converter
@@ -69,7 +76,31 @@ def devcount():
 
 def timer():
     '''Get drop cap reset time'''
-    delta_days, delta_hours, delta_mins, delta_secs = get_time()
+    wanted_day = 'wednesday'
+    wanted_time = 00
+
+    list = [['monday', 0],['tuesday', 1],['wednesday', 2],['thursday', 3],['friday', 4],['saturday', 5],['sunday', 6]]
+
+    for i in list:
+        if wanted_day == i[0]:
+            number_wanted_day = i[1]
+
+    today = datetime.datetime.today().weekday() # delivers the actual day
+    delta_days = number_wanted_day - today # describes how many days are left until the wanted day
+    actual_time = time.localtime(time.time()) # delivers the actual time
+
+    if wanted_time > actual_time[3]:
+        delta_hours = wanted_time - actual_time[3]
+        delta_mins = 59 - actual_time[4]
+        delta_secs = 59 - actual_time[5]
+    else:
+        delta_days = delta_days - 1
+        delta_hours = 23 - actual_time[3] + wanted_time
+        delta_mins = 59 - actual_time[4]
+        delta_secs = 59 - actual_time[5]
+        
+    if delta_days < 0:
+        delta_days = delta_days + 7
     timer_text_en = strings.timer_en.format(delta_days, delta_hours, delta_mins, delta_secs)
     timer_text_ru = strings.timer_ru.format(delta_days, delta_hours, delta_mins, delta_secs)
     return timer_text_en, timer_text_ru
@@ -118,7 +149,110 @@ def gun_info(gun_id):
                                     armored_damage_stomach, unarmored_damage_stomach, armored_damage_leg, unarmored_damage_leg)
     return gun_data_text_en, gun_data_text_ru
 
+def url_checker(data):
+    if data.startswith('steamcommunity'):
+        data = 'https://' + data
+    elif validators.url(data):
+        pass
+    elif data.isdigit():
+        data = f'https://steamcommunity.com/profiles/{data}'
+    else:
+        data = f'https://steamcommunity.com/id/{data}'
+    return data
+
+def ban_info(data):
+    try:
+        steam64 = steamid.from_url(url_checker(data))
+
+        bans = f'http://api.steampowered.com/ISteamUser/GetPlayerBans/v1?key={config.STEAM_API_KEY}&steamids={steam64}'
+        vanity = f'http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={config.STEAM_API_KEY}&steamids={steam64}'
+
+
+        vanityURL = requests.get(vanity).json()['response']['players'][0]['profileurl'].split('/')[-2]
+        steamID = SteamID(steam64).as_64
+        if vanityURL == str(steamID):
+            vanityURL = 'not set'
+            vanityURLR = 'не указана'
+        else:
+            vanityURLR = vanityURL
+        accountID = SteamID(steam64).id
+        steam2ID = SteamID(steam64).as_steam2
+        steam3ID = SteamID(steam64).as_steam3
+        inviteUrl = SteamID(steam64).invite_url
+        #csgoCode = SteamID(data).as_csgo_friend_code
+
+        banData = requests.get(bans).json()['players'][0]
+        if banData['VACBanned']:
+            vacBan = str(banData['NumberOfVACBans']) + ' (days since last ban: ' + str(banData['DaysSinceLastBan']) + ')'
+            vacBanR = str(banData['NumberOfVACBans']) + ' (дней с момента последнего бана: ' + str(banData['DaysSinceLastBan']) + ')'
+        else:
+            vacBan = 0
+            vacBanR = 0
+        gameBans = banData['NumberOfGameBans']
+        if banData['CommunityBanned']:
+            communityBan = 'banned'
+            communityBanR = 'забанен'
+        else:
+            communityBan = 'none'
+            communityBanR = 'нет'
+        if banData['EconomyBan'] == 'banned':
+            tradeBanR = 'забанен'
+        else:
+            tradeBan = 'none'
+            tradeBanR = 'нет'
+
+        bans_text_en = strings.bans_en.format(vanityURL, steamID, accountID, steam2ID, steam3ID, inviteUrl, 'Not available yet.', gameBans, vacBan, communityBan, tradeBan)
+        bans_text_ru = strings.bans_ru.format(vanityURLR, steamID, accountID, steam2ID, steam3ID, inviteUrl, 'Ещё недоступно.', gameBans, vacBanR, communityBanR, tradeBanR)
+        return bans_text_en, bans_text_ru
+    except Exception as e:
+        print('\n\nError:' + str(e) + '\n\n')
+        bans_text_en, bans_text_ru = '⚠️ Invalid request.', '⚠️ Неверный запрос.'
+        return bans_text_en, bans_text_ru
+
+def csgo_stats(data):
+    try:
+        steam64 = steamid.from_url(url_checker(data))
+        statsURL = f'http://api.steampowered.com/ISteamUserStats/GetUserStatsForGame/v2/?appid={config.CSGO_APP_ID}&key={config.STEAM_API_KEY}&steamid={steam64}'
+        response = requests.get(statsURL)
+        if response.status_code == 500:
+            stats_text_en = '''❕ This account is private, statistics are not available. Please, change your privacy settings.''' 
+            stats_text_ru = '''❕ Этот аккаунт приватный, невозможно получить статистику. Пожалуйста, поменяйте настройки приватности.'''
+        else:
+            data = response.json()['playerstats']['stats']
+            totalPlayedTime = "{:.0f}".format(list(filter(lambda x:x['name'] == 'total_time_played', data))[0]['value'] / 3600)
+            totalKills = list(filter(lambda x:x['name'] == 'total_kills', data))[0]['value']
+            totalDeaths = list(filter(lambda x:x['name'] == 'total_deaths', data))[0]['value']
+            kdRatio = "{:.2f}".format(totalKills / totalDeaths)
+
+            totalAk47Kills = list(filter(lambda x:x['name'] == 'total_kills_ak47', data))[0]['value']
+            totalAk47Shots = list(filter(lambda x:x['name'] == 'total_shots_ak47', data))[0]['value']
+            totalAk47Hits = list(filter(lambda x:x['name'] == 'total_hits_ak47', data))[0]['value']
+            Ak47Accuracy = "{:.2f}".format(totalAk47Hits / totalAk47Shots * 100)
+
+            totalM4Kills = list(filter(lambda x:x['name'] == 'total_kills_m4a1', data))[0]['value']
+            totalM4Shots = list(filter(lambda x:x['name'] == 'total_shots_m4a1', data))[0]['value']
+            totalM4Hits = list(filter(lambda x:x['name'] == 'total_hits_m4a1', data))[0]['value']
+            m4Accuracy = "{:.2f}".format(totalM4Hits / totalM4Shots * 100)
+
+            totalAWPKills = list(filter(lambda x:x['name'] == 'total_kills_awp', data))[0]['value']
+            totalAWPShots = list(filter(lambda x:x['name'] == 'total_shots_awp', data))[0]['value']
+            totalAWPHits = list(filter(lambda x:x['name'] == 'total_hits_awp', data))[0]['value']
+            AWPAccuracy = "{:.2f}".format(totalAWPHits / totalAWPShots * 100)
+
+            stats_text_en = strings.stats_en.format(totalPlayedTime, totalKills, totalDeaths, kdRatio, totalAk47Kills, Ak47Accuracy,
+            totalM4Kills, m4Accuracy, totalAWPKills, AWPAccuracy)
+            stats_text_ru = strings.stats_ru.format(totalPlayedTime, totalKills, totalDeaths, kdRatio, totalAk47Kills, Ak47Accuracy,
+            totalM4Kills, m4Accuracy, totalAWPKills, AWPAccuracy)
+
+        return stats_text_en, stats_text_ru
+    except Exception as e:
+        print('\n\nError:' + str(e) + '\n\n')
+        stats_text_en, stats_text_ru = '⚠️ Invalid request.', '⚠️ Неверный запрос.'
+        return stats_text_en, stats_text_ru
+
+
 ### DATA CENTERS ###
+
 
 def dc_africa():
     tsCache, tsRCache = time_converter()[0], time_converter()[1]

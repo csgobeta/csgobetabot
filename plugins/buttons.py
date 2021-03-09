@@ -26,7 +26,13 @@ dc_en = types.KeyboardButton('Dataсenters status')
 markup_ss_en.add(server_status_en, matchmaking_en, dc_en)
 markup_ss_en.add(back_button_en)
 
-# Other
+# Profile Information
+markup_profile_en = types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
+profile_info_en = types.KeyboardButton('Bans and restrictions')
+csgo_stats_en = types.KeyboardButton('CS:GO in-game statistics')
+markup_profile_en.add(profile_info_en, csgo_stats_en, back_button_en)
+
+# Extra Features
 markup_extra_en = types.ReplyKeyboardMarkup(row_width=2, resize_keyboard=True)
 devcount_en = types.KeyboardButton('Developers in-game')
 timer_en = types.KeyboardButton('Cap reset')
@@ -136,7 +142,7 @@ markup_heavy_en.add(back_button_en)
 ### Russian ###
 
 
-# Back Button
+# Back button
 back_button_ru = types.KeyboardButton('⏪ Назад')
 
 # Default
@@ -153,6 +159,12 @@ mathcmaking_ru = types.KeyboardButton('Состояние матчмейкинг
 dc_ru = types.KeyboardButton('Состояние дата-центров')
 markup_ss_ru.add(server_status_ru, mathcmaking_ru, dc_ru)
 markup_ss_ru.add(back_button_ru)
+
+# Profile information RU
+markup_profile_ru = types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
+profile_info_ru = types.KeyboardButton('Запреты и ограничения')
+csgo_stats_ru = types.KeyboardButton('Игровая статистика CS:GO')
+markup_profile_ru.add(profile_info_ru, csgo_stats_ru, back_button_ru)
 
 # Extra Features RU
 markup_extra_ru = types.ReplyKeyboardMarkup(row_width=2, resize_keyboard=True)
