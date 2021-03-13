@@ -127,7 +127,7 @@ gameversion_ru = '''⚙️ Текущая версия игры: <code>{} ({}/{}
 # English
 url_ex_en = '''📖 Please, enter one of the following options:
         
-• Profile URL (ex: https://steamcommunity.com/id/csgobetaN2),
+• Profile URL (ex: https://steamcommunity.com/id/csgobetaN2)
 • Steam ID (ex: 76561199148006660)
 • Custom URL (ex: csgobetaN1)
 
