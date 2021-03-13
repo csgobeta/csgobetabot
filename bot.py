@@ -8,6 +8,7 @@ from telebot import types
 
 import logging
 import random
+import validators
 
 import config
 from plugins import strings
@@ -464,15 +465,26 @@ def send_stats(message):
         cancel(message, markup, profile_info_process)
     else:
         try:
-            stats_text_en, stats_text_ru = get_data.csgo_stats(message.text)
+            url_en, url_ru = get_data.csgo_stats(message.text)
             if message.from_user.language_code in CIS_lang_codes:
-                text = stats_text_ru
+                text = url_ru
+                markup_share = types.InlineKeyboardMarkup()
+                btn = types.InlineKeyboardButton('Поделиться', switch_inline_query=f'{text}')
+                markup_share.add(btn)
+            else:
+                text = url_en
+                markup_share = types.InlineKeyboardMarkup()
+                btn = types.InlineKeyboardButton('Share', switch_inline_query=f'{text}')
+                markup_share.add(btn)
+            bot.send_message(message.chat.id, text, reply_markup=markup_share)
+            if message.from_user.language_code in CIS_lang_codes:
+                text_followup = '📖 Воспользуйтесь одной из приведённых команд:'
                 markup = buttons.markup_profile_ru
             else:
-                text = stats_text_en
+                text_followup = '📖 Use one of the following commands:'
                 markup = buttons.markup_profile_en
-            msg = bot.send_message(message.chat.id, text, reply_markup=markup)
-            bot.register_next_step_handler(msg, profile_info_process) 
+            msg = bot.send_message(message.chat.id, text_followup, reply_markup=markup)
+            bot.register_next_step_handler(msg, profile_info_process)
         except Exception as e:
             bot.send_message(config.LOGCHANNEL, f'❗️{e}')
             send_about_problem_bot(message)
@@ -902,6 +914,7 @@ def cancel(message, *args):
         msg = bot.send_message(message.chat.id, '👍', reply_markup=args[0])
         bot.register_next_step_handler(msg, args[1])
 
+
 ### Commands ###
 
 
@@ -1040,6 +1053,15 @@ def default_inline(inline_query):
     except Exception as e:
         bot.send_message(config.LOGCHANNEL, f'❗️{e}\n\n↩️ inline_query')
 
+@bot.inline_handler(lambda query: validators.url(query.query) == True)
+def share_inline(inline_query):
+    if inline_query.from_user.language_code in CIS_lang_codes:
+        title = 'Ваша игровая статистика'
+    else:
+        title = 'Your in-game statistics'
+    r = types.InlineQueryResultArticle('1', title, input_message_content = types.InputTextMessageContent(inline_query.query), description=inline_query.query)
+    bot.answer_inline_query(inline_query.id, [r], cache_time=5)
+
 @bot.inline_handler(lambda query: len(query.query) >= 0)
 def inline_dc(inline_query):
     log_inline(inline_query)
@@ -1133,10 +1155,10 @@ def answer(message):
         bot.send_message(config.LOGCHANNEL, f'❗️{e}')
 
 
-### Logging ###
+### Misc ###
 
 
-def log(message):   
+def log(message):
     '''The bot sends log to log channel'''
     if not config.TEST_MODE:
         bot.send_message(config.LOGCHANNEL, message, parse_mode='')
@@ -1146,8 +1168,8 @@ def log_inline(inline_query):
     if not config.TEST_MODE:
         bot.send_message(config.LOGCHANNEL, inline_query, parse_mode='')
 
+bot.enable_save_next_step_handlers(delay=2)
 
-### Polling ###
-
+bot.load_next_step_handlers()
 
 bot.polling(True)

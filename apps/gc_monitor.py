@@ -16,6 +16,9 @@ def coordinator_status():
     @client.on('logged_on')
     def start_csgo():
         cs.launch()
+    @client.on('disconnected')
+    def restart():
+        exit()
     @cs.on('connection_status')
     def gc_ready(status):
         if status == 0:

@@ -20,7 +20,7 @@ def time_converter():
     vdCache = (datetime.fromtimestamp(version_date, tz=tz) + timedelta(hours=8)).strftime('%a, %d %B %Y, %H:%M:%S') 
     vdRCache = str(format_datetime(datetime.strptime(vdCache, '%a, %d %B %Y, %H:%M:%S'), 'EEE, dd MMMM yyyy, HH:mm:ss', locale='ru')).title()
 
-    tsVCache = datetime.now(tz = tz_valve).strftime('%H:%M:%S, %d/%m/%y %Z')
+    tsVCache = datetime.now(tz = tz_valve).strftime('%a, %d %B %Y, %H:%M:%S %Z')
 
     return tsCache, tsRCache, vdCache, vdRCache, tsVCache
 

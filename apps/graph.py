@@ -14,7 +14,7 @@ from datetime import datetime
 import time
 
 import logging
-from html_telegraph_poster import upload_image
+from telegraph import upload_file
 
 import config
 from apps import file_manager
@@ -88,7 +88,8 @@ def graph_maker():
                 plt.close()
 
                 fig.savefig(config.GRAPH_IMG_FILE_PATH)
-                url = upload_image(config.GRAPH_IMG_FILE_PATH)
+                url = upload_file(config.GRAPH_IMG_FILE_PATH)
+                url = 'https://telegra.ph' + url[0]
 
                 cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
                 if cacheFile['graph_url'] != url:
@@ -125,7 +126,8 @@ def graph_maker():
                 plt.close()
 
                 fig2.savefig(config.GRAPH2_IMG_FILE_PATH)
-                url2 = upload_image(config.GRAPH2_IMG_FILE_PATH)
+                url2 = upload_file(config.GRAPH2_IMG_FILE_PATH)
+                url2 = 'https://telegra.ph' + url2[0]
 
                 cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
                 if cacheFile['graph_url2'] != url2:
