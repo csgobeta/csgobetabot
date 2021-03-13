@@ -476,14 +476,17 @@ def send_stats(message):
                 markup_share = types.InlineKeyboardMarkup()
                 btn = types.InlineKeyboardButton('Share', switch_inline_query=f'{text}')
                 markup_share.add(btn)
-            bot.send_message(message.chat.id, text, reply_markup=markup_share)
             if message.from_user.language_code in CIS_lang_codes:
                 text_followup = '📖 Воспользуйтесь одной из приведённых команд:'
                 markup = buttons.markup_profile_ru
             else:
                 text_followup = '📖 Use one of the following commands:'
                 markup = buttons.markup_profile_en
-            msg = bot.send_message(message.chat.id, text_followup, reply_markup=markup)
+            if validators.url(url_en):
+                msg = bot.send_message(message.chat.id, text, reply_markup=markup_share)
+                bot.send_message(message.chat.id, text_followup, reply_markup=markup)
+            else:
+                msg = bot.send_message(message.chat.id, text, reply_markup=markup)
             bot.register_next_step_handler(msg, profile_info_process)
         except Exception as e:
             bot.send_message(config.LOGCHANNEL, f'❗️{e}')
