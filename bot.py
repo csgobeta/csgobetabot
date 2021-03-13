@@ -1056,7 +1056,7 @@ def default_inline(inline_query):
     except Exception as e:
         bot.send_message(config.LOGCHANNEL, f'❗️{e}\n\n↩️ inline_query')
 
-@bot.inline_handler(lambda query: validators.url(query.query) == True)
+@bot.inline_handler(lambda query: validators.url(query.query) == True and query.query.startswith('https://telegra.ph/'))
 def share_inline(inline_query):
     if inline_query.from_user.language_code in CIS_lang_codes:
         title = 'Ваша игровая статистика'
