@@ -186,7 +186,7 @@ bans_ru = '''🔍 <b>Общая информация профиля:</b>
 stats_en = '''<p><code>Generated using <a href="https://t.me/csgobetabot">@csgobetabot</a> ❤️</code></p>
 <h3>📊 General in-game statistics:</h3>
 <ul><li>Playtime (matchmaking): <b>{:,}</b>h</li><li>Kills: <b>{:,}</b></li><li>Deaths: <b>{:,}</b></li><li>K/D ratio: <b>{}</b></li></ul><br>
-<ul><li>Matches played: <b>{:,}</b></li><li>Matches won: <b>{:,}</b></li><li>Win percentage: <b>{}</b>%</li><li>Rounds played: <b>{:,}</b></li><li>Pistol rounds played: <b>{:,}</b></li></ul>
+<ul><li>Matches played: <b>{:,}</b></li><li>Matches won: <b>{:,}</b></li><li>Win percentage: <b>{}</b>%</li><li>Rounds played: <b>{:,}</b></li><li>Pistol rounds won: <b>{:,}</b></li></ul>
 <hr>
 <h3>🔫 Shooting statistics:</h3>
 <ul><li>Shots: <b>{:,}</b></li><li>Hits: <b>{:,}</b></li><li>Fire accuracy: <b>{}</b>%</li><li>Headshot accuracy: <b>{}</b>%</li></ul>
@@ -274,7 +274,7 @@ stats_en = '''<p><code>Generated using <a href="https://t.me/csgobetabot">@csgob
 stats_ru = '''<p><code>Cгенерировано с помощью <a href="https://t.me/csgobetabot">@csgobetabot</a> ❤️</code></p>
 <h3>📊 Общая игровая статистика:</h3>
 <ul><li>Время в игре (матчмейкинг): <b>{:,}</b> ч.</li><li>Убийств: <b>{:,}</b></li><li>Смертей: <b>{:,}</b></li><li>Соотношение У/С: <b>{}</b></li></ul>
-<ul><li>Матчей сыграно: <b>{:,}</b></li><li>Матчей выиграно: <b>{:,}</b></li><li>Процент побед: <b>{}</b>%</li><li>Раундов сыграно: <b>{:,}</b></li><li>Пистолетных раундов сыграно: <b>{:,}</b></li></ul>
+<ul><li>Матчей сыграно: <b>{:,}</b></li><li>Матчей выиграно: <b>{:,}</b></li><li>Процент побед: <b>{}</b>%</li><li>Раундов сыграно: <b>{:,}</b></li><li>Пистолетных раундов выиграно: <b>{:,}</b></li></ul>
 <hr>
 <h3>🔫 Статистика стрельбы:</h3>
 <ul><li>Выстрелов: <b>{:,}</b></li><li>Попаданий: <b>{:,}</b></li><li>Точность стрельбы: <b>{}</b>%</li><li>Процент попаданий в голову: <b>{}</b>%</li></ul>
