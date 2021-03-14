@@ -230,8 +230,8 @@ def csgo_stats(data):
         statsURL = f'http://api.steampowered.com/ISteamUserStats/GetUserStatsForGame/v2/?appid={config.CSGO_APP_ID}&key={config.STEAM_API_KEY}&steamid={steam64}'
         response = requests.get(statsURL)
         if response.status_code == 500:
-            url_en = '''❕ This account is private, statistics are not available. Please, change your privacy settings.''' 
-            url_ru = '''❕ Этот аккаунт приватный, невозможно получить статистику. Пожалуйста, поменяйте настройки приватности.'''
+            url_en = '''<a href="https://i.imgur.com/AbMFGfZ.gif">‎‎‎‎‎‎‎‎‎‎‎‎</a>❕ This account is private, statistics are not available. Please, change your privacy settings.''' 
+            url_ru = '''<a href="https://i.imgur.com/AbMFGfZ.gif">‎‎‎‎‎‎‎‎‎‎‎‎‎‎</a>❕ Этот аккаунт приватный, невозможно получить статистику. Пожалуйста, поменяйте настройки приватности.'''
         else:
             data = response.json()['playerstats']['stats']
             try:
