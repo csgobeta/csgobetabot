@@ -185,9 +185,16 @@ def ban_info(data):
         #csgoCode = SteamID(data).as_csgo_friend_code
         responseFaceit = requests.get(faceitAPI).json()['payload']['results']
         nicknames =  [y for i in responseFaceit for x, y in i.items() if x == 'nickname']
+        faceitBans =  [y for i in responseFaceit for x, y in i.items() if x == 'status']
         faceitURLS = '\n'.join('https://www.faceit.com/en/players/{}'.format(x) for x in nicknames)
         if len(faceitURLS) == 0:
             faceitURLS = '<code>not found</code>'
+        if 'banned' in faceitBans:
+            faceitBan = 'banned'
+            faceitBanR = 'забанен'
+        else:
+            faceitBan = 'none'
+            faceitBanR = 'нет'
 
         banData = requests.get(bans).json()['players'][0]
         if banData['VACBanned']:
@@ -209,8 +216,8 @@ def ban_info(data):
             tradeBan = 'none'
             tradeBanR = 'нет'
 
-        bans_text_en = strings.bans_en.format(vanityURL, steamID, accountID, steam2ID, steam3ID, inviteUrl, 'Not available yet.', faceitURLS, gameBans, vacBan, communityBan, tradeBan)
-        bans_text_ru = strings.bans_ru.format(vanityURLR, steamID, accountID, steam2ID, steam3ID, inviteUrl, 'Ещё недоступно.', faceitURLS, gameBans, vacBanR, communityBanR, tradeBanR)
+        bans_text_en = strings.bans_en.format(vanityURL, steamID, accountID, steam2ID, steam3ID, inviteUrl, 'Not available yet.', faceitURLS, gameBans, vacBan, communityBan, tradeBan, faceitBan)
+        bans_text_ru = strings.bans_ru.format(vanityURLR, steamID, accountID, steam2ID, steam3ID, inviteUrl, 'Ещё недоступно.', faceitURLS, gameBans, vacBanR, communityBanR, tradeBanR, faceitBanR)
         return bans_text_en, bans_text_ru
     except Exception as e:
         print('\n\nError:' + str(e) + '\n\n')
