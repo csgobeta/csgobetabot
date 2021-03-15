@@ -23,7 +23,7 @@ class CSGOTwitterListener(StreamListener):
             clean_tweet = re.sub(r' http\S+', '', tweet['text'])
             bot = telebot.TeleBot(config.BOT_TOKEN)
             text = strings.notiNewTweet_ru.format(clean_tweet, tweet['id'])
-            bot.send_message(config.CSGOBETACHAT, text)
+            bot.send_message(config.CSGOBETACHAT, text, parse_mode='html')
         else:
             pass
 

@@ -61,7 +61,7 @@ def send_alert(text):
         chatID = config.CSGOBETACHAT
     else:
         chatID = config.OWNER
-    msg = bot.send_message(chatID, text, parse_mode='Markdown')
+    msg = bot.send_message(chatID, text, parse_mode='html')
     bot.pin_chat_message(msg.chat.id, msg.id, disable_notification=True)
 
 if __name__ == '__main__':
