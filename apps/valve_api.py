@@ -4,11 +4,12 @@ import config
 from datetime import datetime
 
 API_server_status = f'https://api.steampowered.com/ICSGOServers_730/GetGameServersStatus/v1?key={config.STEAM_API_KEY}'
-API_csgo_players = f'https://api.steampowered.com/ISteamUserStats/GetNumberOfCurrentPlayers/v1?appid={config.CSGO_APP_ID}' 
+API_csgo_players = f'https://api.steampowered.com/ISteamUserStats/GetNumberOfCurrentPlayers/v1?appid={config.CSGO_APP_ID}'
 API_dev_players = f'https://api.steampowered.com/ISteamUserStats/GetNumberOfCurrentPlayers/v1?appid={config.CSGO_BETA_APP_ID}'
 
+
 class ValveServersAPI:
-    def get_status(self): 
+    def get_status(self):
         try:
             response = requests.get(API_server_status)
             if response.status_code == 200:
@@ -29,7 +30,7 @@ class ValveServersAPI:
             scheduler = matchmaking['scheduler']
             online_servers = matchmaking['online_servers']
             active_players = matchmaking['online_players']
-            searching_players = matchmaking['searching_players']        
+            searching_players = matchmaking['searching_players']
             search_seconds_avg = matchmaking['search_seconds_avg']
 
             return webapi_status, sessionsLogon, steam_community, scheduler, timestamp, online_servers, active_players, search_seconds_avg, searching_players, datacenters
@@ -37,7 +38,7 @@ class ValveServersAPI:
             webapi_status = scheduler = sessionsLogon = steam_community = datacenters = 'N/A'
             timestamp = online_servers = active_players = search_seconds_avg = searching_players = 0
             return webapi_status, sessionsLogon, steam_community, scheduler, timestamp, online_servers, active_players, search_seconds_avg, searching_players, datacenters
-            
+
     def get_players(self):
         try:
             response = requests.get(API_csgo_players)
@@ -47,7 +48,7 @@ class ValveServersAPI:
         except:
             player_count = 0
             return player_count
-            
+
     def get_devs(self):
         try:
             response = requests.get(API_dev_players)

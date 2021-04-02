@@ -1,29 +1,31 @@
 # based on: https://github.com/ericwoolard/CS-GO-Update-Notifier
 
-import sys, os, inspect
-currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+from apps import file_manager
+from plugins import strings
+import config
+import time
+from datetime import datetime
+import logging
+import telebot
+from steam.client import SteamClient
+import sys
+import os
+import inspect
+currentdir = os.path.dirname(os.path.abspath(
+    inspect.getfile(inspect.currentframe())))
 parentdir = os.path.dirname(currentdir)
 sys.path.insert(0, parentdir)
-
-from steam.client import SteamClient
-import telebot
-import logging
-
-from datetime import datetime
-import time
-
-import config
-from plugins import strings
-from apps import file_manager
 
 
 def setup():
     client = SteamClient()
     try:
-        client.login(username=config.STEAM_USERNAME, password=config.STEAM_PASS)
+        client.login(username=config.STEAM_USERNAME,
+                     password=config.STEAM_PASS)
         check_for_updates(client)
     except Exception as e:
         print(f' - Error:\n{e}\n\n\n')
+
 
 def check_for_updates(client):
     while True:
@@ -42,11 +44,13 @@ def check_for_updates(client):
                 cache_key_list.append(keys)
 
             if currentPublicBuild != cacheFile['public_build_ID']:
-                file_manager.updateJson(config.CACHE_FILE_PATH, currentPublicBuild, cache_key_list[0])
+                file_manager.updateJson(
+                    config.CACHE_FILE_PATH, currentPublicBuild, cache_key_list[0])
                 send_alert(currentPublicBuild, cache_key_list[0])
 
             if currentDPRBuild != cacheFile['dpr_build_ID']:
-                file_manager.updateJson(config.CACHE_FILE_PATH, currentDPRBuild, cache_key_list[1])
+                file_manager.updateJson(
+                    config.CACHE_FILE_PATH, currentDPRBuild, cache_key_list[1])
                 send_alert(currentDPRBuild, cache_key_list[1])
 
             time.sleep(10)
@@ -71,5 +75,6 @@ def send_alert(newVal, key):
 
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
+    logging.basicConfig(
+        level=logging.DEBUG, format='%(asctime)s %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
     setup()

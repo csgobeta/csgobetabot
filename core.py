@@ -17,6 +17,7 @@ peak_count = PeakOnline()
 month_unique = Monthly()
 gv = GameVersion()
 
+
 def info_updater():
     while True:
         try:
@@ -48,21 +49,25 @@ def info_updater():
 
             for values, cache_values, cache_keys in zip(value_list, cache_value_list, cache_key_list):
                 if values != cache_values:
-                    file_manager.updateJson(config.CACHE_FILE_PATH, values, cache_keys)
-                    
+                    file_manager.updateJson(
+                        config.CACHE_FILE_PATH, values, cache_keys)
+
             if playerCount > cacheFile['peak_all_time']:
-                file_manager.updateJson(config.CACHE_FILE_PATH, playerCount, cache_key_list[16])
+                file_manager.updateJson(
+                    config.CACHE_FILE_PATH, playerCount, cache_key_list[16])
                 send_alert(playerCount)
 
             if devCount > cacheFile['dev_all_time_peak']:
-                file_manager.updateJson(config.CACHE_FILE_PATH, devCount, cache_key_list[14])
+                file_manager.updateJson(
+                    config.CACHE_FILE_PATH, devCount, cache_key_list[14])
                 send_alert(devCount)
 
             time.sleep(40)
 
         except Exception as e:
             print(f' - Error:\n{e}\n\n\n')
-            
+
+
 def send_alert(newVal):
     bot = telebot.TeleBot(config.BOT_TOKEN)
     if newVal < 100:
@@ -79,5 +84,6 @@ def send_alert(newVal):
 
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
+    logging.basicConfig(
+        level=logging.DEBUG, format='%(asctime)s %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
     info_updater()

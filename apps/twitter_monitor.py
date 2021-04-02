@@ -1,20 +1,20 @@
-import os, sys
+from plugins import strings
+import config
+import re
+import json
+import logging
+import telebot
+from tweepy import StreamListener, Stream, OAuthHandler
+import os
+import sys
 currentdir = os.path.dirname(os.path.realpath(__file__))
 parentdir = os.path.dirname(currentdir)
 sys.path.append(parentdir)
 
-from tweepy import StreamListener, Stream, OAuthHandler
-import telebot
-
-import logging
-import json
-import re
-
-import config
-from plugins import strings
 
 auth = OAuthHandler(config.TWITTER_API_KEY, config.TWITTER_API_KEY_S)
 auth.set_access_token(config.TWITTER_TOKEN, config.TWITTER_TOKEN_S)
+
 
 class CSGOTwitterListener(StreamListener):
     def on_data(self, data):
@@ -29,14 +29,16 @@ class CSGOTwitterListener(StreamListener):
 
     def on_error(self, status):
         print(status)
-        
-    def on_limit(self,status):
-        print ("Rate Limit Exceeded, Sleep for 15 Mins")
+
+    def on_limit(self, status):
+        print("Rate Limit Exceeded, Sleep for 15 Mins")
         time.sleep(15 * 60)
         return True
 
+
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
+    logging.basicConfig(
+        level=logging.DEBUG, format='%(asctime)s %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
     l = CSGOTwitterListener()
     twitterStream = Stream(auth, l)
     twitterStream.filter(follow=[config.CSGO_TWITTER_ID])

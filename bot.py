@@ -19,7 +19,8 @@ from plugins.addons import translate
 from apps import file_manager
 
 bot = telebot.TeleBot(config.BOT_TOKEN, parse_mode='html')
-telebot.logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
+telebot.logging.basicConfig(
+    level=logging.DEBUG, format='%(asctime)s %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
 CIS_lang_codes = ['ru', 'uk', 'be', 'uz', 'kk']
 
 
@@ -44,6 +45,7 @@ def server_stats(message):
     else:
         send_about_problem_valve_api(message)
 
+
 def server_stats_process(message):
     bot.send_chat_action(message.chat.id, 'typing')
     if message.text.lower() == 'service status' or message.text.lower() == 'состояние служб':
@@ -65,6 +67,7 @@ def server_stats_process(message):
             markup = buttons.markup_ss_en
         unknown_request(message, markup, server_stats_process)
 
+
 def send_server_status(message):
     '''Send the status of CS:GO servers'''
     log(message)
@@ -82,6 +85,7 @@ def send_server_status(message):
     except Exception as e:
         bot.send_message(config.LOGCHANNEL, f'❗️{e}')
         send_about_problem_bot(message)
+
 
 def send_mm_stats(message):
     '''Send CS:GO matchamaking statistics'''
@@ -116,6 +120,7 @@ def extra_features(message):
     msg = bot.send_message(message.chat.id, text, reply_markup=markup)
     bot.register_next_step_handler(msg, extra_features_process)
 
+
 def extra_features_process(message):
     bot.send_chat_action(message.chat.id, 'typing')
     if message.text.lower() == 'developers in-game' or message.text.lower() == 'разработчиков в игре':
@@ -139,6 +144,7 @@ def extra_features_process(message):
             markup = buttons.markup_extra_en
         unknown_request(message, markup, extra_features_process)
 
+
 def send_devcount(message):
     '''Send the count of online devs'''
     log(message)
@@ -148,7 +154,7 @@ def send_devcount(message):
         if message.from_user.language_code in CIS_lang_codes:
             text = devcount_text_ru
             markup = buttons.markup_extra_ru
-        else:    
+        else:
             text = devcount_text_en
             markup = buttons.markup_extra_en
         msg = bot.send_message(message.chat.id, text, reply_markup=markup)
@@ -156,6 +162,7 @@ def send_devcount(message):
     except Exception as e:
         bot.send_message(config.LOGCHANNEL, f'❗️{e}')
         send_about_problem_bot(message)
+
 
 def send_timer(message):
     '''Send drop cap reset time'''
@@ -170,10 +177,11 @@ def send_timer(message):
             text = timer_text_en
             markup = buttons.markup_extra_en
         msg = bot.send_message(message.chat.id, text, reply_markup=markup)
-        bot.register_next_step_handler(msg, extra_features_process) 
+        bot.register_next_step_handler(msg, extra_features_process)
     except Exception as e:
         bot.send_message(config.LOGCHANNEL, f'❗️{e}')
         send_about_problem_bot(message)
+
 
 def send_gameversion(message):
     '''Send the version of the game'''
@@ -187,11 +195,12 @@ def send_gameversion(message):
         else:
             text = gameversion_text_en
             markup = buttons.markup_extra_en
-        msg = bot.send_message(message.chat.id, text, reply_markup=markup) 
+        msg = bot.send_message(message.chat.id, text, reply_markup=markup)
         bot.register_next_step_handler(msg, extra_features_process)
     except Exception as e:
         bot.send_message(config.LOGCHANNEL, f'❗️{e}')
         send_about_problem_bot(message)
+
 
 def guns(message):
     log(message)
@@ -202,8 +211,9 @@ def guns(message):
     else:
         text = '#️⃣ Select the category, that you are interested in:'
         markup = buttons.markup_guns_en
-    msg = bot.send_message(message.chat.id, text, reply_markup=markup) 
+    msg = bot.send_message(message.chat.id, text, reply_markup=markup)
     bot.register_next_step_handler(msg, guns_process)
+
 
 def guns_process(message):
     bot.send_chat_action(message.chat.id, 'typing')
@@ -228,6 +238,7 @@ def guns_process(message):
             markup = buttons.markup_ss_en
         unknown_request(message, markup, guns_process)
 
+
 def pistols(message):
     log(message)
     bot.send_chat_action(message.chat.id, 'typing')
@@ -239,6 +250,7 @@ def pistols(message):
         markup = buttons.markup_pistols_en
     msg = bot.send_message(message.chat.id, text, reply_markup=markup)
     bot.register_next_step_handler(msg, pistols_process)
+
 
 def pistols_process(message):
     bot.send_chat_action(message.chat.id, 'typing')
@@ -259,6 +271,7 @@ def pistols_process(message):
             markup = buttons.markup_pistols_en
         unknown_request(message, markup, pistols_process)
 
+
 def smgs(message):
     log(message)
     bot.send_chat_action(message.chat.id, 'typing')
@@ -270,6 +283,7 @@ def smgs(message):
         markup = buttons.markup_smgs_en
     msg = bot.send_message(message.chat.id, text, reply_markup=markup)
     bot.register_next_step_handler(msg, smgs_process)
+
 
 def smgs_process(message):
     bot.send_chat_action(message.chat.id, 'typing')
@@ -290,6 +304,7 @@ def smgs_process(message):
             markup = buttons.markup_smgs_en
         unknown_request(message, markup, smgs_process)
 
+
 def rifles(message):
     log(message)
     bot.send_chat_action(message.chat.id, 'typing')
@@ -301,6 +316,7 @@ def rifles(message):
         markup = buttons.markup_rifles_en
     msg = bot.send_message(message.chat.id, text, reply_markup=markup)
     bot.register_next_step_handler(msg, rifles_process)
+
 
 def rifles_process(message):
     bot.send_chat_action(message.chat.id, 'typing')
@@ -321,6 +337,7 @@ def rifles_process(message):
             markup = buttons.markup_rifles_en
         unknown_request(message, markup, rifles_process)
 
+
 def heavy(message):
     log(message)
     bot.send_chat_action(message.chat.id, 'typing')
@@ -332,6 +349,7 @@ def heavy(message):
         markup = buttons.markup_heavy_en
     msg = bot.send_message(message.chat.id, text, reply_markup=markup)
     bot.register_next_step_handler(msg, heavy_process)
+
 
 def heavy_process(message):
     bot.send_chat_action(message.chat.id, 'typing')
@@ -351,6 +369,7 @@ def heavy_process(message):
         else:
             markup = buttons.markup_heavy_en
         unknown_request(message, markup, heavy_process)
+
 
 def send_gun_info(message, gun_id):
     '''Send archived data about guns'''
@@ -392,6 +411,7 @@ def profile_info(message):
     else:
         send_about_problem_valve_api(message)
 
+
 def profile_info_process(message):
     bot.send_chat_action(message.chat.id, 'typing')
     if message.text.lower() == 'bans and restrictions' or message.text.lower() == 'запреты и ограничения':
@@ -413,6 +433,7 @@ def profile_info_process(message):
             markup = buttons.markup_profile_en
         unknown_request(message, markup, profile_info_process)
 
+
 def url(message, temp_id):
     log(message)
     if message.from_user.language_code in CIS_lang_codes:
@@ -421,14 +442,17 @@ def url(message, temp_id):
     else:
         text = strings.url_ex_en
         markup = buttons.markup_del
-    msg = bot.send_message(message.chat.id, text, reply_markup=markup, disable_web_page_preview=True)
+    msg = bot.send_message(message.chat.id, text,
+                           reply_markup=markup, disable_web_page_preview=True)
     bot.register_next_step_handler(msg, url_process, temp_id)
+
 
 def url_process(message, temp_id):
     if temp_id == 'bans':
         send_bans(message)
     else:
         send_stats(message)
+
 
 def send_bans(message):
     log(message)
@@ -448,11 +472,13 @@ def send_bans(message):
             else:
                 text = bans_text_en
                 markup = buttons.markup_profile_en
-            msg = bot.send_message(message.chat.id, text, reply_markup=markup, disable_web_page_preview=True)
-            bot.register_next_step_handler(msg, profile_info_process) 
+            msg = bot.send_message(
+                message.chat.id, text, reply_markup=markup, disable_web_page_preview=True)
+            bot.register_next_step_handler(msg, profile_info_process)
         except Exception as e:
             bot.send_message(config.LOGCHANNEL, f'❗️{e}')
             send_about_problem_bot(message)
+
 
 def send_stats(message):
     log(message)
@@ -469,12 +495,14 @@ def send_stats(message):
             if message.from_user.language_code in CIS_lang_codes:
                 text = url_ru
                 markup_share = types.InlineKeyboardMarkup()
-                btn = types.InlineKeyboardButton('Поделиться', switch_inline_query=f'{text}')
+                btn = types.InlineKeyboardButton(
+                    'Поделиться', switch_inline_query=f'{text}')
                 markup_share.add(btn)
             else:
                 text = url_en
                 markup_share = types.InlineKeyboardMarkup()
-                btn = types.InlineKeyboardButton('Share', switch_inline_query=f'{text}')
+                btn = types.InlineKeyboardButton(
+                    'Share', switch_inline_query=f'{text}')
                 markup_share.add(btn)
             if message.from_user.language_code in CIS_lang_codes:
                 text_followup = '📖 Воспользуйтесь одной из приведённых команд:'
@@ -483,10 +511,13 @@ def send_stats(message):
                 text_followup = '📖 Use one of the following commands:'
                 markup = buttons.markup_profile_en
             if validators.url(url_en):
-                msg = bot.send_message(message.chat.id, text, reply_markup=markup_share)
-                bot.send_message(message.chat.id, text_followup, reply_markup=markup)
+                msg = bot.send_message(
+                    message.chat.id, text, reply_markup=markup_share)
+                bot.send_message(
+                    message.chat.id, text_followup, reply_markup=markup)
             else:
-                msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+                msg = bot.send_message(
+                    message.chat.id, text, reply_markup=markup)
             bot.register_next_step_handler(msg, profile_info_process)
         except Exception as e:
             bot.send_message(config.LOGCHANNEL, f'❗️{e}')
@@ -506,6 +537,7 @@ def dc(message):
         markup = buttons.markup_DC_en
     msg = bot.send_message(message.chat.id, text, reply_markup=markup)
     bot.register_next_step_handler(msg, dc_process)
+
 
 def dc_process(message):
     bot.send_chat_action(message.chat.id, 'typing')
@@ -534,17 +566,19 @@ def dc_process(message):
             markup = buttons.markup_DC_en
         unknown_request(message, markup, dc_process)
 
+
 def dc_europe(message):
     log(message)
     bot.send_chat_action(message.chat.id, 'typing')
     if message.from_user.language_code in CIS_lang_codes:
         text = '📍 Укажите регион..'
-        markup = buttons.markup_DC_EU_ru            
+        markup = buttons.markup_DC_EU_ru
     else:
         text = '📍 Specify the region..'
         markup = buttons.markup_DC_EU_en
     msg = bot.send_message(message.chat.id, text, reply_markup=markup)
     bot.register_next_step_handler(msg, dc_europe_process)
+
 
 def dc_europe_process(message):
     log(message)
@@ -568,6 +602,7 @@ def dc_europe_process(message):
             markup = buttons.markup_DC_EU_en
         unknown_request(message, markup, dc_europe_process)
 
+
 def dc_usa(message):
     log(message)
     bot.send_chat_action(message.chat.id, 'typing')
@@ -579,6 +614,7 @@ def dc_usa(message):
         markup = buttons.markup_DC_USA_en
     msg = bot.send_message(message.chat.id, text, reply_markup=markup)
     bot.register_next_step_handler(msg, dc_usa_process)
+
 
 def dc_usa_process(message):
     bot.send_chat_action(message.chat.id, 'typing')
@@ -599,6 +635,7 @@ def dc_usa_process(message):
             markup = buttons.markup_DC_USA_en
         unknown_request(message, markup, dc_usa_process)
 
+
 def dc_asia(message):
     log(message)
     bot.send_chat_action(message.chat.id, 'typing')
@@ -610,6 +647,7 @@ def dc_asia(message):
         markup = buttons.markup_DC_Asia_en
     msg = bot.send_message(message.chat.id, text, reply_markup=markup)
     bot.register_next_step_handler(msg, dc_asia_process)
+
 
 def dc_asia_process(message):
     bot.send_chat_action(message.chat.id, 'typing')
@@ -638,6 +676,7 @@ def dc_asia_process(message):
             markup = buttons.markup_DC_Asia_en
         unknown_request(message, markup, dc_asia_process)
 
+
 def send_dc_africa(message):
     log(message)
     bot.send_chat_action(message.chat.id, 'typing')
@@ -650,6 +689,7 @@ def send_dc_africa(message):
         markup = buttons.markup_DC_en
     msg = bot.send_message(message.chat.id, text, reply_markup=markup)
     bot.register_next_step_handler(msg, dc_process)
+
 
 def send_dc_australia(message):
     log(message)
@@ -664,6 +704,7 @@ def send_dc_australia(message):
     msg = bot.send_message(message.chat.id, text, reply_markup=markup)
     bot.register_next_step_handler(msg, dc_process)
 
+
 def send_dc_eu_north(message):
     log(message)
     bot.send_chat_action(message.chat.id, 'typing')
@@ -676,6 +717,7 @@ def send_dc_eu_north(message):
         markup = buttons.markup_DC_EU_en
     msg = bot.send_message(message.chat.id, text, reply_markup=markup)
     bot.register_next_step_handler(msg, dc_europe_process)
+
 
 def send_dc_eu_west(message):
     log(message)
@@ -690,6 +732,7 @@ def send_dc_eu_west(message):
     msg = bot.send_message(message.chat.id, text, reply_markup=markup)
     bot.register_next_step_handler(msg, dc_europe_process)
 
+
 def send_dc_eu_east(message):
     log(message)
     bot.send_chat_action(message.chat.id, 'typing')
@@ -701,7 +744,8 @@ def send_dc_eu_east(message):
         text = eu_east_text_en
         markup = buttons.markup_DC_EU_en
     msg = bot.send_message(message.chat.id, text, reply_markup=markup)
-    bot.register_next_step_handler(msg, dc_europe_process) 
+    bot.register_next_step_handler(msg, dc_europe_process)
+
 
 def send_dc_usa_north(message):
     log(message)
@@ -716,6 +760,7 @@ def send_dc_usa_north(message):
     msg = bot.send_message(message.chat.id, text, reply_markup=markup)
     bot.register_next_step_handler(msg, dc_usa_process)
 
+
 def send_dc_usa_south(message):
     log(message)
     bot.send_chat_action(message.chat.id, 'typing')
@@ -728,6 +773,7 @@ def send_dc_usa_south(message):
         markup = buttons.markup_DC_USA_en
     msg = bot.send_message(message.chat.id, text, reply_markup=markup)
     bot.register_next_step_handler(msg, dc_usa_process)
+
 
 def send_dc_south_america(message):
     log(message)
@@ -742,6 +788,7 @@ def send_dc_south_america(message):
     msg = bot.send_message(message.chat.id, text, reply_markup=markup)
     bot.register_next_step_handler(msg, dc_process)
 
+
 def send_dc_india(message):
     log(message)
     bot.send_chat_action(message.chat.id, 'typing')
@@ -754,6 +801,7 @@ def send_dc_india(message):
         markup = buttons.markup_DC_Asia_en
     msg = bot.send_message(message.chat.id, text, reply_markup=markup)
     bot.register_next_step_handler(msg, dc_asia_process)
+
 
 def send_dc_japan(message):
     log(message)
@@ -768,6 +816,7 @@ def send_dc_japan(message):
     msg = bot.send_message(message.chat.id, text, reply_markup=markup)
     bot.register_next_step_handler(msg, dc_asia_process)
 
+
 def send_dc_china(message):
     log(message)
     bot.send_chat_action(message.chat.id, 'typing')
@@ -780,6 +829,7 @@ def send_dc_china(message):
         markup = buttons.markup_DC_Asia_en
     msg = bot.send_message(message.chat.id, text, reply_markup=markup)
     bot.register_next_step_handler(msg, dc_asia_process)
+
 
 def send_dc_emirates(message):
     log(message)
@@ -794,6 +844,7 @@ def send_dc_emirates(message):
     msg = bot.send_message(message.chat.id, text, reply_markup=markup)
     bot.register_next_step_handler(msg, dc_asia_process)
 
+
 def send_dc_singapore(message):
     log(message)
     singapore_text_en, singapore_text_ru = get_data.dc_singapore()
@@ -805,6 +856,7 @@ def send_dc_singapore(message):
         markup = buttons.markup_DC_Asia_en
     msg = bot.send_message(message.chat.id, text, reply_markup=markup)
     bot.register_next_step_handler(msg, dc_asia_process)
+
 
 def send_dc_hong_kong(message):
     log(message)
@@ -828,22 +880,24 @@ def send_about_problem_valve_api(message):
     log(message)
     if message.from_user.language_code in CIS_lang_codes:
         text = strings.wrongAPI_ru
-        markup = buttons.markup_ru       
+        markup = buttons.markup_ru
     else:
         text = strings.wrongAPI_en
-        markup = buttons.markup_en   
+        markup = buttons.markup_en
     bot.send_message(message.chat.id, text, reply_markup=markup)
+
 
 def send_about_maintenance(message):
     '''In case weekly server update (on Tuesdays)'''
     log(message)
     if message.from_user.language_code in CIS_lang_codes:
         text = strings.maintenance_ru
-        markup = buttons.markup_ru       
+        markup = buttons.markup_ru
     else:
         text = strings.maintenance_en
-        markup = buttons.markup_en   
+        markup = buttons.markup_en
     bot.send_message(message.chat.id, text, reply_markup=markup)
+
 
 def send_about_problem_valve_api_inline(inline_query):
     log(message)
@@ -855,9 +909,11 @@ def send_about_problem_valve_api_inline(inline_query):
         wrong_r = strings.wrongAPI_en
         title_un = 'No data'
         description_un = 'Unable to call Valve API'
-    r = types.InlineQueryResultArticle('1', title_un, input_message_content = types.InputTextMessageContent(wrong_r), thumb_url='https://telegra.ph/file/b9d408e334795b014ee5c.jpg', description=description_un)
+    r = types.InlineQueryResultArticle('1', title_un, input_message_content=types.InputTextMessageContent(
+        wrong_r), thumb_url='https://telegra.ph/file/b9d408e334795b014ee5c.jpg', description=description_un)
     bot.answer_inline_query(inline_query.id, [r], cache_time=5)
     log_inline(inline_query)
+
 
 def send_about_maintenance_inline(inline_query):
     log(message)
@@ -869,9 +925,11 @@ def send_about_maintenance_inline(inline_query):
         maintenance_r = strings.maintenance_en
         title_maintenance = 'No data'
         maintenance = 'Weekly maintenance'
-    r = types.InlineQueryResultArticle('1', title_maintenance, input_message_content = types.InputTextMessageContent(maintenance_r), thumb_url='https://telegra.ph/file/6120ece0aab30d8c59d07.jpg', description=maintenance)
+    r = types.InlineQueryResultArticle('1', title_maintenance, input_message_content=types.InputTextMessageContent(
+        maintenance_r), thumb_url='https://telegra.ph/file/6120ece0aab30d8c59d07.jpg', description=maintenance)
     bot.answer_inline_query(inline_query.id, [r], cache_time=5)
     log_inline(inline_query)
+
 
 def send_about_problem_bot(message):
     '''If anything goes wrong'''
@@ -884,13 +942,14 @@ def send_about_problem_bot(message):
         markup = buttons.markup_en
     bot.send_message(message.chat.id, text, reply_markup=markup)
 
+
 def unknown_request(message, *args):
     log(message)
     bot.send_chat_action(message.chat.id, 'typing')
     if message.from_user.language_code in CIS_lang_codes:
         text = strings.unknownRequest_ru
         markup = buttons.markup_ru
-    else: 
+    else:
         text = strings.unknownRequest_en
         markup = buttons.markup_en
     if len(args) < 1:
@@ -898,6 +957,7 @@ def unknown_request(message, *args):
     else:
         msg = bot.send_message(message.chat.id, text, reply_markup=args[0])
         bot.register_next_step_handler(msg, args[1])
+
 
 def back(message, *args):
     log(message)
@@ -907,6 +967,7 @@ def back(message, *args):
     else:
         msg = bot.send_message(message.chat.id, '👌', reply_markup=args[0])
         bot.register_next_step_handler(msg, args[1])
+
 
 def cancel(message, *args):
     log(message)
@@ -926,8 +987,10 @@ def welcome(message):
     '''First bot's message'''
     data = pd.read_csv(config.USER_DB_FILE_PATH)
     if not data['UserID'].isin([message.from_user.id]).any():
-        new_data = pd.DataFrame([[message.from_user.first_name, message.from_user.id, message.from_user.language_code]], columns=['Name', 'UserID', 'Language'])
-        pd.concat([data, new_data]).to_csv(config.USER_DB_FILE_PATH, index=False)
+        new_data = pd.DataFrame([[message.from_user.first_name, message.from_user.id,
+                                message.from_user.language_code]], columns=['Name', 'UserID', 'Language'])
+        pd.concat([data, new_data]).to_csv(
+            config.USER_DB_FILE_PATH, index=False)
     log(message)
     if message.chat.type == 'private':
         if message.from_user.language_code in CIS_lang_codes:
@@ -943,6 +1006,7 @@ def welcome(message):
         except:
             pass
 
+
 @bot.message_handler(commands=['feedback'])
 def leave_feedback(message):
     '''Send feedback'''
@@ -950,16 +1014,18 @@ def leave_feedback(message):
     bot.send_chat_action(message.chat.id, 'typing')
     if message.chat.type == 'private':
         if message.from_user.language_code in CIS_lang_codes:
-            text = strings.cmdFeedback_ru 
+            text = strings.cmdFeedback_ru
         else:
             text = strings.cmdFeedback_en
-        msg = bot.send_message(message.chat.id, text, reply_markup=buttons.markup_del)
+        msg = bot.send_message(message.chat.id, text,
+                               reply_markup=buttons.markup_del)
         bot.register_next_step_handler(msg, get_feedback)
     else:
         try:
             bot.delete_message(message.chat.id, message.message_id)
         except:
             pass
+
 
 def get_feedback(message):
     '''Get feedback from users'''
@@ -973,11 +1039,13 @@ def get_feedback(message):
         cancel(message, markup)
 
     else:
-        bot.send_message(config.OWNER, f'🆔 <a href="tg://user?id={message.from_user.id}">{message.from_user.id}</a>:', disable_notification=True)
+        bot.send_message(
+            config.OWNER, f'🆔 <a href="tg://user?id={message.from_user.id}">{message.from_user.id}</a>:', disable_notification=True)
         bot.forward_message(config.OWNER, message.chat.id, message.message_id)
-        
+
         if not config.TEST_MODE:
-            bot.send_message(config.AQ, f'🆔 <a href="tg://user?id={message.from_user.id}">{message.from_user.id}</a>:', disable_notification=True)
+            bot.send_message(
+                config.AQ, f'🆔 <a href="tg://user?id={message.from_user.id}">{message.from_user.id}</a>:', disable_notification=True)
             bot.forward_message(config.AQ, message.chat.id, message.message_id)
 
         if message.from_user.language_code in CIS_lang_codes:
@@ -987,7 +1055,9 @@ def get_feedback(message):
             text = 'Awesome! Your message has been sent.'
             markup = buttons.markup_en
 
-        bot.send_message(message.chat.id, text, reply_to_message_id=message.message_id, reply_markup=markup)
+        bot.send_message(message.chat.id, text,
+                         reply_to_message_id=message.message_id, reply_markup=markup)
+
 
 @bot.message_handler(commands=['help'])
 def help(message):
@@ -1008,13 +1078,14 @@ def help(message):
         except:
             pass
 
+
 @bot.message_handler(commands=['delkey'])
 def delete_keyboard(message):
     bot.delete_message(message.chat.id, message.message_id)
     bot.send_message(message.chat.id, '👍', reply_markup=buttons.markup_del)
     time.sleep(10)
     bot.delete_message(message.chat.id, message.message_id+1)
-        
+
 
 ### Inline-mode ###
 
@@ -1033,21 +1104,26 @@ def default_inline(inline_query):
         wsCache = cacheFile['valve_webapi']
         if wsCache == 'normal':
             thumbs = ['https://telegra.ph/file/8b640b85f6d62f8ed2900.jpg', 'https://telegra.ph/file/57ba2b279c53d69d72481.jpg',
-                        'https://telegra.ph/file/24b05cea99de936fd12bf.jpg', 'https://telegra.ph/file/6948255408689d2f6a472.jpg',
-                        'https://telegra.ph/file/82d8df1e9f5140da70232.jpg']
+                      'https://telegra.ph/file/24b05cea99de936fd12bf.jpg', 'https://telegra.ph/file/6948255408689d2f6a472.jpg',
+                      'https://telegra.ph/file/82d8df1e9f5140da70232.jpg']
             if inline_query.from_user.language_code in CIS_lang_codes:
-                data = [status_text_ru, mm_stats_text_ru, devcount_text_ru, timer_text_ru, gameversion_text_ru]
-                titles = ['Состояние серверов', 'Статистика ММ', 'Бета-версия', 'Сброс ограничений', 'Версия игры']
+                data = [status_text_ru, mm_stats_text_ru,
+                        devcount_text_ru, timer_text_ru, gameversion_text_ru]
+                titles = ['Состояние серверов', 'Статистика ММ',
+                          'Бета-версия', 'Сброс ограничений', 'Версия игры']
                 descriptions = ['Проверить доступность серверов', 'Посмотреть количество онлайн игроков', 'Узнать количество онлайн разработчиков',
                                 'Время до сброса ограничений опыта и дропа', 'Проверить последнюю версию игры']
             else:
-                data = [status_text_en, mm_stats_text_ru, devcount_text_en, timer_text_en, gameversion_text_en]
-                titles = ['Server status', 'MM stats', 'Beta version', 'Drop cap reset', 'Game version']
+                data = [status_text_en, mm_stats_text_en,
+                        devcount_text_en, timer_text_en, gameversion_text_en]
+                titles = ['Server status', 'MM stats',
+                          'Beta version', 'Drop cap reset', 'Game version']
                 descriptions = ['Check the availability of the servers', 'Check the count of online players', 'Show the count of in-game developers',
                                 'Time left until experience and drop cap reset', 'Check the latest game version']
             results = []
             for data, tt, desc, thumb in zip(data, titles, descriptions, thumbs):
-                results.append(types.InlineQueryResultArticle(random.randint(0,9999), tt, input_message_content=types.InputTextMessageContent(data, parse_mode='html'), thumb_url=thumb, description=desc))
+                results.append(types.InlineQueryResultArticle(random.randint(0, 9999), tt, input_message_content=types.InputTextMessageContent(
+                    data, parse_mode='html'), thumb_url=thumb, description=desc))
             bot.answer_inline_query(inline_query.id, results, cache_time=5)
         elif wsCache == 'maintenance':
             send_about_maintenance_inline(inline_query)
@@ -1056,14 +1132,17 @@ def default_inline(inline_query):
     except Exception as e:
         bot.send_message(config.LOGCHANNEL, f'❗️{e}\n\n↩️ inline_query')
 
+
 @bot.inline_handler(lambda query: validators.url(query.query) == True and query.query.startswith('https://telegra.ph/'))
 def share_inline(inline_query):
     if inline_query.from_user.language_code in CIS_lang_codes:
         title = 'Ваша игровая статистика'
     else:
         title = 'Your in-game statistics'
-    r = types.InlineQueryResultArticle('1', title, input_message_content = types.InputTextMessageContent(inline_query.query), description=inline_query.query)
+    r = types.InlineQueryResultArticle('1', title, input_message_content=types.InputTextMessageContent(
+        inline_query.query), description=inline_query.query)
     bot.answer_inline_query(inline_query.id, [r], cache_time=5)
+
 
 @bot.inline_handler(lambda query: len(query.query) >= 0)
 def inline_dc(inline_query):
@@ -1081,38 +1160,39 @@ def inline_dc(inline_query):
         japan_text_en, japan_text_ru = get_data.dc_japan()
         singapore_text_en, singapore_text_ru = get_data.dc_singapore()
         australia_text_en, australia_text_ru = get_data.dc_australia()
-        africa_text_en, africa_text_ru = get_data.dc_africa()            
+        africa_text_en, africa_text_ru = get_data.dc_africa()
         south_america_text_en, south_america_text_ru = get_data.dc_south_america()
         cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
         wsCache = cacheFile['valve_webapi']
         if wsCache == 'normal':
             thumbs = ['https://telegra.ph/file/ff0dad30ae32144d7cd0c.jpg', 'https://telegra.ph/file/1de1e51e62b79cae5181a.jpg', 'https://telegra.ph/file/0b209e65c421910419f34.jpg',
-                        'https://telegra.ph/file/b2213992b750940113b69.jpg', 'https://telegra.ph/file/11b6601a3e60940d59c88.jpg', 'https://telegra.ph/file/1c2121ceec5d1482173d5.jpg',
-                        'https://telegra.ph/file/4d269cb98aadaae391024.jpg', 'https://telegra.ph/file/4d269cb98aadaae391024.jpg', 'https://telegra.ph/file/4d269cb98aadaae391024.jpg',
-                        'https://telegra.ph/file/06119c30872031d1047d0.jpg', 'https://telegra.ph/file/06119c30872031d1047d0.jpg', 'https://telegra.ph/file/5dc6beef1556ea852284c.jpg',
-                        'https://telegra.ph/file/12628c8193b48302722e8.jpg',
-                        'https://telegra.ph/file/60f8226ea5d72815bef57.jpg']
+                      'https://telegra.ph/file/b2213992b750940113b69.jpg', 'https://telegra.ph/file/11b6601a3e60940d59c88.jpg', 'https://telegra.ph/file/1c2121ceec5d1482173d5.jpg',
+                      'https://telegra.ph/file/4d269cb98aadaae391024.jpg', 'https://telegra.ph/file/4d269cb98aadaae391024.jpg', 'https://telegra.ph/file/4d269cb98aadaae391024.jpg',
+                      'https://telegra.ph/file/06119c30872031d1047d0.jpg', 'https://telegra.ph/file/06119c30872031d1047d0.jpg', 'https://telegra.ph/file/5dc6beef1556ea852284c.jpg',
+                      'https://telegra.ph/file/12628c8193b48302722e8.jpg',
+                      'https://telegra.ph/file/60f8226ea5d72815bef57.jpg']
             tagList = [tag_list.chinese, tag_list.emirati, tag_list.hong_kongese, tag_list.indian, tag_list.japanese,
-                    tag_list.singaporean, tag_list.north_european, tag_list.east_european, tag_list.west_european,
-                    tag_list.northern_usa, tag_list.southern_usa, tag_list.australian, tag_list.african, tag_list.south_american]
+                       tag_list.singaporean, tag_list.north_european, tag_list.east_european, tag_list.west_european,
+                       tag_list.northern_usa, tag_list.southern_usa, tag_list.australian, tag_list.african, tag_list.south_american]
             if inline_query.from_user.language_code in CIS_lang_codes:
                 data = [china_text_ru, emirates_text_ru, hong_kong_text_ru, india_text_ru, japan_text_ru, singapore_text_ru, eu_north_text_ru,
-                eu_east_text_ru, eu_west_text_ru, usa_north_text_ru, usa_south_text_ru, australia_text_ru, africa_text_ru, south_america_text_ru]
+                        eu_east_text_ru, eu_west_text_ru, usa_north_text_ru, usa_south_text_ru, australia_text_ru, africa_text_ru, south_america_text_ru]
                 titles = ['Китайские ДЦ', 'Эмиратский ДЦ', 'Гонконгский ДЦ', 'Индийские ДЦ', 'Японский ДЦ', 'Сингапурский ДЦ', 'Североевропейский ДЦ',
-                            'Восточноевропейские ДЦ', 'Западноевропейские ДЦ', 'ДЦ северной части США', 'ДЦ южной части США', 'Австралийский ДЦ',
-                            'Африканский ДЦ', 'Южноамериканские ДЦ']
+                          'Восточноевропейские ДЦ', 'Западноевропейские ДЦ', 'ДЦ северной части США', 'ДЦ южной части США', 'Австралийский ДЦ',
+                          'Африканский ДЦ', 'Южноамериканские ДЦ']
                 descriptions = ['Проверить состояние']
             else:
                 data = [china_text_en, emirates_text_en, hong_kong_text_en, india_text_en, japan_text_en, singapore_text_en, eu_north_text_en,
                         eu_east_text_en, eu_west_text_en, usa_north_text_en, usa_south_text_en, australia_text_en, africa_text_en, south_america_text_en]
                 titles = ['Chinese DC', 'Emirati DC', 'Hong Kongese DC', 'Indian DC', 'Japanese DC', 'Singaporean DC', 'North European DC',
-                            'East European DC', 'West European DC', 'Northern USA DC', 'Southern USA DC', 'Australian DC', 'African DC', 'South American DC']
+                          'East European DC', 'West European DC', 'Northern USA DC', 'Southern USA DC', 'Australian DC', 'African DC', 'South American DC']
                 descriptions = ['Check the status']
             results = []
             for data, tt, desc, thumb, tags in zip(data, titles, descriptions*100, thumbs, tagList):
                 for tag in tags:
                     if inline_query.query == tag:
-                        results.append(types.InlineQueryResultArticle(random.randint(0,9999), tt, input_message_content=types.InputTextMessageContent(data, parse_mode='html'), thumb_url=thumb, description=desc))
+                        results.append(types.InlineQueryResultArticle(random.randint(0, 9999), tt, input_message_content=types.InputTextMessageContent(
+                            data, parse_mode='html'), thumb_url=thumb, description=desc))
             bot.answer_inline_query(inline_query.id, results, cache_time=5)
         elif wsCache == 'maintenance':
             send_about_maintenance_inline(inline_query)
@@ -1122,7 +1202,7 @@ def inline_dc(inline_query):
         bot.send_message(config.LOGCHANNEL, f'❗️{e}\n\n↩️ inline_query')
 
 
-### 
+###
 
 
 @bot.message_handler(content_types=['text'])
@@ -1134,8 +1214,10 @@ def answer(message):
 
             data = pd.read_csv(config.USER_DB_FILE_PATH)
             if not data['UserID'].isin([message.from_user.id]).any():
-                new_data = pd.DataFrame([[message.from_user.first_name, message.from_user.id, message.from_user.language_code]], columns=['Name', 'UserID', 'Language'])
-                pd.concat([data, new_data]).to_csv(config.USER_DB_FILE_PATH, index=False)
+                new_data = pd.DataFrame([[message.from_user.first_name, message.from_user.id,
+                                        message.from_user.language_code]], columns=['Name', 'UserID', 'Language'])
+                pd.concat([data, new_data]).to_csv(
+                    config.USER_DB_FILE_PATH, index=False)
 
             if message.text.lower() == 'server statistics' or message.text.lower() == 'статистика серверов':
                 server_stats(message)
@@ -1152,7 +1234,8 @@ def answer(message):
         else:
             if message.from_user.id == 777000:
                 if message.forward_from_chat.id == config.CSGOBETACHANNEL and 'Обновлены файлы локализации' in message.text:
-                    bot.send_sticker(config.CSGOBETACHAT, 'CAACAgIAAxkBAAID-l_9tlLJhZQSgqsMUAvLv0r8qhxSAAIKAwAC-p_xGJ-m4XRqvoOzHgQ', reply_to_message_id=message.message_id)
+                    bot.send_sticker(
+                        config.CSGOBETACHAT, 'CAACAgIAAxkBAAID-l_9tlLJhZQSgqsMUAvLv0r8qhxSAAIKAwAC-p_xGJ-m4XRqvoOzHgQ', reply_to_message_id=message.message_id)
 
     except Exception as e:
         bot.send_message(config.LOGCHANNEL, f'❗️{e}')
@@ -1166,10 +1249,12 @@ def log(message):
     if not config.TEST_MODE:
         bot.send_message(config.LOGCHANNEL, message, parse_mode='')
 
+
 def log_inline(inline_query):
     '''The bot sends inline query to log channel'''
     if not config.TEST_MODE:
         bot.send_message(config.LOGCHANNEL, inline_query, parse_mode='')
+
 
 bot.enable_save_next_step_handlers(delay=2)
 
