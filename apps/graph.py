@@ -1,3 +1,11 @@
+import sys
+import os
+import inspect
+currentdir = os.path.dirname(os.path.abspath(
+    inspect.getfile(inspect.currentframe())))
+parentdir = os.path.dirname(currentdir)
+sys.path.insert(0, parentdir)
+
 from apps import file_manager
 import config
 from telegraph import upload_file
@@ -9,13 +17,6 @@ import seaborn as sns
 import numpy as np
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
-import sys
-import os
-import inspect
-currentdir = os.path.dirname(os.path.abspath(
-    inspect.getfile(inspect.currentframe())))
-parentdir = os.path.dirname(currentdir)
-sys.path.insert(0, parentdir)
 
 
 def graph_maker():

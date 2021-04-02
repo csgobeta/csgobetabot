@@ -1,3 +1,11 @@
+import sys
+import os
+import inspect
+currentdir = os.path.dirname(os.path.abspath(
+    inspect.getfile(inspect.currentframe())))
+parentdir = os.path.dirname(currentdir)
+sys.path.insert(0, parentdir)
+
 import config
 from plugins.addons import translate
 from plugins.addons import time_converter
@@ -11,14 +19,6 @@ import time
 import re
 from steam.steamid import SteamID
 from steam import steamid
-import sys
-import os
-import inspect
-currentdir = os.path.dirname(os.path.abspath(
-    inspect.getfile(inspect.currentframe())))
-parentdir = os.path.dirname(currentdir)
-sys.path.insert(0, parentdir)
-
 
 def server_status():
     '''Get the status of CS:GO servers'''

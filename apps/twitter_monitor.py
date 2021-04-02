@@ -1,3 +1,9 @@
+import os
+import sys
+currentdir = os.path.dirname(os.path.realpath(__file__))
+parentdir = os.path.dirname(currentdir)
+sys.path.append(parentdir)
+
 from plugins import strings
 import config
 import re
@@ -5,11 +11,6 @@ import json
 import logging
 import telebot
 from tweepy import StreamListener, Stream, OAuthHandler
-import os
-import sys
-currentdir = os.path.dirname(os.path.realpath(__file__))
-parentdir = os.path.dirname(currentdir)
-sys.path.append(parentdir)
 
 
 auth = OAuthHandler(config.TWITTER_API_KEY, config.TWITTER_API_KEY_S)
@@ -23,7 +24,8 @@ class CSGOTwitterListener(StreamListener):
             clean_tweet = re.sub(r' http\S+', '', tweet['text'])
             bot = telebot.TeleBot(config.BOT_TOKEN)
             text = strings.notiNewTweet_ru.format(clean_tweet, tweet['id'])
-            bot.send_message(config.CSGOBETACHAT, text, parse_mode='html')
+            msg = bot.send_message(config.CSGOBETACHAT, text, parse_mode='html')
+            bot.pin_chat_message(msg.chat.id, msg.id, disable_notification=True)
         else:
             pass
 

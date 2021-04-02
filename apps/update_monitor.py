@@ -1,5 +1,13 @@
 # based on: https://github.com/ericwoolard/CS-GO-Update-Notifier
 
+import sys
+import os
+import inspect
+currentdir = os.path.dirname(os.path.abspath(
+    inspect.getfile(inspect.currentframe())))
+parentdir = os.path.dirname(currentdir)
+sys.path.insert(0, parentdir)
+
 from apps import file_manager
 from plugins import strings
 import config
@@ -8,13 +16,6 @@ from datetime import datetime
 import logging
 import telebot
 from steam.client import SteamClient
-import sys
-import os
-import inspect
-currentdir = os.path.dirname(os.path.abspath(
-    inspect.getfile(inspect.currentframe())))
-parentdir = os.path.dirname(currentdir)
-sys.path.insert(0, parentdir)
 
 
 def setup():
@@ -71,7 +72,8 @@ def send_alert(newVal, key):
         chat_list = [config.OWNER]
     for chatID in chat_list:
         msg = bot.send_message(chatID, text, parse_mode='html')
-        bot.pin_chat_message(msg.chat.id, msg.id, disable_notification=True)
+        if chatID != config.AQ:
+            bot.pin_chat_message(msg.chat.id, msg.id, disable_notification=True)
 
 
 if __name__ == '__main__':

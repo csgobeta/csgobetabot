@@ -1,3 +1,9 @@
+import os
+import sys
+currentdir = os.path.dirname(os.path.realpath(__file__))
+parentdir = os.path.dirname(currentdir)
+sys.path.append(parentdir)
+
 from plugins import buttons
 from plugins import strings
 import config
@@ -5,11 +11,6 @@ import logging
 import time
 import telebot
 import pandas as pd
-import os
-import sys
-currentdir = os.path.dirname(os.path.realpath(__file__))
-parentdir = os.path.dirname(currentdir)
-sys.path.append(parentdir)
 
 
 CIS_lang_codes = ['ru', 'uk', 'be', 'uz', 'kk']
