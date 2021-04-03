@@ -1087,6 +1087,36 @@ def delete_keyboard(message):
     bot.delete_message(message.chat.id, message.message_id+1)
 
 
+@bot.message_handler(commands=['ban'])
+def ban(message):
+    admin_list = [config.AQ, config.OWNER]
+    if message.chat.id == config.CSGOBETACHAT:
+        if message.from_user.id in admin_list:
+            if message.reply_to_message:
+                bot.kick_chat_member(message.reply_to_message.chat.id,
+                                     message.reply_to_message.from_user.id, until_date=1)
+                bot.send_message(message.chat.id, "{} получил VAC бан.".format(
+                    message.reply_to_message.from_user.first_name), reply_to_message_id=message.reply_to_message.message_id)
+        else:
+            bot.send_message(message.chat.id, "Эта команда недоступна, Вы не являетесь разработчиком Valve.",
+                             reply_to_message_id=message.message_id)
+
+
+@bot.message_handler(commands=['unban'])
+def unban(message):
+    admin_list = [config.AQ, config.OWNER]
+    if message.chat.id == config.CSGOBETACHAT:
+        if message.from_user.id in admin_list:
+            if message.reply_to_message:
+                bot.unban_chat_member(message.reply_to_message.chat.id,
+                                     message.reply_to_message.from_user.id, only_if_banned=True)
+                bot.send_message(message.chat.id, "VAC бан {} был удалён.".format(
+                    message.reply_to_message.from_user.first_name), reply_to_message_id=message.reply_to_message.message_id)
+        else:
+            bot.send_message(message.chat.id, "Эта команда недоступна, Вы не являетесь разработчиком Valve.",
+                             reply_to_message_id=message.message_id)
+
+
 ### Inline-mode ###
 
 
