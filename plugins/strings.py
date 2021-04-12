@@ -141,6 +141,16 @@ url_ex_ru = '''🔗 Пожалуйста, введите один из след�
 
 Используйте /cancel, чтобы отменить команду.'''
 
+### CS:GO Crosshair code examples ###
+# English
+xhair_decode_en = '''📖 Please, enter the crosshair code that you would like to decode (ex: CSGO-O4Jsi-V36wY-rTMGK-9w7qF-jQ8WB).
+
+Use /cancel to cancel this command.'''
+# Russian
+xhair_decode_ru = '''📖 Пожалуйста, введите код прицела, который желаете расшифровать (напр.: CSGO-O4Jsi-V36wY-rTMGK-9w7qF-jQ8WB).
+
+Используйте /cancel, чтобы отменить команду.'''
+
 
 ### Profile information ###
 # English

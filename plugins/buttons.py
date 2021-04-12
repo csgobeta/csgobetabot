@@ -23,8 +23,7 @@ markup_ss_en = types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
 server_status_en = types.KeyboardButton('Service status')
 matchmaking_en = types.KeyboardButton('Matchmaking status')
 dc_en = types.KeyboardButton('Dataсenters status')
-markup_ss_en.add(server_status_en, matchmaking_en, dc_en)
-markup_ss_en.add(back_button_en)
+markup_ss_en.add(server_status_en, matchmaking_en, dc_en, back_button_en)
 
 # Profile Information
 markup_profile_en = types.ReplyKeyboardMarkup(
@@ -35,12 +34,13 @@ markup_profile_en.add(profile_info_en, csgo_stats_en, back_button_en)
 
 # Extra Features
 markup_extra_en = types.ReplyKeyboardMarkup(row_width=2, resize_keyboard=True)
+crosshair_en = types.KeyboardButton('🆕 Crosshair')
 devcount_en = types.KeyboardButton('Developers in-game')
 timer_en = types.KeyboardButton('Cap reset')
 gv_en = types.KeyboardButton('Game version')
 guns_en = types.KeyboardButton('Gun database')
-markup_extra_en.add(devcount_en, gv_en, timer_en, guns_en)
-markup_extra_en.add(back_button_en)
+markup_extra_en.add(crosshair_en)
+markup_extra_en.add(devcount_en, gv_en, timer_en, guns_en, back_button_en)
 
 # DC
 markup_DC_en = types.ReplyKeyboardMarkup(row_width=3, resize_keyboard=True)
@@ -141,8 +141,14 @@ mag7 = types.KeyboardButton('MAG-7')
 sawedoff = types.KeyboardButton('Sawed-Off')
 m249 = types.KeyboardButton('M249')
 negev = types.KeyboardButton('Negev')
-markup_heavy_en.add(nova, xm1014, mag7, sawedoff, m249, negev)
-markup_heavy_en.add(back_button_en)
+markup_heavy_en.add(nova, xm1014, mag7, sawedoff, m249, negev, back_button_en)
+
+# Crosshair
+markup_crosshair_en = types.ReplyKeyboardMarkup(
+    row_width=2, resize_keyboard=True)
+encode_en = types.KeyboardButton('Generate')
+decode_en = types.KeyboardButton('Decode')
+markup_crosshair_en.add(encode_en, decode_en, back_button_en)
 
 
 ### Russian ###
@@ -163,8 +169,7 @@ markup_ss_ru = types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
 server_status_ru = types.KeyboardButton('Состояние служб')
 mathcmaking_ru = types.KeyboardButton('Состояние матчмейкинга')
 dc_ru = types.KeyboardButton('Состояние дата-центров')
-markup_ss_ru.add(server_status_ru, mathcmaking_ru, dc_ru)
-markup_ss_ru.add(back_button_ru)
+markup_ss_ru.add(server_status_ru, mathcmaking_ru, dc_ru, back_button_ru)
 
 # Profile information RU
 markup_profile_ru = types.ReplyKeyboardMarkup(
@@ -175,12 +180,13 @@ markup_profile_ru.add(profile_info_ru, csgo_stats_ru, back_button_ru)
 
 # Extra Features RU
 markup_extra_ru = types.ReplyKeyboardMarkup(row_width=2, resize_keyboard=True)
+crosshair_ru = types.KeyboardButton('🆕 Прицел')
 devcount_ru = types.KeyboardButton('Разработчиков в игре')
 gv_ru = types.KeyboardButton('Версия игры')
 guns_ru = types.KeyboardButton('База данных оружий')
 timer_ru = types.KeyboardButton('Сброс ограничений')
-markup_extra_ru.add(devcount_ru, gv_ru, timer_ru, guns_ru)
-markup_extra_ru.add(back_button_ru)
+markup_extra_ru.add(crosshair_ru)
+markup_extra_ru.add(devcount_ru, gv_ru, timer_ru, guns_ru, back_button_ru)
 
 # DC
 markup_DC_ru = types.ReplyKeyboardMarkup(row_width=3, resize_keyboard=True)
@@ -247,5 +253,11 @@ markup_rifles_ru.add(back_button_ru)
 
 # Heavy Russian
 markup_heavy_ru = types.ReplyKeyboardMarkup(row_width=3, resize_keyboard=True)
-markup_heavy_ru.add(nova, xm1014, mag7, sawedoff, m249, negev)
-markup_heavy_ru.add(back_button_ru)
+markup_heavy_ru.add(nova, xm1014, mag7, sawedoff, m249, negev, back_button_ru)
+
+# Crosshair
+markup_crosshair_ru = types.ReplyKeyboardMarkup(
+    row_width=2, resize_keyboard=True)
+encode_ru = types.KeyboardButton('Создать')
+decode_ru = types.KeyboardButton('Расшифровать')
+markup_crosshair_ru.add(encode_ru, decode_ru, back_button_ru)

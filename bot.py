@@ -14,6 +14,7 @@ import config
 from plugins import strings
 from plugins import buttons
 from plugins import tag_list
+from apps import xhair_sharecode
 from apps import get_data
 from apps import file_manager
 from apps.addons import translate
@@ -119,7 +120,9 @@ def extra_features(message):
 def extra_features_process(message):
     bot.send_chat_action(message.chat.id, 'typing')
     log(message)
-    if message.text.lower() == 'developers in-game' or message.text.lower() == 'разработчиков в игре':
+    if message.text.lower() == '🆕 crosshair' or message.text.lower() == '🆕 прицел':
+        crosshair(message)
+    elif message.text.lower() == 'developers in-game' or message.text.lower() == 'разработчиков в игре':
         send_devcount(message)
     elif message.text.lower() == 'game version' or message.text.lower() == 'версия игры':
         send_gameversion(message)
@@ -139,6 +142,101 @@ def extra_features_process(message):
         else:
             markup = buttons.markup_extra_en
         unknown_request(message, markup, extra_features_process)
+
+
+def crosshair(message):
+    if message.from_user.language_code in CIS_lang_codes:
+        text = '🔖 Выберите желаемую функцию:'
+        markup = buttons.markup_crosshair_ru
+    else:
+        text = '🔖 Select the desired function:'
+        markup = buttons.markup_crosshair_en
+    msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+    bot.register_next_step_handler(msg, crosshair_process)
+
+
+def crosshair_process(message):
+    bot.send_chat_action(message.chat.id, 'typing')
+    log(message)
+    if message.text.lower() == 'generate' or message.text.lower() == 'создать':
+        encode(message)
+    elif message.text.lower() == 'decode' or message.text.lower() == 'расшифровать':
+        decode(message)
+    elif message.text == '⏪ Back' or message.text == '⏪ Назад':
+        if message.from_user.language_code in CIS_lang_codes:
+            markup = buttons.markup_extra_ru
+        else:
+            markup = buttons.markup_extra_en
+        back(message, markup, extra_features_process)
+    else:
+        if message.from_user.language_code in CIS_lang_codes:
+            markup = buttons.markup_crosshair_ru
+        else:
+            markup = buttons.markup_crosshair_en
+        unknown_request(message, markup, crosshair_process)
+
+
+def encode(message):
+    if message.from_user.language_code in CIS_lang_codes:
+        text = '💤 В разработке..'
+        markup = buttons.crosshair_ru
+    else:
+        text = '💤 Work in progress..'
+        markup = buttons.crosshair_en
+    msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+    bot.register_next_step_handler(msg, crosshair_process)
+
+
+def decode(message):
+    if message.from_user.language_code in CIS_lang_codes:
+        text = strings.xhair_decode_ru
+        markup = buttons.markup_del
+    else:
+        text = strings.xhair_decode_en
+        markup = buttons.markup_del
+    msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+    bot.register_next_step_handler(msg, decode_proccess)
+
+
+def decode_proccess(message):
+    bot.send_chat_action(message.chat.id, 'typing')
+    log(message)
+    if message.text == '/cancel':
+        if message.from_user.language_code in CIS_lang_codes:
+            markup = buttons.markup_crosshair_ru
+        else:
+            markup = buttons.markup_crosshair_en
+        cancel(message, markup, crosshair_process)
+    else:
+        try:
+            data = xhair_sharecode.decode(message.text)
+            if not data:
+                if message.from_user.language_code in CIS_lang_codes:
+                    text = '⚠️ Неверный код.'
+                    markup = buttons.markup_crosshair_ru
+                else:
+                    text = '⚠️ Invalid code.'
+                    markup = buttons.markup_crosshair_en
+            else:
+                parameters = ''
+                for x, y in data.items():
+                    parameters += x + ' '
+                    parameters += str(y) + '; '
+                if message.from_user.language_code in CIS_lang_codes:
+                    article = '🧬 Расшифрованные параметры данного кода прицела:'
+                    text = f'<code>{parameters}</code>'
+                    markup = buttons.markup_crosshair_ru
+                else:
+                    article = '🧬 Here are the decoded parameters for the given crosshair code:'
+                    text = f'<code>{parameters}</code>'
+                    markup = buttons.markup_crosshair_en
+            bot.send_message(message.chat.id, article,
+                             disable_notification=True)
+            msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+            bot.register_next_step_handler(msg, crosshair_process)
+        except Exception as e:
+            bot.send_message(config.LOGCHANNEL, f'❗️{e}')
+            send_about_problem_bot(message)
 
 
 def send_devcount(message):
@@ -920,7 +1018,8 @@ def pmOnly(message):
         text = 'Эта команда работает только в личных сообщениях.'
     else:
         text = 'This command only works in private messages.'
-    msg = bot.send_message(message.chat.id, text, reply_to_message_id=message.message_id)
+    msg = bot.send_message(message.chat.id, text,
+                           reply_to_message_id=message.message_id)
     try:
         bot.delete_message(message.chat.id, message.message_id)
     except:
@@ -1220,6 +1319,7 @@ def answer(message):
 def log(message):
     '''The bot sends log to log channel'''
     text = f"""✍️ User: <a href="tg://user?id={message.from_user.id}">{message.from_user.first_name}</a>
+ID: {message.from_user.id}
 Language: {message.from_user.language_code}
 Private message: {message.text}
 """
@@ -1230,6 +1330,7 @@ Private message: {message.text}
 def log_inline(inline_query):
     '''The bot sends inline query to log channel'''
     text = f"""🛰 User: <a href="tg://user?id={inline_query.from_user.id}">{inline_query.from_user.first_name}</a>
+ID: {inline_query.from_user.id}
 Language: {inline_query.from_user.language_code}
 Inline query: {inline_query.query}
 """
