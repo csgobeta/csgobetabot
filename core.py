@@ -80,7 +80,8 @@ def send_alert(newVal):
         chat_list = [config.OWNER]
     for chatID in chat_list:
         msg = bot.send_message(chatID, text, parse_mode='html')
-        bot.pin_chat_message(msg.chat.id, msg.id, disable_notification=True)
+        if chatID != config.AQ:
+            bot.pin_chat_message(msg.chat.id, msg.id, disable_notification=True)
 
 
 if __name__ == '__main__':

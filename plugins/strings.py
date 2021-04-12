@@ -135,9 +135,9 @@ Use /cancel to cancel this command.'''
 # Russian
 url_ex_ru = '''🔗 Пожалуйста, введите один из следующих вариантов:
 
-• Ссылка на профиль (напр: https://steamcommunity.com/id/csgobetaN2)
-• Steam ID (напр: 76561199148006660)
-• Личная ссылка (напр: csgobetaN1)
+• Ссылка на профиль (напр.: https://steamcommunity.com/id/csgobetaN2)
+• Steam ID (напр.: 76561199148006660)
+• Личная ссылка (напр.: csgobetaN1)
 
 Используйте /cancel, чтобы отменить команду.'''
 
@@ -152,7 +152,7 @@ bans_en = '''🔍 <b>General profile information:</b>
 • Steam2 ID: <code>{}</code>
 • Steam3 ID: <code>{}</code>
 • Invite URL: {}
-• CS:GO friend code: <i>{}</i>
+• CS:GO friend code: <code>{}</code>
 • FACEIT: {}
 
 📛 <b>Bans and restrictions:</b>
@@ -171,7 +171,7 @@ bans_ru = '''🔍 <b>Общая информация профиля:</b>
 • Steam2 ID: <code>{}</code>
 • Steam3 ID: <code>{}</code>
 • Пригласительная ссылка: {}
-• Код друга CS:GO: <i>{}</i>
+• Код друга CS:GO: <code>{}</code>
 • FACEIT: {}
 
 📛 <b>Запреты и ограничения:</b>

@@ -126,7 +126,7 @@ def graph_maker():
                 ax.set_ylabel('')
                 ax.set_xlabel('')
                 ax.xaxis.set_ticks_position('bottom')
-                ax.xaxis.set_major_locator(mdates.HourLocator(interval=7))
+                ax.xaxis.set_major_locator(mdates.HourLocator(interval=12))
                 ax.xaxis.set_major_formatter(
                     mdates.DateFormatter('%d %b %H:%M %Z'))
                 ax.legend(loc='upper left')

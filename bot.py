@@ -28,7 +28,6 @@ CIS_lang_codes = ['ru', 'uk', 'be', 'uz', 'kk']
 
 
 def server_stats(message):
-    bot.send_chat_action(message.chat.id, 'typing')
     cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
     wsCache = cacheFile['valve_webapi']
     if wsCache == 'normal':
@@ -48,6 +47,7 @@ def server_stats(message):
 
 def server_stats_process(message):
     bot.send_chat_action(message.chat.id, 'typing')
+    log(message)
     if message.text.lower() == 'service status' or message.text.lower() == 'состояние служб':
         send_server_status(message)
     elif message.text.lower() == 'matchmaking status' or message.text.lower() == 'состояние матчмейкинга':
@@ -70,8 +70,6 @@ def server_stats_process(message):
 
 def send_server_status(message):
     '''Send the status of CS:GO servers'''
-    log(message)
-    bot.send_chat_action(message.chat.id, 'typing')
     try:
         status_text_en, status_text_ru = get_data.server_status()
         if message.from_user.language_code in CIS_lang_codes:
@@ -89,8 +87,6 @@ def send_server_status(message):
 
 def send_mm_stats(message):
     '''Send CS:GO matchamaking statistics'''
-    log(message)
-    bot.send_chat_action(message.chat.id, 'typing')
     try:
         mm_stats_text_en, mm_stats_text_ru = get_data.mm_stats()
         if message.from_user.language_code in CIS_lang_codes:
@@ -110,7 +106,6 @@ def send_mm_stats(message):
 
 
 def extra_features(message):
-    bot.send_chat_action(message.chat.id, 'typing')
     if message.from_user.language_code in CIS_lang_codes:
         text = '🗃 Воспользуйтесь одной из приведённых команд:'
         markup = buttons.markup_extra_ru
@@ -123,6 +118,7 @@ def extra_features(message):
 
 def extra_features_process(message):
     bot.send_chat_action(message.chat.id, 'typing')
+    log(message)
     if message.text.lower() == 'developers in-game' or message.text.lower() == 'разработчиков в игре':
         send_devcount(message)
     elif message.text.lower() == 'game version' or message.text.lower() == 'версия игры':
@@ -147,8 +143,6 @@ def extra_features_process(message):
 
 def send_devcount(message):
     '''Send the count of online devs'''
-    log(message)
-    bot.send_chat_action(message.chat.id, 'typing')
     try:
         devcount_text_en, devcount_text_ru = get_data.devcount()
         if message.from_user.language_code in CIS_lang_codes:
@@ -166,8 +160,6 @@ def send_devcount(message):
 
 def send_timer(message):
     '''Send drop cap reset time'''
-    log(message)
-    bot.send_chat_action(message.chat.id, 'typing')
     try:
         timer_text_en, timer_text_ru = get_data.timer()
         if message.from_user.language_code in CIS_lang_codes:
@@ -185,8 +177,6 @@ def send_timer(message):
 
 def send_gameversion(message):
     '''Send the version of the game'''
-    log(message)
-    bot.send_chat_action(message.chat.id, 'typing')
     try:
         gameversion_text_en, gameversion_text_ru = get_data.gameversion()
         if message.from_user.language_code in CIS_lang_codes:
@@ -203,8 +193,6 @@ def send_gameversion(message):
 
 
 def guns(message):
-    log(message)
-    bot.send_chat_action(message.chat.id, 'typing')
     if message.from_user.language_code in CIS_lang_codes:
         text = '#️⃣ Выберите категорию, которая Вас интересует:'
         markup = buttons.markup_guns_ru
@@ -217,6 +205,7 @@ def guns(message):
 
 def guns_process(message):
     bot.send_chat_action(message.chat.id, 'typing')
+    log(message)
     if message.text.lower() == 'pistols' or message.text.lower() == 'пистолеты':
         pistols(message)
     elif message.text.lower() == 'smgs' or message.text.lower() == 'пистолеты-пулемёты':
@@ -240,8 +229,6 @@ def guns_process(message):
 
 
 def pistols(message):
-    log(message)
-    bot.send_chat_action(message.chat.id, 'typing')
     if message.from_user.language_code in CIS_lang_codes:
         text = '🔫 Выберите пистолет..'
         markup = buttons.markup_pistols_ru
@@ -254,6 +241,7 @@ def pistols(message):
 
 def pistols_process(message):
     bot.send_chat_action(message.chat.id, 'typing')
+    log(message)
     if message.text.lower() in tag_list.gun_name_list:
         for gName, gId in zip(tag_list.gun_name_list, tag_list.gun_id_list):
             if message.text.lower() == gName:
@@ -273,8 +261,6 @@ def pistols_process(message):
 
 
 def smgs(message):
-    log(message)
-    bot.send_chat_action(message.chat.id, 'typing')
     if message.from_user.language_code in CIS_lang_codes:
         text = '🔫 Выберите пистолет-пулемёт..'
         markup = buttons.markup_smgs_ru
@@ -287,6 +273,7 @@ def smgs(message):
 
 def smgs_process(message):
     bot.send_chat_action(message.chat.id, 'typing')
+    log(message)
     if message.text.lower() in tag_list.gun_name_list:
         for gName, gId in zip(tag_list.gun_name_list, tag_list.gun_id_list):
             if message.text.lower() == gName:
@@ -306,8 +293,6 @@ def smgs_process(message):
 
 
 def rifles(message):
-    log(message)
-    bot.send_chat_action(message.chat.id, 'typing')
     if message.from_user.language_code in CIS_lang_codes:
         text = '🔫 Выберите винтовку..'
         markup = buttons.markup_rifles_ru
@@ -320,6 +305,7 @@ def rifles(message):
 
 def rifles_process(message):
     bot.send_chat_action(message.chat.id, 'typing')
+    log(message)
     if message.text.lower() in tag_list.gun_name_list:
         for gName, gId in zip(tag_list.gun_name_list, tag_list.gun_id_list):
             if message.text.lower() == gName:
@@ -339,8 +325,6 @@ def rifles_process(message):
 
 
 def heavy(message):
-    log(message)
-    bot.send_chat_action(message.chat.id, 'typing')
     if message.from_user.language_code in CIS_lang_codes:
         text = '🔫 Выберите тяжёлое оружие..'
         markup = buttons.markup_heavy_ru
@@ -353,6 +337,7 @@ def heavy(message):
 
 def heavy_process(message):
     bot.send_chat_action(message.chat.id, 'typing')
+    log(message)
     if message.text.lower() in tag_list.gun_name_list:
         for gName, gId in zip(tag_list.gun_name_list, tag_list.gun_id_list):
             if message.text.lower() == gName:
@@ -373,8 +358,6 @@ def heavy_process(message):
 
 def send_gun_info(message, gun_id):
     '''Send archived data about guns'''
-    bot.send_chat_action(message.chat.id, 'typing')
-    log(message)
     try:
         gun_data_text_en, gun_data_text_ru = get_data.gun_info(gun_id)
         if message.from_user.language_code in CIS_lang_codes:
@@ -394,7 +377,6 @@ def send_gun_info(message, gun_id):
 
 
 def profile_info(message):
-    bot.send_chat_action(message.chat.id, 'typing')
     cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
     wsCache = cacheFile['valve_webapi']
     if wsCache == 'normal':
@@ -414,6 +396,7 @@ def profile_info(message):
 
 def profile_info_process(message):
     bot.send_chat_action(message.chat.id, 'typing')
+    log(message)
     if message.text.lower() == 'bans and restrictions' or message.text.lower() == 'запреты и ограничения':
         temp_id = 'bans'
         url(message, temp_id)
@@ -435,7 +418,6 @@ def profile_info_process(message):
 
 
 def url(message, temp_id):
-    log(message)
     if message.from_user.language_code in CIS_lang_codes:
         text = strings.url_ex_ru
         markup = buttons.markup_del
@@ -448,6 +430,8 @@ def url(message, temp_id):
 
 
 def url_process(message, temp_id):
+    bot.send_chat_action(message.chat.id, 'typing')
+    log(message)
     if temp_id == 'bans':
         send_bans(message)
     else:
@@ -455,8 +439,6 @@ def url_process(message, temp_id):
 
 
 def send_bans(message):
-    log(message)
-    bot.send_chat_action(message.chat.id, 'typing')
     if message.text == '/cancel':
         if message.from_user.language_code in CIS_lang_codes:
             markup = buttons.markup_profile_ru
@@ -481,8 +463,6 @@ def send_bans(message):
 
 
 def send_stats(message):
-    log(message)
-    bot.send_chat_action(message.chat.id, 'typing')
     if message.text == '/cancel':
         if message.from_user.language_code in CIS_lang_codes:
             markup = buttons.markup_profile_ru
@@ -528,7 +508,6 @@ def send_stats(message):
 
 
 def dc(message):
-    bot.send_chat_action(message.chat.id, 'typing')
     if message.from_user.language_code in CIS_lang_codes:
         text = '📶 Выберите регион, который Вам интересен, чтобы получить информацию о дата-центрах:'
         markup = buttons.markup_DC_ru
@@ -541,6 +520,7 @@ def dc(message):
 
 def dc_process(message):
     bot.send_chat_action(message.chat.id, 'typing')
+    log(message)
     if message.text.lower() == 'asia' or message.text.lower() == 'азия':
         dc_asia(message)
     elif message.text.lower() == 'south africa' or message.text.lower() == 'южная африка':
@@ -568,8 +548,6 @@ def dc_process(message):
 
 
 def dc_europe(message):
-    log(message)
-    bot.send_chat_action(message.chat.id, 'typing')
     if message.from_user.language_code in CIS_lang_codes:
         text = '📍 Укажите регион..'
         markup = buttons.markup_DC_EU_ru
@@ -581,8 +559,8 @@ def dc_europe(message):
 
 
 def dc_europe_process(message):
-    log(message)
     bot.send_chat_action(message.chat.id, 'typing')
+    log(message)
     if message.text.lower() == 'north' or message.text.lower() == 'север':
         send_dc_eu_north(message)
     elif message.text.lower() == 'east' or message.text.lower() == 'восток':
@@ -604,8 +582,6 @@ def dc_europe_process(message):
 
 
 def dc_usa(message):
-    log(message)
-    bot.send_chat_action(message.chat.id, 'typing')
     if message.from_user.language_code in CIS_lang_codes:
         text = '📍 Укажите регион..'
         markup = buttons.markup_DC_USA_ru
@@ -618,6 +594,7 @@ def dc_usa(message):
 
 def dc_usa_process(message):
     bot.send_chat_action(message.chat.id, 'typing')
+    log(message)
     if message.text.lower() == 'north' or message.text.lower() == 'север':
         send_dc_usa_north(message)
     elif message.text.lower() == 'south' or message.text.lower() == 'юг':
@@ -637,8 +614,6 @@ def dc_usa_process(message):
 
 
 def dc_asia(message):
-    log(message)
-    bot.send_chat_action(message.chat.id, 'typing')
     if message.from_user.language_code in CIS_lang_codes:
         text = '📍 Укажите страну..'
         markup = buttons.markup_DC_Asia_ru
@@ -651,6 +626,7 @@ def dc_asia(message):
 
 def dc_asia_process(message):
     bot.send_chat_action(message.chat.id, 'typing')
+    log(message)
     if message.text.lower() == 'india' or message.text.lower() == 'индия':
         send_dc_india(message)
     elif message.text.lower() == 'japan' or message.text.lower() == 'япония':
@@ -678,8 +654,6 @@ def dc_asia_process(message):
 
 
 def send_dc_africa(message):
-    log(message)
-    bot.send_chat_action(message.chat.id, 'typing')
     africa_text_en, africa_text_ru = get_data.dc_africa()
     if message.from_user.language_code in CIS_lang_codes:
         text = africa_text_ru
@@ -692,8 +666,6 @@ def send_dc_africa(message):
 
 
 def send_dc_australia(message):
-    log(message)
-    bot.send_chat_action(message.chat.id, 'typing')
     australia_text_en, australia_text_ru = get_data.dc_australia()
     if message.from_user.language_code in CIS_lang_codes:
         text = australia_text_ru
@@ -706,8 +678,6 @@ def send_dc_australia(message):
 
 
 def send_dc_eu_north(message):
-    log(message)
-    bot.send_chat_action(message.chat.id, 'typing')
     eu_north_text_en, eu_north_text_ru = get_data.dc_eu_north()
     if message.from_user.language_code in CIS_lang_codes:
         text = eu_north_text_ru
@@ -720,8 +690,6 @@ def send_dc_eu_north(message):
 
 
 def send_dc_eu_west(message):
-    log(message)
-    bot.send_chat_action(message.chat.id, 'typing')
     eu_west_text_en, eu_west_text_ru = get_data.dc_eu_west()
     if message.from_user.language_code in CIS_lang_codes:
         text = eu_west_text_ru
@@ -734,8 +702,6 @@ def send_dc_eu_west(message):
 
 
 def send_dc_eu_east(message):
-    log(message)
-    bot.send_chat_action(message.chat.id, 'typing')
     eu_east_text_en, eu_east_text_ru = get_data.dc_eu_east()
     if message.from_user.language_code in CIS_lang_codes:
         text = eu_east_text_ru
@@ -748,8 +714,6 @@ def send_dc_eu_east(message):
 
 
 def send_dc_usa_north(message):
-    log(message)
-    bot.send_chat_action(message.chat.id, 'typing')
     usa_north_text_en, usa_north_text_ru = get_data.dc_usa_north()
     if message.from_user.language_code in CIS_lang_codes:
         text = usa_north_text_ru
@@ -762,8 +726,6 @@ def send_dc_usa_north(message):
 
 
 def send_dc_usa_south(message):
-    log(message)
-    bot.send_chat_action(message.chat.id, 'typing')
     usa_south_text_en, usa_south_text_ru = get_data.dc_usa_south()
     if message.from_user.language_code in CIS_lang_codes:
         text = usa_south_text_ru
@@ -776,8 +738,6 @@ def send_dc_usa_south(message):
 
 
 def send_dc_south_america(message):
-    log(message)
-    bot.send_chat_action(message.chat.id, 'typing')
     south_america_text_en, south_america_text_ru = get_data.dc_south_america()
     if message.from_user.language_code in CIS_lang_codes:
         text = south_america_text_ru
@@ -790,8 +750,6 @@ def send_dc_south_america(message):
 
 
 def send_dc_india(message):
-    log(message)
-    bot.send_chat_action(message.chat.id, 'typing')
     india_text_en, india_text_ru = get_data.dc_india()
     if message.from_user.language_code in CIS_lang_codes:
         text = india_text_ru
@@ -804,8 +762,6 @@ def send_dc_india(message):
 
 
 def send_dc_japan(message):
-    log(message)
-    bot.send_chat_action(message.chat.id, 'typing')
     japan_text_en, japan_text_ru = get_data.dc_japan()
     if message.from_user.language_code in CIS_lang_codes:
         text = japan_text_ru
@@ -818,8 +774,6 @@ def send_dc_japan(message):
 
 
 def send_dc_china(message):
-    log(message)
-    bot.send_chat_action(message.chat.id, 'typing')
     china_text_en, china_text_ru = get_data.dc_china()
     if message.from_user.language_code in CIS_lang_codes:
         text = china_text_ru
@@ -832,8 +786,6 @@ def send_dc_china(message):
 
 
 def send_dc_emirates(message):
-    log(message)
-    bot.send_chat_action(message.chat.id, 'typing')
     emirates_text_en, emirates_text_ru = get_data.dc_emirates()
     if message.from_user.language_code in CIS_lang_codes:
         text = emirates_text_ru
@@ -846,7 +798,6 @@ def send_dc_emirates(message):
 
 
 def send_dc_singapore(message):
-    log(message)
     singapore_text_en, singapore_text_ru = get_data.dc_singapore()
     if message.from_user.language_code in CIS_lang_codes:
         text = singapore_text_ru
@@ -859,8 +810,6 @@ def send_dc_singapore(message):
 
 
 def send_dc_hong_kong(message):
-    log(message)
-    bot.send_chat_action(message.chat.id, 'typing')
     hong_kong_text_en, hong_kong_text_ru = get_data.dc_hong_kong()
     if message.from_user.language_code in CIS_lang_codes:
         text = hong_kong_text_ru
@@ -877,7 +826,6 @@ def send_dc_hong_kong(message):
 
 def send_about_problem_valve_api(message):
     '''In case the bot can't get Valve's API'''
-    log(message)
     if message.from_user.language_code in CIS_lang_codes:
         text = strings.wrongAPI_ru
         markup = buttons.markup_ru
@@ -889,7 +837,6 @@ def send_about_problem_valve_api(message):
 
 def send_about_maintenance(message):
     '''In case weekly server update (on Tuesdays)'''
-    log(message)
     if message.from_user.language_code in CIS_lang_codes:
         text = strings.maintenance_ru
         markup = buttons.markup_ru
@@ -900,7 +847,6 @@ def send_about_maintenance(message):
 
 
 def send_about_problem_valve_api_inline(inline_query):
-    log(message)
     if inline_query.from_user.language_code in CIS_lang_codes:
         wrong_r = strings.wrongAPI_ru
         title_un = 'Нет данных'
@@ -912,11 +858,9 @@ def send_about_problem_valve_api_inline(inline_query):
     r = types.InlineQueryResultArticle('1', title_un, input_message_content=types.InputTextMessageContent(
         wrong_r), thumb_url='https://telegra.ph/file/b9d408e334795b014ee5c.jpg', description=description_un)
     bot.answer_inline_query(inline_query.id, [r], cache_time=5)
-    log_inline(inline_query)
 
 
 def send_about_maintenance_inline(inline_query):
-    log(message)
     if inline_query.from_user.language_code in CIS_lang_codes:
         maintenance_r = strings.maintenance_ru
         title_maintenance = 'Нет данных'
@@ -928,12 +872,10 @@ def send_about_maintenance_inline(inline_query):
     r = types.InlineQueryResultArticle('1', title_maintenance, input_message_content=types.InputTextMessageContent(
         maintenance_r), thumb_url='https://telegra.ph/file/6120ece0aab30d8c59d07.jpg', description=maintenance)
     bot.answer_inline_query(inline_query.id, [r], cache_time=5)
-    log_inline(inline_query)
 
 
 def send_about_problem_bot(message):
     '''If anything goes wrong'''
-    log(message)
     if message.from_user.language_code in CIS_lang_codes:
         text = strings.wrongBOT_ru
         markup = buttons.markup_ru
@@ -944,8 +886,6 @@ def send_about_problem_bot(message):
 
 
 def unknown_request(message, *args):
-    log(message)
-    bot.send_chat_action(message.chat.id, 'typing')
     if message.from_user.language_code in CIS_lang_codes:
         text = strings.unknownRequest_ru
         markup = buttons.markup_ru
@@ -960,8 +900,6 @@ def unknown_request(message, *args):
 
 
 def back(message, *args):
-    log(message)
-    bot.send_chat_action(message.chat.id, 'typing')
     if len(args) < 2:
         bot.send_message(message.chat.id, '👌', reply_markup=args[0])
     else:
@@ -970,13 +908,25 @@ def back(message, *args):
 
 
 def cancel(message, *args):
-    log(message)
-    bot.send_chat_action(message.chat.id, 'typing')
     if len(args) < 2:
         bot.send_message(message.chat.id, '👍', reply_markup=args[0])
     else:
         msg = bot.send_message(message.chat.id, '👍', reply_markup=args[0])
         bot.register_next_step_handler(msg, args[1])
+
+
+def pmOnly(message):
+    if message.from_user.language_code in CIS_lang_codes:
+        text = 'Эта команда работает только в личных сообщениях.'
+    else:
+        text = 'This command only works in private messages.'
+    msg = bot.send_message(message.chat.id, text, reply_to_message_id=message.message_id)
+    try:
+        bot.delete_message(message.chat.id, message.message_id)
+    except:
+        pass
+    time.sleep(10)
+    bot.delete_message(msg.chat.id, msg.message_id)
 
 
 ### Commands ###
@@ -985,14 +935,15 @@ def cancel(message, *args):
 @bot.message_handler(commands=['start'])
 def welcome(message):
     '''First bot's message'''
-    data = pd.read_csv(config.USER_DB_FILE_PATH)
-    if not data['UserID'].isin([message.from_user.id]).any():
-        new_data = pd.DataFrame([[message.from_user.first_name, message.from_user.id,
-                                message.from_user.language_code]], columns=['Name', 'UserID', 'Language'])
-        pd.concat([data, new_data]).to_csv(
-            config.USER_DB_FILE_PATH, index=False)
-    log(message)
     if message.chat.type == 'private':
+        bot.send_chat_action(message.chat.id, 'typing')
+        log(message)
+        data = pd.read_csv(config.USER_DB_FILE_PATH)
+        if not data['UserID'].isin([message.from_user.id]).any():
+            new_data = pd.DataFrame([[message.from_user.first_name, message.from_user.id,
+                                    message.from_user.language_code]], columns=['Name', 'UserID', 'Language'])
+            pd.concat([data, new_data]).to_csv(
+                config.USER_DB_FILE_PATH, index=False)
         if message.from_user.language_code in CIS_lang_codes:
             text = strings.cmdStart_ru.format(message.from_user.first_name)
             markup = buttons.markup_ru
@@ -1001,18 +952,15 @@ def welcome(message):
             markup = buttons.markup_en
         bot.send_message(message.chat.id, text, reply_markup=markup)
     else:
-        try:
-            bot.delete_message(message.chat.id, message.message_id)
-        except:
-            pass
+        pmOnly(message)
 
 
 @bot.message_handler(commands=['feedback'])
 def leave_feedback(message):
     '''Send feedback'''
-    log(message)
-    bot.send_chat_action(message.chat.id, 'typing')
     if message.chat.type == 'private':
+        bot.send_chat_action(message.chat.id, 'typing')
+        log(message)
         if message.from_user.language_code in CIS_lang_codes:
             text = strings.cmdFeedback_ru
         else:
@@ -1021,16 +969,13 @@ def leave_feedback(message):
                                reply_markup=buttons.markup_del)
         bot.register_next_step_handler(msg, get_feedback)
     else:
-        try:
-            bot.delete_message(message.chat.id, message.message_id)
-        except:
-            pass
+        pmOnly(message)
 
 
 def get_feedback(message):
     '''Get feedback from users'''
-    log(message)
     bot.send_chat_action(message.chat.id, 'typing')
+    log(message)
     if message.text == '/cancel':
         if message.from_user.language_code in CIS_lang_codes:
             markup = buttons.markup_ru
@@ -1062,9 +1007,9 @@ def get_feedback(message):
 @bot.message_handler(commands=['help'])
 def help(message):
     '''/help message'''
-    bot.send_chat_action(message.chat.id, 'typing')
-    log(message)
     if message.chat.type == 'private':
+        bot.send_chat_action(message.chat.id, 'typing')
+        log(message)
         if message.from_user.language_code in CIS_lang_codes:
             text = strings.cmdHelp_ru
             markup = buttons.markup_ru
@@ -1073,18 +1018,16 @@ def help(message):
             markup = buttons.markup_en
         bot.send_message(message.chat.id, text, reply_markup=markup)
     else:
-        try:
-            bot.delete_message(message.chat.id, message.message_id)
-        except:
-            pass
+        pmOnly(message)
 
 
 @bot.message_handler(commands=['delkey'])
 def delete_keyboard(message):
     bot.delete_message(message.chat.id, message.message_id)
-    bot.send_message(message.chat.id, '👍', reply_markup=buttons.markup_del)
+    msg = bot.send_message(message.chat.id, '👍',
+                           reply_markup=buttons.markup_del)
     time.sleep(10)
-    bot.delete_message(message.chat.id, message.message_id+1)
+    bot.delete_message(msg.chat.id, msg.message_id)
 
 
 @bot.message_handler(commands=['ban'])
@@ -1109,7 +1052,7 @@ def unban(message):
         if message.from_user.id in admin_list:
             if message.reply_to_message:
                 bot.unban_chat_member(message.reply_to_message.chat.id,
-                                     message.reply_to_message.from_user.id, only_if_banned=True)
+                                      message.reply_to_message.from_user.id, only_if_banned=True)
                 bot.send_message(message.chat.id, "VAC бан {} был удалён.".format(
                     message.reply_to_message.from_user.first_name), reply_to_message_id=message.reply_to_message.message_id)
         else:
@@ -1165,6 +1108,7 @@ def default_inline(inline_query):
 
 @bot.inline_handler(lambda query: validators.url(query.query) == True and query.query.startswith('https://telegra.ph/'))
 def share_inline(inline_query):
+    log_inline(inline_query)
     if inline_query.from_user.language_code in CIS_lang_codes:
         title = 'Ваша игровая статистика'
     else:
@@ -1237,11 +1181,10 @@ def inline_dc(inline_query):
 
 @bot.message_handler(content_types=['text'])
 def answer(message):
-    log(message)
     try:
         if message.chat.type == 'private':
             bot.send_chat_action(message.chat.id, 'typing')
-
+            log(message)
             data = pd.read_csv(config.USER_DB_FILE_PATH)
             if not data['UserID'].isin([message.from_user.id]).any():
                 new_data = pd.DataFrame([[message.from_user.first_name, message.from_user.id,
@@ -1276,14 +1219,22 @@ def answer(message):
 
 def log(message):
     '''The bot sends log to log channel'''
+    text = f"""✍️ User: <a href="tg://user?id={message.from_user.id}">{message.from_user.first_name}</a>
+Language: {message.from_user.language_code}
+Private message: {message.text}
+"""
     if not config.TEST_MODE:
-        bot.send_message(config.LOGCHANNEL, message, parse_mode='')
+        bot.send_message(config.LOGCHANNEL, text, parse_mode='html')
 
 
 def log_inline(inline_query):
     '''The bot sends inline query to log channel'''
+    text = f"""🛰 User: <a href="tg://user?id={inline_query.from_user.id}">{inline_query.from_user.first_name}</a>
+Language: {inline_query.from_user.language_code}
+Inline query: {inline_query.query}
+"""
     if not config.TEST_MODE:
-        bot.send_message(config.LOGCHANNEL, inline_query, parse_mode='')
+        bot.send_message(config.LOGCHANNEL, text, parse_mode='html')
 
 
 bot.enable_save_next_step_handlers(delay=2)
