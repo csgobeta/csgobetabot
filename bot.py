@@ -13,10 +13,10 @@ import validators
 import config
 from plugins import strings
 from plugins import buttons
-from plugins import get_data
 from plugins import tag_list
-from plugins.addons import translate
+from apps import get_data
 from apps import file_manager
+from apps.addons import translate
 
 bot = telebot.TeleBot(config.BOT_TOKEN, parse_mode='html')
 telebot.logging.basicConfig(

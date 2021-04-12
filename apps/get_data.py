@@ -7,8 +7,8 @@ parentdir = os.path.dirname(currentdir)
 sys.path.insert(0, parentdir)
 
 import config
-from plugins.addons import translate
-from plugins.addons import time_converter
+from apps.addons import translate
+from apps.addons import time_converter
 from plugins import strings
 from apps import file_manager
 from telegraph import Telegraph
