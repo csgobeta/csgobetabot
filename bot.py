@@ -19,7 +19,7 @@ from apps import get_data
 from apps import file_manager
 from apps.addons import translate
 
-bot = telebot.TeleBot(config.BOT_TOKEN, parse_mode='html')
+bot = telebot.AsyncTeleBot(config.BOT_TOKEN, parse_mode='html')
 telebot.logging.basicConfig(
     level=logging.DEBUG, format='%(asctime)s %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
 CIS_lang_codes = ['ru', 'uk', 'be', 'uz', 'kk']
@@ -39,6 +39,7 @@ def server_stats(message):
             text = '📊 Use one of the following commands:'
             markup = buttons.markup_ss_en
         msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+        msg = msg.wait()
         bot.register_next_step_handler(msg, server_stats_process)
     elif wsCache == 'maintenance':
         send_about_maintenance(message)
@@ -80,6 +81,7 @@ def send_server_status(message):
             text = status_text_en
             markup = buttons.markup_ss_en
         msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+        msg = msg.wait()
         bot.register_next_step_handler(msg, server_stats_process)
     except Exception as e:
         bot.send_message(config.LOGCHANNEL, f'❗️{e}')
@@ -97,6 +99,7 @@ def send_mm_stats(message):
             text = mm_stats_text_en
             markup = buttons.markup_ss_en
         msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+        msg = msg.wait()
         bot.register_next_step_handler(msg, server_stats_process)
     except Exception as e:
         bot.send_message(config.LOGCHANNEL, f'❗️{e}')
@@ -114,6 +117,7 @@ def extra_features(message):
         text = '🗃 Use one of the following commands:'
         markup = buttons.markup_extra_en
     msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+    msg = msg.wait()
     bot.register_next_step_handler(msg, extra_features_process)
 
 
@@ -152,6 +156,7 @@ def crosshair(message):
         text = '🔖 Select the desired function:'
         markup = buttons.markup_crosshair_en
     msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+    msg = msg.wait()
     bot.register_next_step_handler(msg, crosshair_process)
 
 
@@ -184,6 +189,7 @@ def encode(message):
         text = '💤 Work in progress..'
         markup = buttons.crosshair_en
     msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+    msg = msg.wait()
     bot.register_next_step_handler(msg, crosshair_process)
 
 
@@ -195,6 +201,7 @@ def decode(message):
         text = strings.xhair_decode_en
         markup = buttons.markup_del
     msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+    msg = msg.wait()
     bot.register_next_step_handler(msg, decode_proccess)
 
 
@@ -233,6 +240,7 @@ def decode_proccess(message):
             bot.send_message(message.chat.id, article,
                              disable_notification=True)
             msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+            msg = msg.wait()
             bot.register_next_step_handler(msg, crosshair_process)
         except Exception as e:
             bot.send_message(config.LOGCHANNEL, f'❗️{e}')
@@ -250,6 +258,7 @@ def send_devcount(message):
             text = devcount_text_en
             markup = buttons.markup_extra_en
         msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+        msg = msg.wait()
         bot.register_next_step_handler(msg, extra_features_process)
     except Exception as e:
         bot.send_message(config.LOGCHANNEL, f'❗️{e}')
@@ -267,6 +276,7 @@ def send_timer(message):
             text = timer_text_en
             markup = buttons.markup_extra_en
         msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+        msg = msg.wait()
         bot.register_next_step_handler(msg, extra_features_process)
     except Exception as e:
         bot.send_message(config.LOGCHANNEL, f'❗️{e}')
@@ -284,6 +294,7 @@ def send_gameversion(message):
             text = gameversion_text_en
             markup = buttons.markup_extra_en
         msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+        msg = msg.wait()
         bot.register_next_step_handler(msg, extra_features_process)
     except Exception as e:
         bot.send_message(config.LOGCHANNEL, f'❗️{e}')
@@ -298,6 +309,7 @@ def guns(message):
         text = '#️⃣ Select the category, that you are interested in:'
         markup = buttons.markup_guns_en
     msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+    msg = msg.wait()
     bot.register_next_step_handler(msg, guns_process)
 
 
@@ -334,6 +346,7 @@ def pistols(message):
         text = '🔫 Select the pistol..'
         markup = buttons.markup_pistols_en
     msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+    msg = msg.wait()
     bot.register_next_step_handler(msg, pistols_process)
 
 
@@ -366,6 +379,7 @@ def smgs(message):
         text = '🔫 Select the SMG..'
         markup = buttons.markup_smgs_en
     msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+    msg = msg.wait()
     bot.register_next_step_handler(msg, smgs_process)
 
 
@@ -398,6 +412,7 @@ def rifles(message):
         text = '🔫 Select the rifle..'
         markup = buttons.markup_rifles_en
     msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+    msg = msg.wait()
     bot.register_next_step_handler(msg, rifles_process)
 
 
@@ -430,6 +445,7 @@ def heavy(message):
         text = '🔫 Select the heavy gun..'
         markup = buttons.markup_heavy_en
     msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+    msg = msg.wait()
     bot.register_next_step_handler(msg, heavy_process)
 
 
@@ -465,6 +481,7 @@ def send_gun_info(message, gun_id):
             text = gun_data_text_en
             markup = buttons.markup_guns_en
         msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+        msg = msg.wait()
         bot.register_next_step_handler(msg, guns_process)
     except Exception as e:
         bot.send_message(config.LOGCHANNEL, f'❗️{e}')
@@ -485,6 +502,7 @@ def profile_info(message):
             text = '📖 Use one of the following commands:'
             markup = buttons.markup_profile_en
         msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+        msg = msg.wait()
         bot.register_next_step_handler(msg, profile_info_process)
     elif wsCache == 'maintenance':
         send_about_maintenance(message)
@@ -524,6 +542,7 @@ def url(message, temp_id):
         markup = buttons.markup_del
     msg = bot.send_message(message.chat.id, text,
                            reply_markup=markup, disable_web_page_preview=True)
+    msg = msg.wait()
     bot.register_next_step_handler(msg, url_process, temp_id)
 
 
@@ -554,6 +573,7 @@ def send_bans(message):
                 markup = buttons.markup_profile_en
             msg = bot.send_message(
                 message.chat.id, text, reply_markup=markup, disable_web_page_preview=True)
+            msg = msg.wait()
             bot.register_next_step_handler(msg, profile_info_process)
         except Exception as e:
             bot.send_message(config.LOGCHANNEL, f'❗️{e}')
@@ -591,11 +611,13 @@ def send_stats(message):
             if validators.url(url_en):
                 msg = bot.send_message(
                     message.chat.id, text, reply_markup=markup_share)
+                msg = msg.wait()
                 bot.send_message(
                     message.chat.id, text_followup, reply_markup=markup)
             else:
                 msg = bot.send_message(
                     message.chat.id, text, reply_markup=markup)
+                msg = msg.wait()
             bot.register_next_step_handler(msg, profile_info_process)
         except Exception as e:
             bot.send_message(config.LOGCHANNEL, f'❗️{e}')
@@ -613,6 +635,7 @@ def dc(message):
         text = '📶 Select the region, that you are interested in, to get information about the datacenters:'
         markup = buttons.markup_DC_en
     msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+    msg = msg.wait()
     bot.register_next_step_handler(msg, dc_process)
 
 
@@ -653,6 +676,7 @@ def dc_europe(message):
         text = '📍 Specify the region..'
         markup = buttons.markup_DC_EU_en
     msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+    msg = msg.wait()
     bot.register_next_step_handler(msg, dc_europe_process)
 
 
@@ -687,6 +711,7 @@ def dc_usa(message):
         text = '📍 Specify the region..'
         markup = buttons.markup_DC_USA_en
     msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+    msg = msg.wait()
     bot.register_next_step_handler(msg, dc_usa_process)
 
 
@@ -719,6 +744,7 @@ def dc_asia(message):
         text = '📍 Specify the country..'
         markup = buttons.markup_DC_Asia_en
     msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+    msg = msg.wait()
     bot.register_next_step_handler(msg, dc_asia_process)
 
 
@@ -760,6 +786,7 @@ def send_dc_africa(message):
         text = africa_text_en
         markup = buttons.markup_DC_en
     msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+    msg = msg.wait()
     bot.register_next_step_handler(msg, dc_process)
 
 
@@ -772,6 +799,7 @@ def send_dc_australia(message):
         text = australia_text_en
         markup = buttons.markup_DC_en
     msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+    msg = msg.wait()
     bot.register_next_step_handler(msg, dc_process)
 
 
@@ -784,6 +812,7 @@ def send_dc_eu_north(message):
         text = eu_north_text_en
         markup = buttons.markup_DC_EU_en
     msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+    msg = msg.wait()
     bot.register_next_step_handler(msg, dc_europe_process)
 
 
@@ -796,6 +825,7 @@ def send_dc_eu_west(message):
         text = eu_west_text_en
         markup = buttons.markup_DC_EU_en
     msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+    msg = msg.wait()
     bot.register_next_step_handler(msg, dc_europe_process)
 
 
@@ -808,6 +838,7 @@ def send_dc_eu_east(message):
         text = eu_east_text_en
         markup = buttons.markup_DC_EU_en
     msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+    msg = msg.wait()
     bot.register_next_step_handler(msg, dc_europe_process)
 
 
@@ -820,6 +851,7 @@ def send_dc_usa_north(message):
         text = usa_north_text_en
         markup = buttons.markup_DC_USA_en
     msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+    msg = msg.wait()
     bot.register_next_step_handler(msg, dc_usa_process)
 
 
@@ -832,6 +864,7 @@ def send_dc_usa_south(message):
         text = usa_south_text_en
         markup = buttons.markup_DC_USA_en
     msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+    msg = msg.wait()
     bot.register_next_step_handler(msg, dc_usa_process)
 
 
@@ -844,6 +877,7 @@ def send_dc_south_america(message):
         text = south_america_text_en
         markup = buttons.markup_DC_en
     msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+    msg = msg.wait()
     bot.register_next_step_handler(msg, dc_process)
 
 
@@ -856,6 +890,7 @@ def send_dc_india(message):
         text = india_text_en
         markup = buttons.markup_DC_Asia_en
     msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+    msg = msg.wait()
     bot.register_next_step_handler(msg, dc_asia_process)
 
 
@@ -868,6 +903,7 @@ def send_dc_japan(message):
         text = japan_text_en
         markup = buttons.markup_DC_Asia_en
     msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+    msg = msg.wait()
     bot.register_next_step_handler(msg, dc_asia_process)
 
 
@@ -880,6 +916,7 @@ def send_dc_china(message):
         text = china_text_en
         markup = buttons.markup_DC_Asia_en
     msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+    msg = msg.wait()
     bot.register_next_step_handler(msg, dc_asia_process)
 
 
@@ -892,6 +929,7 @@ def send_dc_emirates(message):
         text = emirates_text_en
         markup = buttons.markup_DC_Asia_en
     msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+    msg = msg.wait()
     bot.register_next_step_handler(msg, dc_asia_process)
 
 
@@ -904,6 +942,7 @@ def send_dc_singapore(message):
         text = singapore_text_en
         markup = buttons.markup_DC_Asia_en
     msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+    msg = msg.wait()
     bot.register_next_step_handler(msg, dc_asia_process)
 
 
@@ -916,6 +955,7 @@ def send_dc_hong_kong(message):
         text = hong_kong_text_en
         markup = buttons.markup_DC_Asia_en
     msg = bot.send_message(message.chat.id, text, reply_markup=markup)
+    msg = msg.wait()
     bot.register_next_step_handler(msg, dc_asia_process)
 
 
@@ -994,6 +1034,7 @@ def unknown_request(message, *args):
         bot.send_message(message.chat.id, text, reply_markup=markup)
     else:
         msg = bot.send_message(message.chat.id, text, reply_markup=args[0])
+        msg = msg.wait()
         bot.register_next_step_handler(msg, args[1])
 
 
@@ -1002,6 +1043,7 @@ def back(message, *args):
         bot.send_message(message.chat.id, '👌', reply_markup=args[0])
     else:
         msg = bot.send_message(message.chat.id, '👌', reply_markup=args[0])
+        msg = msg.wait()
         bot.register_next_step_handler(msg, args[1])
 
 
@@ -1010,6 +1052,7 @@ def cancel(message, *args):
         bot.send_message(message.chat.id, '👍', reply_markup=args[0])
     else:
         msg = bot.send_message(message.chat.id, '👍', reply_markup=args[0])
+        msg = msg.wait()
         bot.register_next_step_handler(msg, args[1])
 
 
@@ -1020,6 +1063,7 @@ def pmOnly(message):
         text = 'This command only works in private messages.'
     msg = bot.send_message(message.chat.id, text,
                            reply_to_message_id=message.message_id)
+    msg = msg.wait()
     try:
         bot.delete_message(message.chat.id, message.message_id)
     except:
@@ -1066,6 +1110,7 @@ def leave_feedback(message):
             text = strings.cmdFeedback_en
         msg = bot.send_message(message.chat.id, text,
                                reply_markup=buttons.markup_del)
+        msg = msg.wait()
         bot.register_next_step_handler(msg, get_feedback)
     else:
         pmOnly(message)
@@ -1301,7 +1346,7 @@ def answer(message):
                 profile_info(message)
 
             else:
-                unknown_request(message)
+                pass
 
         else:
             if message.from_user.id == 777000:

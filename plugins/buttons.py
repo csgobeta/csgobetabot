@@ -74,7 +74,7 @@ markup_DC_EU_en.add(eu_East_en, eu_North_en, eu_West_en, back_button_en)
 
 # DC USA
 markup_DC_USA_en = types.ReplyKeyboardMarkup(row_width=2, resize_keyboard=True)
-usa_Northwest_en = types.KeyboardButton('Nоrth')
+usa_Northwest_en = types.KeyboardButton('North')
 usa_Southwest_en = types.KeyboardButton('South')
 markup_DC_USA_en.add(usa_Northwest_en, usa_Southwest_en, back_button_en)
 
