@@ -29,6 +29,7 @@ CIS_lang_codes = ['ru', 'uk', 'be', 'uz', 'kk']
 
 
 def server_stats(message):
+    bot.send_chat_action(message.chat.id, 'typing')
     cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
     wsCache = cacheFile['valve_webapi']
     if wsCache == 'normal':
@@ -110,6 +111,7 @@ def send_mm_stats(message):
 
 
 def extra_features(message):
+    bot.send_chat_action(message.chat.id, 'typing')
     if message.from_user.language_code in CIS_lang_codes:
         text = '🗃 Воспользуйтесь одной из приведённых команд:'
         markup = buttons.markup_extra_ru
@@ -332,9 +334,9 @@ def guns_process(message):
         back(message, markup, extra_features_process)
     else:
         if message.from_user.language_code in CIS_lang_codes:
-            markup = buttons.markup_ss_ru
+            markup = buttons.markup_guns_ru
         else:
-            markup = buttons.markup_ss_en
+            markup = buttons.markup_guns_en
         unknown_request(message, markup, guns_process)
 
 
@@ -492,6 +494,7 @@ def send_gun_info(message, gun_id):
 
 
 def profile_info(message):
+    bot.send_chat_action(message.chat.id, 'typing')
     cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
     wsCache = cacheFile['valve_webapi']
     if wsCache == 'normal':
@@ -1327,7 +1330,6 @@ def inline_dc(inline_query):
 def answer(message):
     try:
         if message.chat.type == 'private':
-            bot.send_chat_action(message.chat.id, 'typing')
             log(message)
             data = pd.read_csv(config.USER_DB_FILE_PATH)
             if not data['UserID'].isin([message.from_user.id]).any():
@@ -1346,7 +1348,7 @@ def answer(message):
                 profile_info(message)
 
             else:
-                pass
+                unknown_request(message)
 
         else:
             if message.from_user.id == 777000:
