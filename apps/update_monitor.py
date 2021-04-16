@@ -8,14 +8,14 @@ currentdir = os.path.dirname(os.path.abspath(
 parentdir = os.path.dirname(currentdir)
 sys.path.insert(0, parentdir)
 
-from apps import file_manager
-from plugins import strings
-import config
-import time
-from datetime import datetime
-import logging
-import telebot
 from steam.client import SteamClient
+import telebot
+import logging
+from datetime import datetime
+import time
+import config
+from plugins import strings
+from apps import file_manager
 
 
 def setup():
@@ -63,17 +63,23 @@ def check_for_updates(client):
 def send_alert(newVal, key):
     bot = telebot.TeleBot(config.BOT_TOKEN)
     if key == 'public_build_ID':
-        text = strings.notiNewBuild_ru.format(newVal)
+        text_ru = strings.notiNewBuild_ru.format(newVal)
+        text_en = strings.notiNewBuild_en.format(newVal)
     else:
-        text = strings.notiNewDPRBuild_ru.format(newVal)
+        text_ru = strings.notiNewDPRBuild_ru.format(newVal)
+        text_en = strings.notiNewDPRBuild_en.format(newVal)
     if not config.TEST_MODE:
-        chat_list = [config.CSGOBETACHAT, config.AQ]
+        chat_list = [config.CSGOBETACHAT, config.CSGOBETACHAT_EN, config.AQ]
     else:
         chat_list = [config.OWNER]
     for chatID in chat_list:
-        msg = bot.send_message(chatID, text, parse_mode='html')
+        if chatID == config.CSGOBETACHAT:
+            msg = bot.send_message(chatID, text_ru, parse_mode='html')
+        else:
+            msg = bot.send_message(chatID, text_en, parse_mode='html')
         if chatID != config.AQ:
-            bot.pin_chat_message(msg.chat.id, msg.id, disable_notification=True)
+            bot.pin_chat_message(msg.chat.id, msg.id,
+                                 disable_notification=True)
 
 
 if __name__ == '__main__':

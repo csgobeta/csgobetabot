@@ -55,12 +55,14 @@ def info_updater():
             if playerCount > cacheFile['peak_all_time']:
                 file_manager.updateJson(
                     config.CACHE_FILE_PATH, playerCount, cache_key_list[16])
-                send_alert(playerCount)
+                key = 'players'
+                send_alert(playerCount, key)
 
             if devCount > cacheFile['dev_all_time_peak']:
                 file_manager.updateJson(
                     config.CACHE_FILE_PATH, devCount, cache_key_list[14])
-                send_alert(devCount)
+                key = 'devs'
+                send_alert(devCount, key)
 
             time.sleep(40)
 
@@ -68,20 +70,26 @@ def info_updater():
             print(f' - Error:\n{e}\n\n\n')
 
 
-def send_alert(newVal):
+def send_alert(newVal, key):
     bot = telebot.TeleBot(config.BOT_TOKEN)
-    if newVal < 100:
-        text = strings.notiNewDevPeak_ru.format(newVal)
+    if key == 'devs':
+        text_ru = strings.notiNewDevPeak_ru.format(newVal)
+        text_en = strings.notiNewDevPeak_en.format(newVal)
     else:
-        text = strings.notiNewPlayerPeak_ru.format(newVal)
+        text_ru = strings.notiNewPlayerPeak_ru.format(newVal)
+        text_en = strings.notiNewPlayerPeak_en.format(newVal)
     if not config.TEST_MODE:
-        chat_list = [config.CSGOBETACHAT, config.AQ]
+        chat_list = [config.CSGOBETACHAT, config.CSGOBETACHAT_EN, config.AQ]
     else:
         chat_list = [config.OWNER]
     for chatID in chat_list:
-        msg = bot.send_message(chatID, text, parse_mode='html')
+        if chatID == config.CSGOBETACHAT:
+            msg = bot.send_message(chatID, text_ru, parse_mode='html')
+        else:
+            msg = bot.send_message(chatID, text_en, parse_mode='html')
         if chatID != config.AQ:
-            bot.pin_chat_message(msg.chat.id, msg.id, disable_notification=True)
+            bot.pin_chat_message(msg.chat.id, msg.id,
+                                 disable_notification=True)
 
 
 if __name__ == '__main__':

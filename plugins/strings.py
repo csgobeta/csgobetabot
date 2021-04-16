@@ -401,13 +401,23 @@ wrongBOT_ru = '🧐 Извините, что-то не так. Пожалуйс�
 
 
 ### Text for new BuildID ###
+# English
+notiNewBuild_en = '''⚡️ New Counter-Strike: Global Offensive update has been detected. A post with a list of changes will be released soon.
+
+New build ID: <code>{}</code>'''
+
 # Russian
 notiNewBuild_ru = '''⚡️ Обнаружено новое обновление Counter-Strike: Global Offensive. Пост со списком изменений выйдет в ближайшее время.
 
 ID новой сборки: <code>{}</code>'''
 
-
 ### Text for new DPR BuildID ###
+# English
+notiNewDPRBuild_en = '''🔒 CS:GO’s password-protected DPR* build has been updated. This may mean that a new update will be released soon.
+
+<i>*DPR — developer pre-release</i>
+
+New build ID: <code>{}</code>'''
 # Russian
 notiNewDPRBuild_ru = '''🔒 Защищённая паролем DPR* сборка CS:GO была обновлена. Это может означать, что в скором времени выйдет новое обновление.
 
@@ -417,6 +427,18 @@ ID новой сборки: <code>{}</code>'''
 
 
 ### Text for Workshop Changes ###
+# English
+notiNewMap_en = '''🆕 Official CS:GO on Steam has uploaded <b>{}</b> to the Workshop for compatibility with future versions of the game.
+
+In future updates of the game, you can expect some changes to this map.
+
+🔗 steamcommunity.com/sharedfiles/filedetails/?id={}'''
+
+notiNewMaps_en = '''🆕 Official CS:GO on Steam has uploaded <b>{}</b> to the Workshop for compatibility with future versions of the game.
+
+In future updates of the game, you can expect some changes to these maps.
+
+🔗 steamcommunity.com/profiles/76561198082857351/myworkshopfiles/'''
 # Russian
 notiNewMap_ru = '''🆕 Официальный аккаунт CS:GO в Steam загрузил карту <b>{}</b> в Мастерскую для совместимости с будущими версиями игры.
 
@@ -432,6 +454,10 @@ notiNewMaps_ru = '''🆕 Официальный аккаунт CS:GO в Steam з
 
 
 ### Text for new Player Peak ###
+# English
+notiNewPlayerPeak_en = '''🤩  A new record peak of online players in Counter-Strike: Global Offensive has been registered.
+
+Player count: {}'''
 # Russian
 notiNewPlayerPeak_ru = '''🤩 Зарегистрирован новый рекордный пик онлайн игроков в Counter-Strike: Global Offensive.
 
@@ -439,6 +465,10 @@ notiNewPlayerPeak_ru = '''🤩 Зарегистрирован новый рек�
 
 
 ### Text for new Dev Peak ###
+# English
+notiNewDevPeak_en = '''🔍 A new record peak of online developers in the beta version of Counter-Strike: Global Offensive has been registered.
+
+Dev count: {}'''
 # Russian
 notiNewDevPeak_ru = '''🔍 Зарегистрирован новый рекордный пик онлайн разработчиков в бета-версии Counter-Strike: Global Offensive.
 
@@ -446,6 +476,12 @@ notiNewDevPeak_ru = '''🔍 Зарегистрирован новый рекор
 
 
 ### Text for new Tweet ###
+# English
+notiNewTweet_en = '''💬 Official CS:GO account on Twitter:
+
+«{}»
+
+🔗 twitter.com/csgo/status/{}'''
 # Russian
 notiNewTweet_ru = '''💬 Официальный аккаунт CS:GO в Twitter:
 
