@@ -428,13 +428,13 @@ ID новой сборки: <code>{}</code>'''
 
 ### Text for Workshop Changes ###
 # English
-notiNewMap_en = '''🆕 Official CS:GO on Steam has uploaded <b>{}</b> to the Workshop for compatibility with future versions of the game.
+notiNewMap_en = '''🆕 Official CS:GO account on Steam has uploaded <b>{}</b> to the Workshop for compatibility with future versions of the game.
 
 In future updates of the game, you can expect some changes to this map.
 
 🔗 steamcommunity.com/sharedfiles/filedetails/?id={}'''
 
-notiNewMaps_en = '''🆕 Official CS:GO on Steam has uploaded <b>{}</b> to the Workshop for compatibility with future versions of the game.
+notiNewMaps_en = '''🆕 Official CS:GO account on Steam has uploaded <b>{}</b> to the Workshop for compatibility with future versions of the game.
 
 In future updates of the game, you can expect some changes to these maps.
 

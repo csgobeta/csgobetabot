@@ -4,16 +4,18 @@ currentdir = os.path.dirname(os.path.realpath(__file__))
 parentdir = os.path.dirname(currentdir)
 sys.path.append(parentdir)
 
-import feedparser
-import logging
-import telebot
-import re
-import time
-import config
 from plugins import strings
+import config
+import time
+import re
+import telebot
+import logging
+import feedparser
+
 
 blogpost_url = 'https://blog.counter-strike.net/index.php/feed/'
 patchnotes_url = 'https://blog.counter-strike.net/index.php/category/updates/feed/'
+
 
 def feed_parser():
     currentBlogpost = feedparser.parse(blogpost_url).entries
@@ -54,7 +56,8 @@ def send_alert(data, key):
 
 {data.link}
 '''
-    bot.send_message(chatID, text, disable_web_page_preview=True, parse_mode='html')
+    bot.send_message(
+        chatID, text, disable_web_page_preview=True, parse_mode='html')
 
 
 if __name__ == '__main__':
