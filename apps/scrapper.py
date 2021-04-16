@@ -1,13 +1,9 @@
 import requests
 from bs4 import BeautifulSoup
-
 import json
 import re
-
 from datetime import datetime
 
-from apps import file_manager
-import config
 
 url_st = 'https://store.steampowered.com/stats/'
 url_cs = 'https://blog.counter-strike.net'

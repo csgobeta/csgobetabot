@@ -1,5 +1,6 @@
 # based on: https://github.com/ericwoolard/CS-GO-Update-Notifier
 
+
 import sys
 import os
 import inspect
@@ -8,14 +9,14 @@ currentdir = os.path.dirname(os.path.abspath(
 parentdir = os.path.dirname(currentdir)
 sys.path.insert(0, parentdir)
 
-from steam.client import SteamClient
-import telebot
-import logging
-from datetime import datetime
-import time
-import config
-from plugins import strings
+
 from apps import file_manager
+from plugins import strings
+import config
+import time
+import logging
+import telebot
+from steam.client import SteamClient
 
 
 def setup():

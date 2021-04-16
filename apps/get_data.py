@@ -6,19 +6,21 @@ currentdir = os.path.dirname(os.path.abspath(
 parentdir = os.path.dirname(currentdir)
 sys.path.insert(0, parentdir)
 
-import config
-from apps.addons import translate
-from apps.addons import time_converter
-from plugins import strings
-from apps import file_manager
-from telegraph import Telegraph
-import validators
-import requests
-import datetime
-import time
-import re
-from steam.steamid import SteamID
+
 from steam import steamid
+from steam.steamid import SteamID
+import re
+import time
+import datetime
+import requests
+import validators
+from telegraph import Telegraph
+from apps import file_manager
+from plugins import strings
+from apps.addons import time_converter
+from apps.addons import translate
+import config
+
 
 def server_status():
     '''Get the status of CS:GO servers'''

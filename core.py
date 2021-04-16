@@ -1,16 +1,13 @@
 import json
 import logging
 import telebot
-
-from datetime import datetime
 import time
-
 import config
 from plugins import strings
-
 from apps import file_manager
 from apps.valve_api import ValveServersAPI
 from apps.scrapper import PeakOnline, Monthly, GameVersion
+
 
 api = ValveServersAPI()
 peak_count = PeakOnline()

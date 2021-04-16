@@ -1,7 +1,7 @@
 import requests
 import config
-
 from datetime import datetime
+
 
 API_server_status = f'https://api.steampowered.com/ICSGOServers_730/GetGameServersStatus/v1?key={config.STEAM_API_KEY}'
 API_csgo_players = f'https://api.steampowered.com/ISteamUserStats/GetNumberOfCurrentPlayers/v1?appid={config.CSGO_APP_ID}'

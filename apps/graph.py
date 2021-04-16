@@ -6,17 +6,18 @@ currentdir = os.path.dirname(os.path.abspath(
 parentdir = os.path.dirname(currentdir)
 sys.path.insert(0, parentdir)
 
-from apps import file_manager
-import config
-from telegraph import upload_file
-import logging
-import time
-from datetime import datetime
-import pandas as pd
-import seaborn as sns
-import numpy as np
-import matplotlib.dates as mdates
+
 import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
+import numpy as np
+import seaborn as sns
+import pandas as pd
+from datetime import datetime
+import time
+import logging
+from telegraph import upload_file
+import config
+from apps import file_manager
 
 
 def graph_maker():

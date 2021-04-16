@@ -4,11 +4,12 @@ currentdir = os.path.dirname(os.path.realpath(__file__))
 parentdir = os.path.dirname(currentdir)
 sys.path.append(parentdir)
 
-from apps import file_manager
-import config
-import logging
-from csgo.client import CSGOClient
+
 from steam.client import SteamClient
+from csgo.client import CSGOClient
+import logging
+import config
+from apps import file_manager
 
 
 def coordinator_status():
