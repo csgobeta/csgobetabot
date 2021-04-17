@@ -12,7 +12,10 @@ OWNER = '' # Telegram Bot Owner ID
 AQ = '' # Telegram Bot Owner ID
 
 CSGOBETACHAT = '' # Telegram Chat ID
+CSGOBETACHAT_EN = ''
 CSGOBETACHANNEL = '' # Telegram Channel ID
+CSGOBETACHANNEL_EN = ''
+CSGOBETA_DEV = ''
 
 LOGCHANNEL = '' # Telegram Log Channel ID
 
@@ -27,12 +30,12 @@ TWITTER_API_KEY_S = ''
 TWITTER_TOKEN = ''
 TWITTER_TOKEN_S = ''
 
+TELEGRAPH_ACCESS_TOKEN = ''
+
 CSGO_APP_ID = '730'
 CSGO_BETA_APP_ID = '710'
 CSGO_STEAM_PROFILE_ID = '76561198082857351'
 CSGO_TWITTER_ID = '353780675'
-
-TELEGRAPH_ACCESS_TOKEN = ''
 
 CACHE_FILE_PATH = 'data/json/cache.json'
 GUNS_CACHE_FILE_PATH = 'data/json/guns_db.json'
