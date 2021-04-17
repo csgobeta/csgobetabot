@@ -1355,6 +1355,9 @@ def answer(message):
                 if message.forward_from_chat.id == config.CSGOBETACHANNEL and 'Обновлены файлы локализации' in message.text:
                     bot.send_sticker(
                         config.CSGOBETACHAT, 'CAACAgIAAxkBAAID-l_9tlLJhZQSgqsMUAvLv0r8qhxSAAIKAwAC-p_xGJ-m4XRqvoOzHgQ', reply_to_message_id=message.message_id)
+                if message.forward_from_chat.id == config.CSGOBETACHANNEL_EN and 'Updated localization files' in message.text:
+                    bot.send_sticker(
+                        config.CSGOBETACHAT_EN, 'CAACAgIAAxkBAAIGBGB6bEkj7L4mwMlHt9mFWB1UmdG5AAL6DwACXdrRS-aEY71lb0e3HwQ', reply_to_message_id=message.message_id)
 
     except Exception as e:
         bot.send_message(config.LOGCHANNEL, f'❗️{e}')
