@@ -37,34 +37,28 @@ def notes_monitor():
                 patchnotes_url, headers=headers).content, 'html.parser')
             newPatchnotes = soup_notes.find("div", {"class": "main_blog"})
 
-            if len(newBlogpost) < 1:
-                pass
-            else:
-                if newBlogpost != currentBlogpost:
-                    data = newBlogpost.find("div", {"class": "inner_post"})
-                    title = data.find('h2').text
-                    textList = data.find_all('p')[1:]
-                    textStr = '\n\n'.join(str(i) for i in textList)
-                    text = re.sub(r'<.*?>', '', textStr)
-                    url = data.find('a')['href']
-                    currentBlogpost = newBlogpost
-                    data = [title, text, url]
-                    send_alert(data)
+            if newBlogpost != currentBlogpost:
+                data = newBlogpost.find("div", {"class": "inner_post"})
+                title = data.find('h2').text
+                textList = data.find_all('p')[1:]
+                textStr = '\n\n'.join(str(i) for i in textList)
+                text = re.sub(r'<.*?>', '', textStr)
+                url = data.find('a')['href']
+                currentBlogpost = newBlogpost
+                data = [title, text, url]
+                send_alert(data)
 
-            if len(newPatchnotes) < 1:
-                pass
-            else:
-                if newPatchnotes != currentPatchnotes:
-                    data = newPatchnotes.find("div", {"class": "inner_post"})
-                    title = data.find('h2').text
-                    textList = data.find_all('p')[1:]
-                    textStr = '\n\n'.join(str(i) for i in textList)
-                    cleantext = re.sub(r'<.*?>', '', textStr)
-                    text = re.sub(r'–', '•', cleantext)
-                    url = data.find('a')['href']
-                    currentPatchnotes = newPatchnotes
-                    data = [title, text, url]
-                    send_alert(data)
+            if newPatchnotes != currentPatchnotes:
+                data = newPatchnotes.find("div", {"class": "inner_post"})
+                title = data.find('h2').text
+                textList = data.find_all('p')[1:]
+                textStr = '\n\n'.join(str(i) for i in textList)
+                cleantext = re.sub(r'<.*?>', '', textStr)
+                text = re.sub(r'–', '•', cleantext)
+                url = data.find('a')['href']
+                currentPatchnotes = newPatchnotes
+                data = [title, text, url]
+                send_alert(data)
 
             time.sleep(40)
         except Exception as e:
