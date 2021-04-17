@@ -453,6 +453,30 @@ notiNewMaps_ru = '''🆕 Официальный аккаунт CS:GO в Steam з
 🔗 steamcommunity.com/profiles/76561198082857351/myworkshopfiles/'''
 
 
+### Text for Workshop Changes ###
+# English
+notiNewSTS_en = '''🆕 New localization files found. List of changes:
+
+{}
+
+🔗 {}'''
+
+# Russian
+notiNewSTS_ru = '''🆕 Обнаружены новые файлы локализации. Список изменений:
+
+{}
+
+🔗 {}'''
+
+
+### Text for CS:GO Beta Devs ###
+dev_upd = '''<b>{}</b>
+
+{}
+
+{}'''
+
+
 ### Text for new Player Peak ###
 # English
 notiNewPlayerPeak_en = '''🤩  A new record peak of online players in Counter-Strike: Global Offensive has been registered.

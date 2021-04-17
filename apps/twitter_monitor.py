@@ -28,7 +28,7 @@ class CSGOTwitterListener(StreamListener):
             if not config.TEST_MODE:
                 chat_list = [config.CSGOBETACHAT, config.CSGOBETACHAT_EN]
             else:
-                chatID = config.OWNER
+                chat_list = [config.OWNER]
             bot = telebot.TeleBot(config.BOT_TOKEN)
             for chatID in chat_list:
                 if chatID == config.CSGOBETACHAT:

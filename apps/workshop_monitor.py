@@ -69,7 +69,7 @@ def send_alert(text_ru, text_en):
     if not config.TEST_MODE:
         chat_list = [config.CSGOBETACHAT, config.CSGOBETACHAT_EN]
     else:
-        chatID = config.OWNER
+        chat_list = [config.OWNER]
     for chatID in chat_list:
         if chatID == config.CSGOBETACHAT:
             msg = bot.send_message(chatID, text_ru, parse_mode='html')
