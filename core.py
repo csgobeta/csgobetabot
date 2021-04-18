@@ -76,7 +76,7 @@ def send_alert(newVal, key):
         text_ru = strings.notiNewPlayerPeak_ru.format(newVal)
         text_en = strings.notiNewPlayerPeak_en.format(newVal)
     if not config.TEST_MODE:
-        chat_list = [config.CSGOBETACHAT, config.CSGOBETACHAT_EN, config.AQ]
+        chat_list = [config.CSGOBETACHAT, config.CSGOBETACHAT_EN, config.CSGOBETA_DEV]
     else:
         chat_list = [config.OWNER]
     for chatID in chat_list:
@@ -84,7 +84,7 @@ def send_alert(newVal, key):
             msg = bot.send_message(chatID, text_ru, parse_mode='html')
         else:
             msg = bot.send_message(chatID, text_en, parse_mode='html')
-        if chatID != config.AQ:
+        if chatID != config.CSGOBETA_DEV:
             bot.pin_chat_message(msg.chat.id, msg.id,
                                  disable_notification=True)
 

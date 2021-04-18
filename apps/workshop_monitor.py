@@ -67,7 +67,7 @@ def workshop_monitor():
 def send_alert(text_ru, text_en):
     bot = telebot.TeleBot(config.BOT_TOKEN)
     if not config.TEST_MODE:
-        chat_list = [config.CSGOBETACHAT, config.CSGOBETACHAT_EN]
+        chat_list = [config.CSGOBETACHAT, config.CSGOBETACHAT_EN, config.CSGOBETA_DEV]
     else:
         chat_list = [config.OWNER]
     for chatID in chat_list:
@@ -75,7 +75,9 @@ def send_alert(text_ru, text_en):
             msg = bot.send_message(chatID, text_ru, parse_mode='html')
         else:
             msg = bot.send_message(chatID, text_en, parse_mode='html')
-        bot.pin_chat_message(msg.chat.id, msg.id, disable_notification=True)
+        if chatID != config.CSGOBETA_DEV:
+            bot.pin_chat_message(msg.chat.id, msg.id,
+                                 disable_notification=True)
 
 
 if __name__ == '__main__':
