@@ -112,11 +112,16 @@ def notes_monitor():
 def send_alert(data, key):
     bot = telebot.TeleBot(config.BOT_TOKEN)
     if key == 'notes':
-        text = strings.dev_upd.format(data[1], data[2], data[0], data[4], data[3])
+        text_en = strings.dev_upd_en.format(data[1], data[2], data[0], data[4], data[3])
+        text_ru = strings.dev_upd_ru.format(data[1], data[2], data[0], data[4], data[3])
+        bot.send_message(
+            config.CSGOBETA_DEV, text_en, disable_web_page_preview=True, parse_mode='html')
+        bot.send_message(
+            config.CSGOBETA_DEV, text_ru, disable_web_page_preview=True, parse_mode='html')
     else:
         text = 'NEW BLOGPOST:{}\n\n{}\n\n{}'.format(data[0], data[1], data[2])
-    bot.send_message(
-        config.CSGOBETA_DEV, text, disable_web_page_preview=True, parse_mode='html')
+        bot.send_message(
+            config.CSGOBETA_DEV, text, disable_web_page_preview=True, parse_mode='html')
 
 
 if __name__ == '__main__':
