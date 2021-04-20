@@ -51,15 +51,13 @@ def info_updater():
 
             if playerCount > cacheFile['peak_all_time']:
                 file_manager.updateJson(
-                    config.CACHE_FILE_PATH, playerCount, cache_key_list[16])
-                key = 'players'
-                send_alert(playerCount, key)
+                    config.CACHE_FILE_PATH, playerCount, cache_key_list[168])
+                send_alert(playerCount, cache_key_list[16])
 
             if devCount > cacheFile['dev_all_time_peak']:
                 file_manager.updateJson(
                     config.CACHE_FILE_PATH, devCount, cache_key_list[14])
-                key = 'devs'
-                send_alert(devCount, key)
+                send_alert(devCount, cache_key_list[14])
 
             time.sleep(40)
 
@@ -69,7 +67,7 @@ def info_updater():
 
 def send_alert(newVal, key):
     bot = telebot.TeleBot(config.BOT_TOKEN)
-    if key == 'devs':
+    if key == 'dev_all_time_peak':
         text_ru = strings.notiNewDevPeak_ru.format(newVal)
         text_en = strings.notiNewDevPeak_en.format(newVal)
     else:

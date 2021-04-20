@@ -16,6 +16,7 @@ import config
 import time
 import logging
 import telebot
+import subprocess
 from steam.client import SteamClient
 
 
@@ -32,9 +33,6 @@ def setup():
 def check_for_updates(client):
     while True:
         try:
-            currentPublicBuild = 0
-            currentDPRBuild = 0
-
             for keys, values in client.get_product_info(apps=[730], timeout=15).items():
                 for k, v in values.items():
                     currentPublicBuild = v['depots']['branches']['public']['buildid']
@@ -46,6 +44,7 @@ def check_for_updates(client):
                 cache_key_list.append(keys)
 
             if currentPublicBuild != cacheFile['public_build_ID']:
+                subprocess.call(['steamcmd', '+login', config.STEAM_USERNAME, config.STEAM_PASS, '+app_update 730', '+quit'])
                 file_manager.updateJson(
                     config.CACHE_FILE_PATH, currentPublicBuild, cache_key_list[0])
                 send_alert(currentPublicBuild, cache_key_list[0])

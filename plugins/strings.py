@@ -470,12 +470,12 @@ notiNewSTS_ru = '''🆕 Обнаружены новые файлы локали�
 
 
 ### Text for CS:GO Beta Devs ###
-dev_upd = '''<b>Counter-Strike: Global Offensive</b> has been updated to the version <code>{} ({})</code>
+dev_upd = '''<b>Counter-Strike: Global Offensive</b> has been updated to the version <code>{}</code> <code>({})</code>
 
-<b>What's new:</b>
+<b>What’s new:</b>
 {}
 
-<b>Size:</b>
+<b>Size:</b> {} MB
 
 <i>*pls go here if somethings broken: {}</i>'''
 
