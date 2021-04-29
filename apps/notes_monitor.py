@@ -37,10 +37,6 @@ def notes_monitor():
         patchnotes_url, headers=headers).content, 'html.parser')
     currentPatchnotes = soup_notes.find("div", {"id": "main_blog"})
 
-    steamcmd = str(subprocess.check_output(['steamcmd', '+login', config.STEAM_USERNAME, config.STEAM_PASS, '+app_status 730', '+quit']))
-    regex = re.findall(r'size on disk: \d+', steamcmd)
-    currentSize = int(regex[0].replace('size on disk: ', ''))
-
     while True:
         try:
             cacheFile = file_manager.readJson(config.CACHE_FILE_PATH)
@@ -48,10 +44,9 @@ def notes_monitor():
 
             if newVersion != currentVersion:
                 steamcmd = str(subprocess.check_output(['steamcmd', '+login', config.STEAM_USERNAME, config.STEAM_PASS, '+app_status 730', '+quit']))
-                regex = re.findall(r'size on disk: \d+', steamcmd)
-                newSize = int(regex[0].replace('size on disk: ', ''))
+                regex = re.findall(r'downloaded: \d+/\d+', steamcmd)
+                size = regex[0].split('/')
                 patch = cacheFile['patch_version']
-                size = round((newSize - currentSize) / (1024 * 1024), 1)
                 key = 'notes'
                 patchnotes = False
                 while time.time() < timeout_start + timeout:
@@ -68,11 +63,10 @@ def notes_monitor():
                             cleantext = re.sub(r'<.*?>', '', textStr)
                             text = re.sub(r'–', '•', cleantext)
                             url = data.find('a')['href']
-                            data = [text, patch, newVersion, url, size]
+                            data = [text, patch, newVersion, url, size[1]]
                             send_alert(data, key)
                             currentPatchnotes = newPatchnotes
                             currentVersion = newVersion
-                            currentSize = newSize
                             break
 
                         time.sleep(20)
@@ -82,10 +76,9 @@ def notes_monitor():
                 if not patchnotes:
                     text = 'no patchnotes found, pls check url below'
                     url = 'steamdb.info/patchnotes/{}'.format(cacheFile['public_build_ID'])
-                    data = [text, patch, newVersion, url, size]
+                    data = [text, patch, newVersion, url, size[1]]
                     send_alert(data, key)
                     currentVersion = newVersion
-                    currentSize = newSize
 
             soup_blog = BeautifulSoup(requests.get(
                 blogpost_url, headers=headers).content, 'html.parser')

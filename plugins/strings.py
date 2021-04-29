@@ -477,7 +477,7 @@ dev_upd_en = '''<b>Counter-Strike: Global Offensive</b> has been updated to the 
 {}
 • Updated localization files.
 
-<b>Size:</b> {} MB
+<b>Size:</b> ~{} MB
 
 <i>*pls go here if somethings broken: {}</i>'''
 # Russian
@@ -487,7 +487,7 @@ dev_upd_ru = '''<b>Counter-Strike: Global Offensive</b> был обновлён 
 {}
 • Обновлены файлы локализации.
 
-<b>Размер:</b> {} MB
+<b>Размер:</b> ~{} MB
 
 <i>*pls go here if somethings broken: {}</i>'''
 
